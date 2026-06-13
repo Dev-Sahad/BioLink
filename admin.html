@@ -1,183 +1,150 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width,initial-scale=1.0"/>
   <title>Admin — BioLink</title>
-  <link rel="preconnect" href="https://fonts.googleapis.com" />
-  <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet" />
-  <link rel="stylesheet" href="style.css" />
+  <link rel="stylesheet" href="style.css"/>
   <style>
-    .page-title { font-size: 22px; font-weight: 700; margin-bottom: 4px; }
-    .page-sub   { font-size: 14px; color: var(--muted); margin-bottom: 28px; }
-
-    /* stats */
-    .stats-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(160px,1fr)); gap: 12px; margin-bottom: 28px; }
-    .stat-card.accent { border-color: rgba(124,106,255,.3); background: linear-gradient(135deg, rgba(124,106,255,.08), rgba(255,106,240,.04)); }
-
-    /* search */
-    .search-bar { display: flex; gap: 10px; margin-bottom: 16px; }
-    .search-bar input {
-      flex: 1; background: var(--surface); border: 1px solid var(--border);
-      border-radius: var(--radius); padding: 10px 14px;
-      font-family: var(--ff); font-size: 14px; color: var(--text);
-      transition: border-color var(--trans);
-    }
-    .search-bar input:focus { outline: none; border-color: var(--border-focus); }
-
-    /* user row actions */
-    .actions { display: flex; gap: 6px; flex-wrap: wrap; }
-
-    /* bio preview chip */
-    .bio-chip { font-family: var(--ff-mono); font-size: 11px; color: var(--muted); }
-
-    /* add user modal */
-    .modal-form { display: flex; flex-direction: column; gap: 14px; }
-
-    /* section tabs */
-    .admin-tabs { display: flex; gap: 0; margin-bottom: 20px; background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); overflow: hidden; }
-    .admin-tab  { flex: 1; padding: 10px 0; text-align: center; font-size: 13px; font-weight: 600; color: var(--muted); background: none; border: none; transition: all var(--trans); cursor: pointer; }
-    .admin-tab.active { background: var(--accent-dim); color: var(--accent); }
-
-    /* log entries */
-    .log-entry { font-size: 12px; font-family: var(--ff-mono); color: var(--muted); padding: 6px 0; border-bottom: 1px solid var(--border); }
-    .log-entry .ts { color: var(--muted); opacity: .6; }
-    .log-entry .msg { color: var(--text); }
+    .stats-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:12px;margin-bottom:28px;}
+    .search-bar{display:flex;gap:10px;margin-bottom:16px;}
+    .search-bar input{flex:1;background:var(--surface);border:1px solid var(--border);border-radius:var(--rad);padding:10px 14px;font-family:var(--ff);font-size:14px;color:var(--text);transition:border-color var(--trans);}
+    .search-bar input:focus{outline:none;border-color:var(--border-f);}
+    .actions{display:flex;gap:6px;flex-wrap:wrap;align-items:center;}
+    .modal-form{display:flex;flex-direction:column;gap:14px;}
+    .setting-row{display:flex;align-items:center;justify-content:space-between;padding:14px 0;border-bottom:1px solid var(--border);}
+    .setting-row:last-child{border-bottom:none;}
+    .setting-info .s-name{font-size:14px;font-weight:600;margin-bottom:3px;}
+    .setting-info .s-desc{font-size:12px;color:var(--muted);}
+    .bio-preview{max-width:180px;overflow:hidden;white-space:nowrap;text-overflow:ellipsis;font-size:12px;color:var(--muted);font-family:var(--ffm);}
   </style>
 </head>
 <body>
-
-<!-- NAV -->
 <nav class="nav">
   <div class="nav-inner">
     <a href="index.html" class="nav-logo">✦ BioLink</a>
     <div class="nav-links">
-      <span class="badge badge-admin">⚙ Admin</span>
+      <span class="badge badge-admin" style="margin-right:6px">⚙ Admin</span>
+      <a href="dashboard.html" class="btn btn-ghost btn-sm">My Profile</a>
       <button class="btn btn-ghost btn-sm" id="nav-logout">Log Out</button>
     </div>
   </div>
 </nav>
 
 <div class="app-layout">
-
-  <!-- SIDEBAR -->
   <aside class="sidebar">
-    <div class="sidebar-section">Admin</div>
+    <div class="sidebar-section">Platform</div>
     <button class="sidebar-item active" data-panel="dashboard">📊 Dashboard</button>
     <button class="sidebar-item" data-panel="users">👥 Users</button>
     <button class="sidebar-item" data-panel="bios">🔗 BioLinks</button>
+    <button class="sidebar-item" data-panel="analytics">📈 Analytics</button>
     <button class="sidebar-item" data-panel="settings">⚙️ Settings</button>
+    <div class="sidebar-sep"></div>
+    <a href="credits.html" class="sidebar-item" style="text-decoration:none">ℹ Credits</a>
     <div style="flex:1"></div>
-    <a href="dashboard.html" class="sidebar-item" style="text-decoration:none">👤 My Profile</a>
     <button class="sidebar-item" id="sb-logout" style="color:var(--danger)">← Log Out</button>
   </aside>
 
-  <!-- MAIN -->
   <main class="main-content">
 
-    <!-- ── DASHBOARD PANEL ────────────────────────────── -->
+    <!-- DASHBOARD -->
     <section class="panel active" id="panel-dashboard">
       <div class="page-title">Admin Dashboard</div>
-      <div class="page-sub">Platform overview and quick controls.</div>
-
+      <div class="page-sub">Platform-wide overview.</div>
       <div class="stats-grid" id="dash-stats"></div>
-
-      <!-- Recent users table -->
-      <div class="card">
+      <div class="card" style="margin-bottom:20px">
         <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:16px">
-          <h3>Recent Users</h3>
+          <h3>All Users</h3>
           <button class="btn btn-primary btn-sm" id="dash-add-user">+ Add User</button>
         </div>
-        <div class="table-wrap">
-          <table>
-            <thead>
-              <tr><th>User</th><th>Role</th><th>Views</th><th>Status</th><th>Joined</th><th>Actions</th></tr>
-            </thead>
-            <tbody id="recent-users-table"></tbody>
-          </table>
-        </div>
+        <div class="table-wrap"><table>
+          <thead><tr><th>User</th><th>Role</th><th>Views</th><th>Clicks</th><th>Bio</th><th>Status</th><th>Actions</th></tr></thead>
+          <tbody id="dash-users-tbody"></tbody>
+        </table></div>
       </div>
     </section>
 
-    <!-- ── USERS PANEL ────────────────────────────────── -->
+    <!-- USERS -->
     <section class="panel" id="panel-users">
       <div class="page-title">User Management</div>
-      <div class="page-sub">Create, edit, suspend, or delete user accounts.</div>
-
+      <div class="page-sub">Create, edit, suspend, or delete accounts.</div>
       <div class="search-bar">
-        <input type="text" id="user-search" placeholder="Search by username or email…" />
+        <input type="text" id="user-search" placeholder="Search username or email…"/>
         <button class="btn btn-primary btn-sm" id="add-user-btn">+ Add User</button>
       </div>
-
       <div class="card" style="padding:0;overflow:hidden">
-        <div class="table-wrap">
-          <table>
-            <thead>
-              <tr><th>Username</th><th>Email</th><th>Role</th><th>Bio URL</th><th>Views</th><th>Joined</th><th>Actions</th></tr>
-            </thead>
-            <tbody id="users-table"></tbody>
-          </table>
-        </div>
+        <div class="table-wrap"><table>
+          <thead><tr><th>Username</th><th>Email</th><th>Role</th><th>Views</th><th>Clicks</th><th>Joined</th><th>Actions</th></tr></thead>
+          <tbody id="users-tbody"></tbody>
+        </table></div>
       </div>
     </section>
 
-    <!-- ── BIOS PANEL ─────────────────────────────────── -->
+    <!-- BIOS -->
     <section class="panel" id="panel-bios">
-      <div class="page-title">BioLinks</div>
-      <div class="page-sub">All published bio pages on the platform.</div>
-
+      <div class="page-title">BioLink Pages</div>
+      <div class="page-sub">All bio pages on the platform.</div>
       <div class="search-bar">
-        <input type="text" id="bio-search" placeholder="Search bios…" />
+        <input type="text" id="bio-search" placeholder="Search bios…"/>
       </div>
-
       <div class="card" style="padding:0;overflow:hidden">
-        <div class="table-wrap">
-          <table>
-            <thead>
-              <tr><th>Username</th><th>Display Name</th><th>Links</th><th>Views</th><th>Status</th><th>Updated</th><th>Actions</th></tr>
-            </thead>
-            <tbody id="bios-table"></tbody>
-          </table>
-        </div>
+        <div class="table-wrap"><table>
+          <thead><tr><th>Username</th><th>Display Name</th><th>Theme</th><th>Links</th><th>Media</th><th>Views</th><th>Status</th><th>Actions</th></tr></thead>
+          <tbody id="bios-tbody"></tbody>
+        </table></div>
       </div>
     </section>
 
-    <!-- ── SETTINGS PANEL ─────────────────────────────── -->
+    <!-- ANALYTICS -->
+    <section class="panel" id="panel-analytics">
+      <div class="page-title">Analytics</div>
+      <div class="page-sub">Platform engagement overview.</div>
+      <div class="stats-grid" id="analytics-stats" style="margin-bottom:24px"></div>
+      <div class="card" style="margin-bottom:20px">
+        <div class="section-head">🏆 Top Pages by Views</div>
+        <div class="table-wrap"><table>
+          <thead><tr><th>Rank</th><th>Username</th><th>Display Name</th><th>Views</th><th>Clicks</th><th>CTR</th></tr></thead>
+          <tbody id="top-bios-tbody"></tbody>
+        </table></div>
+      </div>
+      <div class="card">
+        <div class="section-head">📊 Content Breakdown</div>
+        <div id="content-breakdown" style="display:flex;flex-direction:column;gap:14px;margin-top:4px"></div>
+      </div>
+    </section>
+
+    <!-- SETTINGS -->
     <section class="panel" id="panel-settings">
       <div class="page-title">Platform Settings</div>
-      <div class="page-sub">Manage global configuration.</div>
-      <div class="card" style="display:flex;flex-direction:column;gap:20px;max-width:500px">
-        <div class="field">
-          <label>Platform Name</label>
-          <input type="text" id="set-name" value="BioLink" />
+      <div class="page-sub">Global configuration for your BioLink instance.</div>
+      <div class="card" style="margin-bottom:20px">
+        <div class="section-head">General</div>
+        <div class="setting-row">
+          <div class="setting-info"><div class="s-name">Platform Name</div><div class="s-desc">Shown in the nav and page titles</div></div>
+          <input type="text" id="set-name" value="BioLink" style="background:var(--surface);border:1px solid var(--border);border-radius:var(--rad);padding:8px 12px;font-family:var(--ff);font-size:13px;color:var(--text);width:180px"/>
         </div>
-        <div class="field">
-          <label>Base URL (for bio links)</label>
-          <input type="text" id="set-url" />
+        <div class="setting-row">
+          <div class="setting-info"><div class="s-name">Base URL</div><div class="s-desc">Used in bio links and DNS instructions</div></div>
+          <input type="text" id="set-url" style="background:var(--surface);border:1px solid var(--border);border-radius:var(--rad);padding:8px 12px;font-family:var(--ffm);font-size:12px;color:var(--accent);width:280px"/>
         </div>
-        <div class="toggle-wrap">
-          <label class="toggle">
-            <input type="checkbox" id="set-register" checked />
-            <span class="toggle-slider"></span>
-          </label>
-          <span style="font-size:14px">Allow public registration</span>
+        <div class="setting-row">
+          <div class="setting-info"><div class="s-name">Allow Registration</div><div class="s-desc">Let new users sign up publicly</div></div>
+          <label class="toggle"><input type="checkbox" id="set-register" checked/><span class="toggle-slider"></span></label>
         </div>
-        <div class="toggle-wrap">
-          <label class="toggle">
-            <input type="checkbox" id="set-views" checked />
-            <span class="toggle-slider"></span>
-          </label>
-          <span style="font-size:14px">Show view counts publicly</span>
+        <div class="setting-row">
+          <div class="setting-info"><div class="s-name">Show View Counts</div><div class="s-desc">Display view counters on bio pages</div></div>
+          <label class="toggle"><input type="checkbox" id="set-views" checked/><span class="toggle-slider"></span></label>
         </div>
-        <div>
-          <button class="btn btn-primary" id="save-settings">Save Settings</button>
+        <div style="margin-top:16px">
+          <button class="btn btn-primary btn-sm" id="save-settings">Save Settings</button>
         </div>
-
-        <hr style="border:none;border-top:1px solid var(--border)" />
-        <div>
-          <h3 style="margin-bottom:10px;color:var(--danger)">Danger Zone</h3>
-          <p style="font-size:13px;color:var(--muted);margin-bottom:14px">These actions are irreversible. Be careful.</p>
-          <button class="btn btn-danger btn-sm" id="export-data">⬇ Export All Data</button>
+      </div>
+      <div class="card" style="border-color:rgba(255,79,106,.2)">
+        <div class="section-head" style="color:var(--danger)">⚠️ Danger Zone</div>
+        <p style="font-size:13px;color:var(--muted);margin-bottom:16px">These actions affect all platform data. Proceed with caution.</p>
+        <div style="display:flex;gap:10px;flex-wrap:wrap">
+          <button class="btn btn-warn btn-sm" id="export-data">⬇ Export All Data (JSON)</button>
+          <button class="btn btn-danger btn-sm" id="clear-views">🗑 Clear All View Counts</button>
         </div>
       </div>
     </section>
@@ -185,24 +152,18 @@
   </main>
 </div>
 
-<!-- ADD / EDIT USER MODAL -->
+<!-- ADD/EDIT USER MODAL -->
 <div class="modal-overlay" id="user-modal">
   <div class="modal-box">
-    <div class="modal-title" id="user-modal-title">Add User</div>
+    <div class="modal-title" id="um-title">Add User</div>
     <div class="modal-form">
-      <input type="hidden" id="um-editing" value="" />
-      <div class="field"><label>Username</label><input type="text" id="um-user" placeholder="username" /></div>
-      <div class="field"><label>Email</label><input type="email" id="um-email" placeholder="email@example.com" /></div>
-      <div class="field"><label>Password</label><input type="password" id="um-pass" placeholder="Leave blank to keep current" /></div>
-      <div class="field">
-        <label>Role</label>
-        <select id="um-role">
-          <option value="user">User</option>
-          <option value="admin">Admin</option>
-        </select>
-      </div>
+      <input type="hidden" id="um-editing"/>
+      <div class="field"><label>Username</label><input type="text" id="um-user" placeholder="username"/></div>
+      <div class="field"><label>Email</label><input type="email" id="um-email" placeholder="email@example.com"/></div>
+      <div class="field"><label>Password <small style="color:var(--muted)">(leave blank when editing to keep current)</small></label><input type="password" id="um-pass" placeholder="6+ characters"/></div>
+      <div class="field"><label>Role</label><select id="um-role"><option value="user">User</option><option value="admin">Admin</option></select></div>
       <div style="display:flex;gap:10px;margin-top:4px">
-        <button class="btn btn-primary" style="flex:1" id="um-save">Save User</button>
+        <button class="btn btn-primary" style="flex:1" id="um-save">Save</button>
         <button class="btn btn-ghost" id="um-cancel">Cancel</button>
       </div>
     </div>
@@ -212,248 +173,216 @@
 <div id="toast"></div>
 <script src="app.js"></script>
 <script>
-if (!BL.requireAdmin()) throw '';
-document.getElementById('nav-logout').addEventListener('click', () => { BL.logout(); location.href='index.html'; });
-document.getElementById('sb-logout').addEventListener('click', () => { BL.logout(); location.href='index.html'; });
+if(!BL.requireAdmin())throw'';
+document.getElementById('nav-logout').addEventListener('click',()=>{BL.logout();location.href='index.html';});
+document.getElementById('sb-logout').addEventListener('click',()=>{BL.logout();location.href='index.html';});
 
-/* ── PANEL NAV ─────────────────────────────────────────── */
-document.querySelectorAll('.sidebar-item[data-panel]').forEach(b => {
-  b.addEventListener('click', () => {
+/* PANELS */
+document.querySelectorAll('.sidebar-item[data-panel]').forEach(b=>{
+  b.addEventListener('click',()=>{
     document.querySelectorAll('.sidebar-item').forEach(x=>x.classList.remove('active'));
     document.querySelectorAll('.panel').forEach(p=>p.classList.remove('active'));
     b.classList.add('active');
     document.getElementById(`panel-${b.dataset.panel}`).classList.add('active');
-    if (b.dataset.panel==='dashboard') renderDashboard();
-    if (b.dataset.panel==='users')     renderUsers();
-    if (b.dataset.panel==='bios')      renderBios();
-    if (b.dataset.panel==='settings')  loadSettings();
+    const fn={dashboard:renderDashboard,users:()=>renderUsers(),bios:()=>renderBios(),analytics:renderAnalytics,settings:loadSettings};
+    fn[b.dataset.panel]?.();
   });
 });
 
-/* ── DASHBOARD ─────────────────────────────────────────── */
-function renderDashboard() {
-  const users = BL.getUsers();
-  const bios  = BL.getBios();
-  const views = Object.values(BL.getViews ? BL.getViews() : {}).reduce((a,b)=>a+b,0) ||
-                Object.keys(bios).reduce((a,u)=>a+BL.viewCount(u),0);
+function esc(s){return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');}
+function fmtDate(iso){if(!iso)return'—';try{return new Date(iso).toLocaleDateString('en-US',{month:'short',day:'numeric',year:'numeric'});}catch{return'—';}}
 
-  document.getElementById('dash-stats').innerHTML = `
-    <div class="stat-card accent">
-      <div class="s-lbl">Total Users</div>
-      <div class="s-num">${users.length}</div>
-    </div>
-    <div class="stat-card accent">
-      <div class="s-lbl">Bio Pages</div>
-      <div class="s-num">${Object.keys(bios).length}</div>
-    </div>
-    <div class="stat-card accent">
-      <div class="s-lbl">Total Views</div>
-      <div class="s-num">${views.toLocaleString()}</div>
-    </div>
-    <div class="stat-card accent">
-      <div class="s-lbl">Active Today</div>
-      <div class="s-num">${Math.min(users.length, Math.ceil(users.length*.6))}</div>
-    </div>
+/* DASHBOARD */
+function renderDashboard(){
+  const users=BL.getUsers(),bios=BL.getBios();
+  const totalViews=Object.keys(bios).reduce((a,u)=>a+BL.viewCount(u),0);
+  const totalClicks=Object.keys(bios).reduce((a,u)=>a+BL.clickCount(u),0);
+  const published=Object.values(bios).filter(b=>b.published).length;
+  document.getElementById('dash-stats').innerHTML=`
+    <div class="stat-card accent"><div class="s-lbl">Total Users</div><div class="s-num">${users.length}</div></div>
+    <div class="stat-card accent"><div class="s-lbl">Bio Pages</div><div class="s-num">${Object.keys(bios).length}</div></div>
+    <div class="stat-card accent"><div class="s-lbl">Published</div><div class="s-num">${published}</div></div>
+    <div class="stat-card accent"><div class="s-lbl">Total Views</div><div class="s-num">${totalViews.toLocaleString()}</div></div>
+    <div class="stat-card accent"><div class="s-lbl">Total Clicks</div><div class="s-num">${totalClicks.toLocaleString()}</div></div>
   `;
-
-  const tbody = document.getElementById('recent-users-table');
-  tbody.innerHTML = '';
-  [...users].reverse().slice(0,8).forEach(u => {
-    const tr = document.createElement('tr');
-    tr.innerHTML = `
-      <td><strong>@${esc(u.username)}</strong><br><span style="font-size:11px;color:var(--muted)">${esc(u.email)}</span></td>
-      <td><span class="badge ${u.role==='admin'?'badge-admin':'badge-user'}">${u.role}</span></td>
-      <td>${BL.viewCount(u.username).toLocaleString()}</td>
-      <td>${u.suspended ? '<span class="badge" style="color:var(--danger);border-color:rgba(255,79,106,.3)">Suspended</span>' : '<span class="badge badge-active">Active</span>'}</td>
-      <td style="font-size:12px;color:var(--muted)">${fmtDate(u.createdAt)}</td>
-      <td><div class="actions">
-        <button class="btn btn-ghost btn-sm" onclick="openEditModal('${u.username}')">Edit</button>
-        ${u.username!=='admin'?`<button class="btn btn-danger btn-sm" onclick="confirmDelete('${u.username}')">Delete</button>`:''}
-      </div></td>
-    `;
-    tbody.appendChild(tr);
-  });
+  const tbody=document.getElementById('dash-users-tbody');tbody.innerHTML='';
+  [...users].reverse().forEach(u=>tbody.appendChild(buildUserRow(u,true)));
 }
 renderDashboard();
 
-/* ── USERS TABLE ───────────────────────────────────────── */
-function renderUsers(filter='') {
-  const users = BL.getUsers().filter(u =>
-    !filter || u.username.includes(filter) || u.email.includes(filter)
-  );
-  const tbody = document.getElementById('users-table');
-  tbody.innerHTML = '';
-  if (!users.length) {
-    tbody.innerHTML = '<tr><td colspan="7" style="text-align:center;color:var(--muted);padding:32px">No users found.</td></tr>';
-    return;
-  }
-  users.forEach(u => {
-    const url = BL.bioUrl(u.username);
-    const tr  = document.createElement('tr');
-    tr.innerHTML = `
+function buildUserRow(u,short=false){
+  const bio=BL.getBio(u.username);
+  const url=BL.bioUrl(u.username);
+  const tr=document.createElement('tr');
+  tr.innerHTML=`
+    <td><strong>@${esc(u.username)}</strong>${!short?`<br><span style="font-size:11px;color:var(--muted)">${esc(u.email)}</span>`:''}</td>
+    <td><span class="badge ${u.role==='admin'?'badge-admin':'badge-user'}">${u.role}</span></td>
+    <td>${BL.viewCount(u.username).toLocaleString()}</td>
+    <td>${BL.clickCount(u.username).toLocaleString()}</td>
+    <td><a href="${esc(url)}" target="_blank" style="color:var(--accent);font-size:12px;font-family:var(--ffm)">↗ view</a></td>
+    <td>${u.suspended?'<span class="badge badge-danger">Suspended</span>':'<span class="badge badge-active">Active</span>'}</td>
+    <td><div class="actions">
+      <button class="btn btn-ghost btn-sm" onclick="openEdit('${esc(u.username)}')">Edit</button>
+      ${u.username!=='admin'?`<button class="btn btn-warn btn-sm" onclick="toggleSuspend('${esc(u.username)}')">${u.suspended?'Unsuspend':'Suspend'}</button><button class="btn btn-danger btn-sm" onclick="confirmDel('${esc(u.username)}')">Delete</button>`:''}
+    </div></td>`;
+  return tr;
+}
+
+/* USERS */
+function renderUsers(filter=''){
+  const users=BL.getUsers().filter(u=>!filter||(u.username+u.email).toLowerCase().includes(filter));
+  const tbody=document.getElementById('users-tbody');tbody.innerHTML='';
+  if(!users.length){tbody.innerHTML='<tr><td colspan="7" style="text-align:center;padding:32px;color:var(--muted)">No users found.</td></tr>';return;}
+  users.forEach(u=>{
+    const tr=document.createElement('tr');
+    tr.innerHTML=`
       <td><strong>@${esc(u.username)}</strong></td>
       <td style="font-size:12px;color:var(--muted)">${esc(u.email)}</td>
       <td><span class="badge ${u.role==='admin'?'badge-admin':'badge-user'}">${u.role}</span></td>
-      <td><span class="bio-chip"><a href="${esc(url)}" target="_blank" style="color:var(--accent);text-decoration:none">↗ view</a></span></td>
       <td>${BL.viewCount(u.username).toLocaleString()}</td>
+      <td>${BL.clickCount(u.username).toLocaleString()}</td>
       <td style="font-size:12px;color:var(--muted)">${fmtDate(u.createdAt)}</td>
       <td><div class="actions">
-        <button class="btn btn-ghost btn-sm" onclick="openEditModal('${esc(u.username)}')">Edit</button>
-        <button class="btn btn-ghost btn-sm" onclick="toggleSuspend('${esc(u.username)}')">${u.suspended?'Unsuspend':'Suspend'}</button>
-        ${u.username!=='admin'?`<button class="btn btn-danger btn-sm" onclick="confirmDelete('${esc(u.username)}')">Delete</button>`:''}
-      </div></td>
-    `;
+        <button class="btn btn-ghost btn-sm" onclick="openEdit('${esc(u.username)}')">Edit</button>
+        ${u.username!=='admin'?`<button class="btn btn-warn btn-sm" onclick="toggleSuspend('${esc(u.username)}')">${u.suspended?'Unsuspend':'Suspend'}</button><button class="btn btn-danger btn-sm" onclick="confirmDel('${esc(u.username)}')">Del</button>`:''}
+      </div></td>`;
     tbody.appendChild(tr);
   });
 }
+document.getElementById('user-search').addEventListener('input',function(){renderUsers(this.value.trim().toLowerCase());});
+document.getElementById('add-user-btn').addEventListener('click',()=>openAdd());
+document.getElementById('dash-add-user').addEventListener('click',()=>openAdd());
 
-document.getElementById('user-search').addEventListener('input', function() { renderUsers(this.value.trim().toLowerCase()); });
-document.getElementById('add-user-btn').addEventListener('click', () => openAddModal());
-document.getElementById('dash-add-user').addEventListener('click', () => openAddModal());
-
-/* ── BIOS TABLE ────────────────────────────────────────── */
-function renderBios(filter='') {
-  const bios  = BL.getBios();
-  const tbody = document.getElementById('bios-table');
-  tbody.innerHTML = '';
-  const entries = Object.values(bios).filter(b =>
-    !filter || b.username.includes(filter) || (b.displayName||'').toLowerCase().includes(filter)
-  );
-  if (!entries.length) {
-    tbody.innerHTML = '<tr><td colspan="7" style="text-align:center;color:var(--muted);padding:32px">No bio pages yet.</td></tr>';
-    return;
-  }
-  entries.forEach(b => {
-    const tr = document.createElement('tr');
-    const url= BL.bioUrl(b.username);
-    tr.innerHTML = `
+/* BIOS */
+function renderBios(filter=''){
+  const bios=Object.values(BL.getBios()).filter(b=>!filter||(b.username+(b.displayName||'')).toLowerCase().includes(filter));
+  const tbody=document.getElementById('bios-tbody');tbody.innerHTML='';
+  if(!bios.length){tbody.innerHTML='<tr><td colspan="8" style="text-align:center;padding:32px;color:var(--muted)">No bio pages yet.</td></tr>';return;}
+  bios.forEach(b=>{
+    const music=(b.music||{}).type||'none';const video=(b.video||{}).type||'none';
+    const hasMedia=[music,video].filter(t=>t!=='none');
+    const tr=document.createElement('tr');
+    tr.innerHTML=`
       <td><strong>@${esc(b.username)}</strong></td>
       <td>${esc(b.displayName||b.username)}</td>
+      <td><span style="text-transform:capitalize;font-size:13px">${esc(b.theme||'dark')}</span></td>
       <td>${(b.links||[]).length}</td>
+      <td>${hasMedia.length?hasMedia.join(', '):'—'}</td>
       <td>${BL.viewCount(b.username).toLocaleString()}</td>
-      <td>${b.published ? '<span class="badge badge-active">Live</span>' : '<span class="badge" style="color:var(--muted)">Draft</span>'}</td>
-      <td style="font-size:12px;color:var(--muted)">${fmtDate(b.updatedAt)}</td>
+      <td>${b.published?'<span class="badge badge-active">Live</span>':'<span class="badge badge-warn">Draft</span>'}</td>
       <td><div class="actions">
-        <a href="${esc(url)}" target="_blank" class="btn btn-ghost btn-sm">↗ View</a>
-        <button class="btn btn-danger btn-sm" onclick="confirmDeleteBio('${esc(b.username)}')">Delete</button>
-      </div></td>
-    `;
+        <a href="${esc(BL.bioUrl(b.username))}" target="_blank" class="btn btn-ghost btn-sm">↗ View</a>
+        <button class="btn btn-danger btn-sm" onclick="confirmDelBio('${esc(b.username)}')">Delete</button>
+      </div></td>`;
     tbody.appendChild(tr);
   });
 }
-document.getElementById('bio-search').addEventListener('input', function() { renderBios(this.value.trim().toLowerCase()); });
+document.getElementById('bio-search').addEventListener('input',function(){renderBios(this.value.trim().toLowerCase());});
 
-/* ── USER MODAL ────────────────────────────────────────── */
-const userModal = document.getElementById('user-modal');
-function openAddModal() {
-  document.getElementById('user-modal-title').textContent = 'Add User';
-  document.getElementById('um-editing').value = '';
-  document.getElementById('um-user').value  = '';
-  document.getElementById('um-email').value = '';
-  document.getElementById('um-pass').value  = '';
-  document.getElementById('um-role').value  = 'user';
-  document.getElementById('um-user').disabled = false;
-  userModal.classList.add('open');
+/* ANALYTICS */
+function renderAnalytics(){
+  const bios=BL.getBios();const users=BL.getUsers();
+  const totalViews=Object.keys(bios).reduce((a,u)=>a+BL.viewCount(u),0);
+  const totalClicks=Object.keys(bios).reduce((a,u)=>a+BL.clickCount(u),0);
+  const withMusic=Object.values(bios).filter(b=>(b.music||{}).type&&(b.music||{}).type!=='none').length;
+  const withVideo=Object.values(bios).filter(b=>(b.video||{}).type&&(b.video||{}).type!=='none').length;
+  const withGallery=Object.values(bios).filter(b=>(b.gallery||[]).length>0).length;
+  const ctr=totalViews>0?((totalClicks/totalViews)*100).toFixed(1)+'%':'—';
+  document.getElementById('analytics-stats').innerHTML=`
+    <div class="stat-card accent"><div class="s-lbl">Total Views</div><div class="s-num">${totalViews.toLocaleString()}</div></div>
+    <div class="stat-card accent"><div class="s-lbl">Total Clicks</div><div class="s-num">${totalClicks.toLocaleString()}</div></div>
+    <div class="stat-card accent"><div class="s-lbl">Avg CTR</div><div class="s-num">${ctr}</div></div>
+    <div class="stat-card accent"><div class="s-lbl">Users w/ Media</div><div class="s-num">${withMusic+withVideo}</div></div>
+  `;
+  /* top bios */
+  const sorted=Object.values(bios).sort((a,b)=>BL.viewCount(b.username)-BL.viewCount(a.username)).slice(0,10);
+  const tbody=document.getElementById('top-bios-tbody');tbody.innerHTML='';
+  sorted.forEach((b,i)=>{
+    const views=BL.viewCount(b.username),clicks=BL.clickCount(b.username);
+    const ctr=views>0?((clicks/views)*100).toFixed(1)+'%':'—';
+    const tr=document.createElement('tr');
+    tr.innerHTML=`<td><span style="color:var(--accent);font-weight:700">#${i+1}</span></td>
+      <td><a href="${esc(BL.bioUrl(b.username))}" target="_blank" style="color:var(--accent)">@${esc(b.username)}</a></td>
+      <td>${esc(b.displayName||b.username)}</td><td>${views.toLocaleString()}</td><td>${clicks.toLocaleString()}</td><td>${ctr}</td>`;
+    tbody.appendChild(tr);
+  });
+  /* content breakdown */
+  const themes={};Object.values(bios).forEach(b=>{const t=b.theme||'dark';themes[t]=(themes[t]||0)+1;});
+  document.getElementById('content-breakdown').innerHTML=`
+    <div style="display:flex;flex-wrap:wrap;gap:12px">
+      <div class="stat-card" style="flex:1;min-width:140px"><div class="s-lbl">With Music</div><div class="s-num" style="font-size:22px">${withMusic}</div></div>
+      <div class="stat-card" style="flex:1;min-width:140px"><div class="s-lbl">With Video</div><div class="s-num" style="font-size:22px">${withVideo}</div></div>
+      <div class="stat-card" style="flex:1;min-width:140px"><div class="s-lbl">With Gallery</div><div class="s-num" style="font-size:22px">${withGallery}</div></div>
+    </div>
+    <div>
+      <div style="font-size:13px;font-weight:600;margin-bottom:10px;">Theme Distribution</div>
+      ${Object.entries(themes).sort((a,b)=>b[1]-a[1]).map(([t,c])=>`
+        <div style="display:flex;align-items:center;gap:10px;margin-bottom:6px;">
+          <span style="font-size:13px;text-transform:capitalize;width:80px;color:var(--muted)">${t}</span>
+          <div style="flex:1;background:var(--surface);border-radius:3px;height:8px;overflow:hidden">
+            <div style="height:100%;background:linear-gradient(90deg,var(--accent),var(--accent2));width:${Math.round(c/Object.keys(bios).length*100)||5}%;border-radius:3px"></div>
+          </div>
+          <span style="font-size:12px;color:var(--muted);width:20px">${c}</span>
+        </div>`).join('')}
+    </div>
+  `;
 }
-function openEditModal(username) {
-  const u = BL.getUsers().find(u=>u.username===username);
-  if (!u) return;
-  document.getElementById('user-modal-title').textContent = `Edit @${username}`;
-  document.getElementById('um-editing').value = username;
-  document.getElementById('um-user').value  = u.username;
-  document.getElementById('um-email').value = u.email;
-  document.getElementById('um-pass').value  = '';
-  document.getElementById('um-role').value  = u.role;
-  document.getElementById('um-user').disabled = username === 'admin';
-  userModal.classList.add('open');
+
+/* SETTINGS */
+function loadSettings(){
+  const s=BL.getSettings();
+  document.getElementById('set-name').value=s.platformName||'BioLink';
+  document.getElementById('set-url').value=location.origin+location.pathname.replace(/admin\.html$/,'');
+  document.getElementById('set-register').checked=s.allowRegister!==false;
+  document.getElementById('set-views').checked=s.showViews!==false;
 }
-document.getElementById('um-cancel').addEventListener('click', () => userModal.classList.remove('open'));
-userModal.addEventListener('click', e => { if(e.target===userModal) userModal.classList.remove('open'); });
-
-document.getElementById('um-save').addEventListener('click', () => {
-  const editing = document.getElementById('um-editing').value;
-  const username= document.getElementById('um-user').value.trim().toLowerCase();
-  const email   = document.getElementById('um-email').value.trim();
-  const pass    = document.getElementById('um-pass').value;
-  const role    = document.getElementById('um-role').value;
-
-  if (!username || username.length < 3) { BL.toast('Username must be 3+ chars.', 'error'); return; }
-  if (!email || !email.includes('@'))   { BL.toast('Valid email required.', 'error'); return; }
-
-  const users = BL.getUsers();
-
-  if (!editing) {
-    // ADD
-    if (!pass || pass.length < 6) { BL.toast('Password must be 6+ chars.', 'error'); return; }
-    if (users.find(u=>u.username===username)) { BL.toast('Username taken.','error'); return; }
-    if (users.find(u=>u.email===email))       { BL.toast('Email registered.','error'); return; }
-    users.push({ id:username, username, email, password:pass, role, createdAt:new Date().toISOString() });
-    BL.saveUsers(users);
-    BL.saveBio(username, BL.defaultBio(username));
-    BL.toast(`@${username} created ✓`);
-  } else {
-    // EDIT
-    const u = users.find(u=>u.username===editing);
-    if (!u) return;
-    if (pass && pass.length >= 6) u.password = pass;
-    else if (pass && pass.length < 6) { BL.toast('New password must be 6+ chars.','error'); return; }
-    u.email = email;
-    u.role  = role;
-    BL.saveUsers(users);
-    BL.toast(`@${editing} updated ✓`);
-  }
-  userModal.classList.remove('open');
-  renderDashboard();
-  renderUsers(document.getElementById('user-search').value);
+document.getElementById('save-settings').addEventListener('click',()=>{
+  BL.saveSettings({platformName:document.getElementById('set-name').value,allowRegister:document.getElementById('set-register').checked,showViews:document.getElementById('set-views').checked});
+  BL.toast('Settings saved ✓');
 });
-
-/* ── ACTIONS ───────────────────────────────────────────── */
-function toggleSuspend(username) {
-  BL.toggleUserStatus(username);
-  BL.toast(`@${username} status changed`);
-  renderUsers(document.getElementById('user-search').value);
-}
-
-function confirmDelete(username) {
-  if (!confirm(`Delete @${username} and all their data? This cannot be undone.`)) return;
-  BL.deleteUser(username);
-  BL.toast(`@${username} deleted`);
-  renderDashboard();
-  renderUsers(document.getElementById('user-search').value);
-}
-
-function confirmDeleteBio(username) {
-  if (!confirm(`Delete the bio page for @${username}?`)) return;
-  BL.deleteBio(username);
-  BL.toast(`Bio for @${username} deleted`);
-  renderBios(document.getElementById('bio-search').value);
-}
-
-/* ── SETTINGS ──────────────────────────────────────────── */
-function loadSettings() {
-  document.getElementById('set-url').value = location.origin + location.pathname.replace(/admin\.html$/,'');
-}
-document.getElementById('save-settings').addEventListener('click', () => BL.toast('Settings saved ✓'));
-document.getElementById('export-data').addEventListener('click', () => {
-  const data = {
-    users: BL.getUsers().map(u => ({ ...u, password: '***' })),
-    bios:  BL.getBios()
-  };
-  const blob = new Blob([JSON.stringify(data, null, 2)], { type:'application/json' });
-  const a = Object.assign(document.createElement('a'), { href:URL.createObjectURL(blob), download:'biolink-export.json' });
-  a.click(); URL.revokeObjectURL(a.href);
+document.getElementById('export-data').addEventListener('click',()=>{
+  const data={exportedAt:new Date().toISOString(),users:BL.getUsers().map(u=>({...u,password:'[REDACTED]'})),bios:BL.getBios()};
+  const blob=new Blob([JSON.stringify(data,null,2)],{type:'application/json'});
+  const a=Object.assign(document.createElement('a'),{href:URL.createObjectURL(blob),download:`biolink-export-${Date.now()}.json`});a.click();URL.revokeObjectURL(a.href);
   BL.toast('Data exported ✓');
 });
+document.getElementById('clear-views').addEventListener('click',()=>{
+  if(!confirm('Clear ALL view and click counts for every user? This cannot be undone.'))return;
+  localStorage.removeItem('bl_views');localStorage.removeItem('bl_clicks');
+  BL.toast('View counts cleared','warn');renderDashboard();
+});
 
-/* ── HELPERS ───────────────────────────────────────────── */
-function fmtDate(iso) {
-  if (!iso) return '—';
-  try { return new Date(iso).toLocaleDateString('en-US',{month:'short',day:'numeric',year:'numeric'}); }
-  catch { return '—'; }
-}
-function esc(s) {
-  return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
-}
+/* USER MODAL */
+const userModal=document.getElementById('user-modal');
+function openAdd(){document.getElementById('um-title').textContent='Add User';document.getElementById('um-editing').value='';document.getElementById('um-user').value='';document.getElementById('um-email').value='';document.getElementById('um-pass').value='';document.getElementById('um-role').value='user';document.getElementById('um-user').disabled=false;userModal.classList.add('open');}
+function openEdit(username){const u=BL.getUsers().find(u=>u.username===username);if(!u)return;document.getElementById('um-title').textContent=`Edit @${username}`;document.getElementById('um-editing').value=username;document.getElementById('um-user').value=u.username;document.getElementById('um-email').value=u.email;document.getElementById('um-pass').value='';document.getElementById('um-role').value=u.role;document.getElementById('um-user').disabled=username==='admin';userModal.classList.add('open');}
+document.getElementById('um-cancel').addEventListener('click',()=>userModal.classList.remove('open'));
+userModal.addEventListener('click',e=>{if(e.target===userModal)userModal.classList.remove('open');});
+document.getElementById('um-save').addEventListener('click',()=>{
+  const editing=document.getElementById('um-editing').value;
+  const username=document.getElementById('um-user').value.trim().toLowerCase();
+  const email=document.getElementById('um-email').value.trim();
+  const pass=document.getElementById('um-pass').value;
+  const role=document.getElementById('um-role').value;
+  if(!username||username.length<3){BL.toast('Username must be 3+ chars','error');return;}
+  if(!email||!email.includes('@')){BL.toast('Valid email required','error');return;}
+  const users=BL.getUsers();
+  if(!editing){
+    if(!pass||pass.length<6){BL.toast('Password must be 6+ chars','error');return;}
+    if(users.find(u=>u.username===username)){BL.toast('Username taken','error');return;}
+    users.push({id:username,username,email,password:pass,role,createdAt:new Date().toISOString()});
+    BL.saveUsers(users);BL.saveBio(username,BL.defaultBio(username));BL.toast(`@${username} created ✓`);
+  } else {
+    const u=users.find(u=>u.username===editing);if(!u)return;
+    if(pass&&pass.length>=6)u.password=pass;else if(pass&&pass.length<6){BL.toast('Password 6+ chars','error');return;}
+    u.email=email;u.role=role;BL.saveUsers(users);BL.toast(`@${editing} updated ✓`);
+  }
+  userModal.classList.remove('open');renderDashboard();renderUsers(document.getElementById('user-search').value);
+});
+
+function toggleSuspend(username){BL.toggleUserStatus(username);BL.toast(`@${username} status changed`,'warn');renderDashboard();renderUsers(document.getElementById('user-search').value);}
+function confirmDel(username){if(!confirm(`Delete @${username} and all their data? This cannot be undone.`))return;BL.deleteUser(username);BL.toast(`@${username} deleted`,'warn');renderDashboard();renderUsers(document.getElementById('user-search').value);}
+function confirmDelBio(username){if(!confirm(`Delete the bio page for @${username}?`))return;BL.deleteBio(username);BL.toast(`Bio deleted`,'warn');renderBios(document.getElementById('bio-search').value);}
 </script>
 </body>
 </html>
