@@ -1,83 +1,100 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width,initial-scale=1.0"/>
   <title>BioLink — Your link in bio, elevated</title>
-  <link rel="preconnect" href="https://fonts.googleapis.com" />
-  <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet" />
-  <link rel="stylesheet" href="style.css" />
+  <meta name="description" content="Create a beautiful bio page in seconds. Share links, music, video, gallery and more with your own custom URL. Free forever."/>
+  <meta property="og:title" content="BioLink — Your link in bio, elevated"/>
+  <meta property="og:description" content="One link. Everything you are. Free, self-hosted, GitHub Pages ready."/>
+  <meta property="og:image" content="assets/og-image.svg"/>
+  <meta property="og:type" content="website"/>
+  <meta name="twitter:card" content="summary_large_image"/>
+  <meta name="twitter:image" content="assets/og-image.svg"/>
+  <link rel="icon" type="image/svg+xml" href="assets/favicon.svg"/>
+  <link rel="preconnect" href="https://fonts.googleapis.com"/>
+  <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet"/>
+  <link rel="stylesheet" href="style.css"/>
   <style>
-    /* ── HERO ─────────────────────────────────────────── */
-    .hero {
-      min-height: calc(100vh - 60px);
-      display: flex; flex-direction: column;
-      align-items: center; justify-content: center;
-      text-align: center; padding: 60px 20px;
-      position: relative; z-index: 1;
-    }
-    .hero-eyebrow {
-      display: inline-flex; align-items: center; gap: 8px;
-      background: var(--accent-dim); border: 1px solid var(--border-focus);
-      border-radius: 50px; padding: 5px 14px;
-      font-size: 12px; font-weight: 600; color: var(--accent);
-      letter-spacing: .06em; text-transform: uppercase;
-      margin-bottom: 24px;
-    }
-    .hero h1 { margin-bottom: 20px; }
-    .hero h1 span {
-      background: linear-gradient(135deg, var(--accent), var(--accent2));
-      -webkit-background-clip: text; -webkit-text-fill-color: transparent;
-    }
-    .hero-sub {
-      font-size: 18px; color: var(--muted); max-width: 480px;
-      margin: 0 auto 36px; line-height: 1.6;
-    }
-    .hero-btns { display: flex; gap: 12px; flex-wrap: wrap; justify-content: center; }
+    /* HERO */
+    .hero{min-height:calc(100vh - 60px);display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;padding:60px 20px;position:relative;z-index:1;}
+    .hero-eyebrow{display:inline-flex;align-items:center;gap:8px;background:var(--accent-d);border:1px solid var(--border-f);border-radius:50px;padding:5px 14px;font-size:12px;font-weight:600;color:var(--accent);letter-spacing:.06em;text-transform:uppercase;margin-bottom:24px;}
+    .hero h1{margin-bottom:20px;}
+    .hero h1 span{background:linear-gradient(135deg,var(--accent),var(--accent2));-webkit-background-clip:text;-webkit-text-fill-color:transparent;}
+    .hero-sub{font-size:18px;color:var(--muted);max-width:500px;margin:0 auto 36px;line-height:1.6;}
+    .hero-btns{display:flex;gap:12px;flex-wrap:wrap;justify-content:center;margin-bottom:60px;}
 
-    /* ── FEATURES STRIP ───────────────────────────────── */
-    .features {
-      display: grid; grid-template-columns: repeat(auto-fit, minmax(220px,1fr));
-      gap: 16px; padding: 80px 20px; max-width: 1080px; margin: 0 auto;
-      position: relative; z-index: 1;
-    }
-    .feat-card {
-      background: var(--card); border: 1px solid var(--border);
-      border-radius: var(--radius-lg); padding: 24px;
-      transition: all var(--trans);
-    }
-    .feat-card:hover { border-color: var(--accent); transform: translateY(-3px); box-shadow: 0 12px 32px var(--glow); }
-    .feat-icon { font-size: 28px; margin-bottom: 12px; }
-    .feat-card h3 { margin-bottom: 6px; }
-    .feat-card p  { font-size: 13px; color: var(--muted); line-height: 1.5; }
+    /* PHONE MOCKUP */
+    .hero-mockup{position:relative;width:100%;max-width:860px;margin:0 auto 0;}
+    .mockup-wrap{display:grid;grid-template-columns:1fr 1fr 1fr;gap:20px;align-items:end;padding:0 20px;}
+    @media(max-width:680px){.mockup-wrap{grid-template-columns:1fr;max-width:320px;margin:0 auto;}}
+    .phone-frame{position:relative;filter:drop-shadow(0 24px 60px rgba(124,106,255,0.3));transition:transform .3s;}
+    .phone-frame:hover{transform:translateY(-6px);}
+    .phone-frame.center{transform:scale(1.06);filter:drop-shadow(0 32px 80px rgba(124,106,255,0.5));}
+    .phone-frame.center:hover{transform:scale(1.06) translateY(-6px);}
+    @media(max-width:680px){.phone-frame{display:none;}.phone-frame.center{display:block;}}
 
-    /* ── PREVIEW BAR ──────────────────────────────────── */
-    .preview-bar {
-      text-align: center; padding: 20px 20px 80px;
-      position: relative; z-index: 1;
-    }
-    .preview-bar p { font-size: 14px; color: var(--muted); margin-bottom: 12px; }
-    .preview-url {
-      display: inline-flex; align-items: center; gap: 8px;
-      background: var(--card); border: 1px solid var(--border);
-      border-radius: 50px; padding: 10px 20px;
-      font-family: var(--ff-mono); font-size: 14px; color: var(--accent);
-    }
+    /* BROWSER MOCKUP */
+    .browser-frame{background:var(--card);border:1px solid var(--border);border-radius:12px;overflow:hidden;margin-bottom:40px;box-shadow:0 24px 64px rgba(0,0,0,.5);}
+    .browser-bar{display:flex;align-items:center;gap:8px;padding:12px 16px;background:var(--surface);border-bottom:1px solid var(--border);}
+    .browser-dots{display:flex;gap:6px;}
+    .browser-dot{width:12px;height:12px;border-radius:50%;}
+    .browser-url{flex:1;background:var(--card);border-radius:6px;padding:5px 12px;font-family:var(--ffm);font-size:12px;color:var(--muted);text-align:center;}
 
-    /* ── AUTH MODAL SPECIFICS ─────────────────────────── */
-    .auth-tabs { display: flex; gap: 0; margin-bottom: 24px; border-radius: var(--radius); overflow: hidden; border: 1px solid var(--border); }
-    .auth-tab {
-      flex: 1; padding: 10px; text-align: center;
-      font-size: 14px; font-weight: 600; background: none;
-      border: none; color: var(--muted); transition: all var(--trans);
-    }
-    .auth-tab.active { background: var(--accent-dim); color: var(--accent); }
-    .auth-form { display: flex; flex-direction: column; gap: 14px; }
-    .auth-panel { display: none; }
-    .auth-panel.active { display: flex; flex-direction: column; gap: 14px; }
-    .divider { height: 1px; background: var(--border); margin: 4px 0; }
-    .hint { font-size: 12px; color: var(--muted); text-align: center; }
-    .hint a { color: var(--accent); }
+    /* FEATURES */
+    .features{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:16px;padding:0 20px 80px;max-width:1080px;margin:0 auto;position:relative;z-index:1;}
+    .feat-card{background:var(--card);border:1px solid var(--border);border-radius:var(--rad-lg);padding:24px;transition:all var(--trans);}
+    .feat-card:hover{border-color:var(--accent);transform:translateY(-3px);box-shadow:0 12px 32px var(--glow);}
+    .feat-img{width:100%;height:120px;border-radius:10px;margin-bottom:14px;overflow:hidden;background:var(--surface);}
+    .feat-img img,.feat-img svg{width:100%;height:100%;object-fit:cover;display:block;}
+    .feat-card h3{margin-bottom:6px;}
+    .feat-card p{font-size:13px;color:var(--muted);line-height:1.5;}
+
+    /* HOW IT WORKS */
+    .how-section{padding:20px 20px 80px;max-width:900px;margin:0 auto;position:relative;z-index:1;}
+    .how-title{text-align:center;margin-bottom:48px;}
+    .how-title h2{margin-bottom:8px;}
+    .how-title p{font-size:15px;color:var(--muted);}
+    .how-steps{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:24px;}
+    .how-step{text-align:center;}
+    .step-img{width:100%;height:160px;border-radius:var(--rad-lg);margin-bottom:14px;overflow:hidden;background:var(--card);border:1px solid var(--border);display:flex;align-items:center;justify-content:center;}
+    .step-num{font-size:11px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--accent);margin-bottom:6px;}
+    .step-label{font-size:15px;font-weight:600;margin-bottom:4px;}
+    .step-desc{font-size:13px;color:var(--muted);}
+    .step-connector{display:none;}
+    @media(min-width:700px){.step-connector{display:flex;align-items:center;justify-content:center;color:var(--muted);font-size:20px;padding-top:60px;}}
+
+    /* TESTIMONIALS */
+    .testimonials{padding:0 20px 80px;max-width:900px;margin:0 auto;position:relative;z-index:1;}
+    .testimonials h2{text-align:center;margin-bottom:32px;}
+    .testi-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:16px;}
+    .testi-card{background:var(--card);border:1px solid var(--border);border-radius:var(--rad-lg);padding:22px;}
+    .testi-stars{color:#ffd56a;font-size:14px;margin-bottom:10px;}
+    .testi-text{font-size:14px;color:var(--muted);line-height:1.6;margin-bottom:14px;}
+    .testi-author{display:flex;align-items:center;gap:10px;}
+    .testi-avatar{width:36px;height:36px;border-radius:50%;overflow:hidden;flex-shrink:0;}
+    .testi-name{font-size:13px;font-weight:600;}
+    .testi-handle{font-size:12px;color:var(--muted);}
+
+    /* PREVIEW BAR */
+    .preview-bar{text-align:center;padding:0 20px 80px;position:relative;z-index:1;}
+    .preview-bar p{font-size:14px;color:var(--muted);margin-bottom:12px;}
+    .preview-url{display:inline-flex;align-items:center;gap:8px;background:var(--card);border:1px solid var(--border);border-radius:50px;padding:10px 20px;font-family:var(--ffm);font-size:14px;color:var(--accent);}
+
+    /* AUTH MODAL */
+    .auth-tabs{display:flex;gap:0;margin-bottom:24px;border-radius:var(--rad);overflow:hidden;border:1px solid var(--border);}
+    .auth-tab{flex:1;padding:10px;text-align:center;font-size:14px;font-weight:600;background:none;border:none;color:var(--muted);transition:all var(--trans);}
+    .auth-tab.active{background:var(--accent-d);color:var(--accent);}
+    .auth-panel{display:none;}
+    .auth-panel.active{display:flex;flex-direction:column;gap:14px;}
+    .divider{height:1px;background:var(--border);margin:4px 0;}
+    .hint{font-size:12px;color:var(--muted);text-align:center;}
+    .hint a{color:var(--accent);}
+
+    /* SECTION DIVIDER */
+    .sec-div{display:flex;align-items:center;gap:16px;margin:0 20px 40px;max-width:1040px;margin-left:auto;margin-right:auto;position:relative;z-index:1;}
+    .sec-div::before,.sec-div::after{content:'';flex:1;height:1px;background:var(--border);}
+    .sec-div span{font-size:11px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:var(--muted);white-space:nowrap;}
   </style>
 </head>
 <body class="ambient">
@@ -85,174 +102,603 @@
 <!-- NAV -->
 <nav class="nav">
   <div class="nav-inner">
-    <span class="nav-logo">✦ BioLink</span>
+    <a href="index.html" class="nav-logo">
+      <svg width="20" height="20" viewBox="0 0 64 64" style="display:inline-block;vertical-align:middle;margin-right:6px"><defs><linearGradient id="lg" x1="0%" y1="0%" x2="100%" y2="100%"><stop offset="0%" style="stop-color:#7c6aff"/><stop offset="100%" style="stop-color:#ff6af0"/></linearGradient></defs><rect width="64" height="64" rx="14" fill="#181826"/><text x="32" y="46" text-anchor="middle" font-size="38" fill="url(#lg)">✦</text></svg>
+      BioLink
+    </a>
     <div class="nav-links">
+      <a href="credits.html" class="btn btn-ghost btn-sm" style="display:none" id="nav-credits">Credits</a>
       <button class="btn btn-ghost btn-sm" id="nav-login">Log In</button>
-      <button class="btn btn-primary btn-sm" id="nav-register">Get Started</button>
+      <button class="btn btn-primary btn-sm" id="nav-register">Get Started Free</button>
     </div>
   </div>
 </nav>
 
 <!-- HERO -->
 <section class="hero">
-  <div class="hero-eyebrow">✦ Free forever · No credit card needed</div>
+  <div class="hero-eyebrow">
+    <svg width="10" height="10" viewBox="0 0 10 10"><circle cx="5" cy="5" r="5" fill="#3dff8f"/></svg>
+    Free forever · No credit card needed
+  </div>
   <h1>One link.<br/><span>Everything you are.</span></h1>
-  <p class="hero-sub">Create a beautiful bio page in seconds. Share your links, socials, gallery and more — with your own custom URL.</p>
+  <p class="hero-sub">Create a beautiful bio page in seconds. Links, music, video, gallery, custom domain — all yours.</p>
   <div class="hero-btns">
-    <button class="btn btn-primary" id="hero-register">Create my BioLink →</button>
-    <button class="btn btn-ghost" id="hero-demo">See an example</button>
+    <button class="btn btn-primary" id="hero-register" style="font-size:15px;padding:13px 32px">Create my BioLink →</button>
+    <button class="btn btn-ghost" id="hero-demo" style="font-size:15px;padding:13px 32px">See a demo ↗</button>
+  </div>
+
+  <!-- BROWSER + PHONE MOCKUP -->
+  <div class="hero-mockup">
+    <div class="mockup-wrap">
+      <!-- Left phone: dark theme -->
+      <div class="phone-frame left">
+        <svg viewBox="0 0 220 440" xmlns="http://www.w3.org/2000/svg" width="100%">
+          <rect width="220" height="440" rx="28" fill="#0a0a14" stroke="#2a2a3e" stroke-width="1.5"/>
+          <!-- notch -->
+          <rect x="72" y="10" width="76" height="22" rx="11" fill="#181826"/>
+          <!-- avatar -->
+          <circle cx="110" cy="110" r="38" fill="#1c1c28" stroke="#7c6aff" stroke-width="2"/>
+          <text x="110" y="118" text-anchor="middle" font-size="30" fill="#7c6aff">🤖</text>
+          <!-- name -->
+          <rect x="65" y="158" width="90" height="12" rx="6" fill="#2a2a3e"/>
+          <!-- tagline -->
+          <rect x="78" y="178" width="64" height="8" rx="4" fill="#1c1c28"/>
+          <!-- links -->
+          <rect x="20" y="210" width="180" height="36" rx="10" fill="#1c1c28" stroke="#2a2a3e" stroke-width="1"/>
+          <circle cx="50" cy="228" r="12" fill="#181826"/>
+          <text x="50" y="232" text-anchor="middle" font-size="12" fill="#7c6aff">🔗</text>
+          <rect x="70" y="221" width="80" height="8" rx="4" fill="#2a2a3e"/>
+          <rect x="70" y="233" width="55" height="6" rx="3" fill="#181826"/>
+          <rect x="20" y="256" width="180" height="36" rx="10" fill="#1c1c28" stroke="#2a2a3e" stroke-width="1"/>
+          <circle cx="50" cy="274" r="12" fill="#181826"/>
+          <text x="50" y="278" text-anchor="middle" font-size="12" fill="#ff6af0">🎵</text>
+          <rect x="70" y="267" width="70" height="8" rx="4" fill="#2a2a3e"/>
+          <rect x="70" y="279" width="50" height="6" rx="3" fill="#181826"/>
+          <rect x="20" y="302" width="180" height="36" rx="10" fill="#1c1c28" stroke="#2a2a3e" stroke-width="1"/>
+          <circle cx="50" cy="320" r="12" fill="#181826"/>
+          <text x="50" y="324" text-anchor="middle" font-size="12" fill="#3dff8f">📺</text>
+          <rect x="70" y="313" width="90" height="8" rx="4" fill="#2a2a3e"/>
+          <rect x="70" y="325" width="60" height="6" rx="3" fill="#181826"/>
+          <!-- gallery strip -->
+          <rect x="20" y="352" width="54" height="54" rx="8" fill="#1c1c28"/>
+          <rect x="83" y="352" width="54" height="54" rx="8" fill="#1c1c28"/>
+          <rect x="146" y="352" width="54" height="54" rx="8" fill="#1c1c28"/>
+          <text x="47" y="384" text-anchor="middle" font-size="20" fill="#2a2a3e">🖼</text>
+          <text x="110" y="384" text-anchor="middle" font-size="20" fill="#2a2a3e">🖼</text>
+          <text x="173" y="384" text-anchor="middle" font-size="20" fill="#2a2a3e">🖼</text>
+          <!-- home bar -->
+          <rect x="80" y="424" width="60" height="4" rx="2" fill="#2a2a3e"/>
+        </svg>
+      </div>
+
+      <!-- Center phone: cyber theme (featured) -->
+      <div class="phone-frame center">
+        <svg viewBox="0 0 240 480" xmlns="http://www.w3.org/2000/svg" width="100%">
+          <defs>
+            <linearGradient id="cyberBg" x1="0%" y1="0%" x2="100%" y2="100%">
+              <stop offset="0%" style="stop-color:#030310"/>
+              <stop offset="100%" style="stop-color:#0a0a28"/>
+            </linearGradient>
+            <linearGradient id="cyberAccent" x1="0%" y1="0%" x2="100%" y2="0%">
+              <stop offset="0%" style="stop-color:#00ffe1"/>
+              <stop offset="100%" style="stop-color:#ff00c8"/>
+            </linearGradient>
+          </defs>
+          <rect width="240" height="480" rx="30" fill="url(#cyberBg)" stroke="#00ffe180" stroke-width="1.5"/>
+          <!-- glow aura -->
+          <ellipse cx="120" cy="80" rx="90" ry="40" fill="#00ffe1" opacity="0.05"/>
+          <!-- notch -->
+          <rect x="82" y="10" width="76" height="22" rx="11" fill="#080820"/>
+          <!-- avatar with ring -->
+          <circle cx="120" cy="118" r="46" fill="none" stroke="url(#cyberAccent)" stroke-width="1.5" stroke-dasharray="4 3"/>
+          <circle cx="120" cy="118" r="38" fill="#0e0e28" stroke="#00ffe1" stroke-width="2"/>
+          <text x="120" y="126" text-anchor="middle" font-size="32" fill="#00ffe1">🤖</text>
+          <!-- online dot -->
+          <circle cx="152" cy="148" r="7" fill="#3dff8f" stroke="#030310" stroke-width="2"/>
+          <!-- name -->
+          <rect x="75" y="170" width="90" height="13" rx="6" fill="#141432"/>
+          <!-- badges -->
+          <rect x="55" y="192" width="60" height="16" rx="8" fill="#00ffe120" stroke="#00ffe140" stroke-width="1"/>
+          <text x="85" y="203" text-anchor="middle" font-size="8" fill="#00ffe1" font-weight="600">✦ CREATOR</text>
+          <rect x="125" y="192" width="60" height="16" rx="8" fill="#ff00c820" stroke="#ff00c840" stroke-width="1"/>
+          <text x="155" y="203" text-anchor="middle" font-size="8" fill="#ff00c8" font-weight="600">🔥 HOT</text>
+          <!-- socials row -->
+          <circle cx="90" cy="228" r="14" fill="#0e0e28" stroke="#141432" stroke-width="1"/>
+          <text x="90" y="233" text-anchor="middle" font-size="13" fill="#fff">🐦</text>
+          <circle cx="120" cy="228" r="14" fill="#0e0e28" stroke="#141432" stroke-width="1"/>
+          <text x="120" y="233" text-anchor="middle" font-size="13" fill="#fff">📸</text>
+          <circle cx="150" cy="228" r="14" fill="#0e0e28" stroke="#141432" stroke-width="1"/>
+          <text x="150" y="233" text-anchor="middle" font-size="13" fill="#fff">💻</text>
+          <!-- music player -->
+          <rect x="18" y="254" width="204" height="52" rx="12" fill="#0e0e28" stroke="#00ffe130" stroke-width="1"/>
+          <circle cx="44" cy="280" r="16" fill="#141432"/>
+          <text x="44" y="285" text-anchor="middle" font-size="14" fill="#1db954">🎵</text>
+          <rect x="68" y="268" width="100" height="9" rx="4" fill="#141432"/>
+          <rect x="68" y="281" width="70" height="7" rx="3" fill="#0a0a1e"/>
+          <rect x="68" y="295" width="120" height="4" rx="2" fill="#141432"/>
+          <rect x="68" y="295" width="55" height="4" rx="2" fill="url(#cyberAccent)"/>
+          <text x="188" y="288" text-anchor="middle" font-size="16" fill="#00ffe1">▶</text>
+          <!-- link cards -->
+          <rect x="18" y="316" width="204" height="38" rx="10" fill="#0e0e28" stroke="#141432" stroke-width="1"/>
+          <circle cx="44" cy="335" r="13" fill="#080820"/>
+          <text x="44" y="339" text-anchor="middle" font-size="12" fill="#00ffe1">💻</text>
+          <rect x="65" y="328" width="85" height="8" rx="4" fill="#141432"/>
+          <rect x="65" y="340" width="60" height="6" rx="3" fill="#080820"/>
+          <rect x="196" y="329" width="18" height="13" rx="4" fill="#00ffe120" stroke="#00ffe140" stroke-width="1"/>
+          <text x="205" y="339" text-anchor="middle" font-size="7" fill="#00ffe1">NEW</text>
+          <rect x="18" y="362" width="204" height="38" rx="10" fill="#0e0e28" stroke="#141432" stroke-width="1"/>
+          <circle cx="44" cy="381" r="13" fill="#080820"/>
+          <text x="44" y="385" text-anchor="middle" font-size="12" fill="#ff6af0">🛒</text>
+          <rect x="65" y="374" width="95" height="8" rx="4" fill="#141432"/>
+          <rect x="65" y="386" width="70" height="6" rx="3" fill="#080820"/>
+          <!-- gallery -->
+          <rect x="18" y="408" width="62" height="46" rx="8" fill="#0e0e28" stroke="#141432" stroke-width="1"/>
+          <rect x="89" y="408" width="62" height="46" rx="8" fill="#0e0e28" stroke="#141432" stroke-width="1"/>
+          <rect x="160" y="408" width="62" height="46" rx="8" fill="#0e0e28" stroke="#141432" stroke-width="1"/>
+          <text x="49" y="436" text-anchor="middle" font-size="18" fill="#141432">🖼</text>
+          <text x="120" y="436" text-anchor="middle" font-size="18" fill="#141432">🖼</text>
+          <text x="191" y="436" text-anchor="middle" font-size="18" fill="#141432">🖼</text>
+          <!-- home bar -->
+          <rect x="88" y="465" width="64" height="4" rx="2" fill="#141432"/>
+        </svg>
+      </div>
+
+      <!-- Right phone: vapor theme -->
+      <div class="phone-frame right">
+        <svg viewBox="0 0 220 440" xmlns="http://www.w3.org/2000/svg" width="100%">
+          <defs>
+            <linearGradient id="vBg" x1="0%" y1="0%" x2="100%" y2="100%">
+              <stop offset="0%" style="stop-color:#0d0020"/>
+              <stop offset="100%" style="stop-color:#1c0040"/>
+            </linearGradient>
+          </defs>
+          <rect width="220" height="440" rx="28" fill="url(#vBg)" stroke="#ff71ce40" stroke-width="1.5"/>
+          <rect x="72" y="10" width="76" height="22" rx="11" fill="#160030"/>
+          <circle cx="110" cy="110" r="38" fill="#1c0040" stroke="#ff71ce" stroke-width="2"/>
+          <text x="110" y="118" text-anchor="middle" font-size="30" fill="#ff71ce">🤖</text>
+          <rect x="65" y="158" width="90" height="12" rx="6" fill="#240050"/>
+          <rect x="80" y="178" width="60" height="8" rx="4" fill="#1c0040"/>
+          <!-- video embed -->
+          <rect x="20" y="200" width="180" height="80" rx="10" fill="#1c0040" stroke="#240050" stroke-width="1"/>
+          <text x="110" y="248" text-anchor="middle" font-size="26" fill="#ff71ce80">▶</text>
+          <rect x="20" y="288" width="180" height="8" rx="4" fill="#240050"/>
+          <!-- links -->
+          <rect x="20" y="308" width="180" height="36" rx="10" fill="#1c0040" stroke="#240050" stroke-width="1"/>
+          <circle cx="50" cy="326" r="12" fill="#160030"/>
+          <text x="50" y="330" text-anchor="middle" font-size="12" fill="#ff71ce">▶️</text>
+          <rect x="70" y="319" width="75" height="8" rx="4" fill="#240050"/>
+          <rect x="70" y="331" width="50" height="6" rx="3" fill="#1c0040"/>
+          <rect x="20" y="352" width="180" height="36" rx="10" fill="#1c0040" stroke="#240050" stroke-width="1"/>
+          <circle cx="50" cy="370" r="12" fill="#160030"/>
+          <text x="50" y="374" text-anchor="middle" font-size="12" fill="#05d9e8">🎨</text>
+          <rect x="70" y="363" width="80" height="8" rx="4" fill="#240050"/>
+          <rect x="70" y="375" width="55" height="6" rx="3" fill="#1c0040"/>
+          <!-- credit -->
+          <rect x="40" y="404" width="140" height="22" rx="11" fill="#1c0040" stroke="#240050" stroke-width="1"/>
+          <text x="110" y="419" text-anchor="middle" font-size="9" fill="#6060a0" font-family="monospace">✦ Powered by BioLink</text>
+          <rect x="80" y="430" width="60" height="4" rx="2" fill="#240050"/>
+        </svg>
+      </div>
+    </div>
   </div>
 </section>
+
+<!-- SECTION DIV -->
+<div class="sec-div"><span>Features</span></div>
 
 <!-- FEATURES -->
 <div class="features">
   <div class="feat-card">
-    <div class="feat-icon">🔗</div>
-    <h3>Unlimited Links</h3>
-    <p>Add as many links as you want with custom icons, titles, and descriptions.</p>
+    <div class="feat-img">
+      <svg viewBox="0 0 400 120" xmlns="http://www.w3.org/2000/svg">
+        <rect width="400" height="120" fill="#0e0e1a"/>
+        <rect x="16" y="16" width="368" height="36" rx="10" fill="#181826" stroke="#2a2a3e" stroke-width="1"/>
+        <circle cx="44" cy="34" r="12" fill="#11111c"/><text x="44" y="38" text-anchor="middle" font-size="12" fill="#7c6aff">💻</text>
+        <rect x="62" y="26" width="90" height="8" rx="4" fill="#2a2a3e"/>
+        <rect x="62" y="38" width="65" height="6" rx="3" fill="#181826"/>
+        <text x="372" y="37" text-anchor="end" font-size="12" fill="#6464a0">↗</text>
+        <rect x="16" y="62" width="368" height="36" rx="10" fill="#181826" stroke="#2a2a3e" stroke-width="1"/>
+        <circle cx="44" cy="80" r="12" fill="#11111c"/><text x="44" y="84" text-anchor="middle" font-size="12" fill="#ff6af0">🛒</text>
+        <rect x="62" y="72" width="110" height="8" rx="4" fill="#2a2a3e"/>
+        <rect x="62" y="84" width="80" height="6" rx="3" fill="#181826"/>
+        <rect x="346" y="75" width="34" height="12" rx="6" fill="#7c6aff20" stroke="#7c6aff50" stroke-width="1"/>
+        <text x="363" y="84" text-anchor="middle" font-size="8" fill="#7c6aff" font-weight="700">FREE</text>
+      </svg>
+    </div>
+    <h3>🔗 Unlimited Links</h3>
+    <p>Add as many links as you want with custom emoji icons, descriptions, and tags (New, Free, Hot…).</p>
   </div>
   <div class="feat-card">
-    <div class="feat-icon">🎨</div>
-    <h3>Full Customization</h3>
-    <p>Themes, colors, fonts, badges, typewriter effect — make it yours.</p>
+    <div class="feat-img">
+      <svg viewBox="0 0 400 120" xmlns="http://www.w3.org/2000/svg">
+        <rect width="400" height="120" fill="#0e0e1a"/>
+        <rect x="16" y="12" width="368" height="52" rx="10" fill="#0e0e28" stroke="#00ffe130" stroke-width="1"/>
+        <circle cx="48" cy="38" r="18" fill="#080820"/>
+        <text x="48" y="43" text-anchor="middle" font-size="16" fill="#1db954">🎵</text>
+        <rect x="74" y="25" width="100" height="9" rx="4" fill="#141432"/>
+        <rect x="74" y="38" width="70" height="7" rx="3" fill="#0a0a20"/>
+        <rect x="74" y="52" width="140" height="4" rx="2" fill="#141432"/>
+        <rect x="74" y="52" width="65" height="4" rx="2" fill="#00ffe1"/>
+        <text x="210" y="42" font-size="18" fill="#00ffe1">▶</text>
+        <!-- vol -->
+        <text x="230" y="42" font-size="12" fill="#6464a0">🔊</text>
+        <rect x="250" y="37" width="60" height="4" rx="2" fill="#141432"/>
+        <rect x="250" y="37" width="38" height="4" rx="2" fill="#00ffe1"/>
+        <rect x="16" y="76" width="368" height="36" rx="10" fill="#181826" stroke="#2a2a3e" stroke-width="1"/>
+        <rect x="28" y="90" width="344" height="8" rx="4" fill="#11111c"/>
+        <rect x="28" y="90" width="150" height="8" rx="4" fill="url(#lg2)"/>
+        <defs><linearGradient id="lg2"><stop offset="0%" style="stop-color:#7c6aff"/><stop offset="100%" style="stop-color:#ff6af0"/></linearGradient></defs>
+        <circle cx="178" cy="94" r="6" fill="#fff"/>
+        <text x="280" y="97" text-anchor="middle" font-size="11" fill="#6464a0">2:34 / 4:12</text>
+      </svg>
+    </div>
+    <h3>🎵 Music Embed</h3>
+    <p>Spotify, SoundCloud, or a custom MP3 player with play/pause, seek, time display, and volume control.</p>
   </div>
   <div class="feat-card">
-    <div class="feat-icon">📊</div>
-    <h3>View Analytics</h3>
-    <p>See how many people visit your page and which links get the most clicks.</p>
+    <div class="feat-img">
+      <svg viewBox="0 0 400 120" xmlns="http://www.w3.org/2000/svg">
+        <rect width="400" height="120" fill="#0e0e1a"/>
+        <rect x="16" y="10" width="368" height="100" rx="12" fill="#181826" stroke="#2a2a3e" stroke-width="1"/>
+        <rect x="28" y="22" width="344" height="76" rx="8" fill="#11111c"/>
+        <!-- video thumbnail gradient -->
+        <rect x="28" y="22" width="344" height="76" rx="8" fill="url(#vidGrad)"/>
+        <defs><linearGradient id="vidGrad" x1="0%" y1="0%" x2="100%" y2="100%"><stop offset="0%" style="stop-color:#1a0040;stop-opacity:1"/><stop offset="100%" style="stop-color:#040010;stop-opacity:1"/></linearGradient></defs>
+        <!-- play button -->
+        <circle cx="200" cy="60" r="24" fill="rgba(255,113,206,0.15)" stroke="#ff71ce" stroke-width="1.5"/>
+        <text x="200" y="67" text-anchor="middle" font-size="20" fill="#ff71ce">▶</text>
+        <!-- bar -->
+        <rect x="28" y="88" width="344" height="6" rx="3" fill="#0a0a20"/>
+        <rect x="28" y="88" width="140" height="6" rx="3" fill="#ff71ce"/>
+      </svg>
+    </div>
+    <h3>📺 Video Embed</h3>
+    <p>YouTube, Vimeo, or direct MP4 — embedded beautifully with a 16:9 player right on your page.</p>
   </div>
   <div class="feat-card">
-    <div class="feat-icon">🖼️</div>
-    <h3>Media Gallery</h3>
-    <p>Showcase your photos and videos directly on your bio page.</p>
+    <div class="feat-img">
+      <svg viewBox="0 0 400 120" xmlns="http://www.w3.org/2000/svg">
+        <rect width="400" height="120" fill="#0e0e1a"/>
+        <rect x="16" y="12" width="114" height="96" rx="10" fill="#181826" stroke="#2a2a3e" stroke-width="1"/>
+        <rect x="20" y="16" width="106" height="88" rx="8" fill="#11111c"/>
+        <text x="73" y="66" text-anchor="middle" font-size="36" fill="#2a2a3e">🖼</text>
+        <rect x="142" y="12" width="114" height="96" rx="10" fill="#181826" stroke="#7c6aff40" stroke-width="1"/>
+        <rect x="146" y="16" width="106" height="88" rx="8" fill="#11111c"/>
+        <text x="199" y="66" text-anchor="middle" font-size="36" fill="#2a2a3e">🖼</text>
+        <rect x="268" y="12" width="114" height="96" rx="10" fill="#181826" stroke="#2a2a3e" stroke-width="1"/>
+        <rect x="272" y="16" width="106" height="88" rx="8" fill="#11111c"/>
+        <text x="325" y="66" text-anchor="middle" font-size="36" fill="#2a2a3e">🖼</text>
+        <!-- zoom icon on center -->
+        <circle cx="199" cy="60" r="16" fill="rgba(124,106,255,0.2)"/>
+        <text x="199" y="64" text-anchor="middle" font-size="12" fill="#7c6aff">🔍</text>
+      </svg>
+    </div>
+    <h3>🖼️ Photo Gallery</h3>
+    <p>3-column gallery grid with a fullscreen lightbox viewer. Tap any photo to zoom in.</p>
   </div>
   <div class="feat-card">
-    <div class="feat-icon">🔒</div>
-    <h3>Secure & Private</h3>
-    <p>Your data stays in your browser. No ads, no tracking, no nonsense.</p>
+    <div class="feat-img">
+      <svg viewBox="0 0 400 120" xmlns="http://www.w3.org/2000/svg">
+        <defs>
+          <linearGradient id="themeGrad" x1="0%" y1="0%" x2="100%" y2="100%"><stop offset="0%" style="stop-color:#7c6aff"/><stop offset="100%" style="stop-color:#ff6af0"/></linearGradient>
+        </defs>
+        <rect width="400" height="120" fill="#0e0e1a"/>
+        <!-- theme swatches -->
+        <rect x="16" y="16" width="56" height="40" rx="10" fill="#0a0a0f" stroke="#2a2a3e" stroke-width="1"/><text x="44" y="41" text-anchor="middle" font-size="10" fill="#6464a0">Dark</text>
+        <rect x="82" y="16" width="56" height="40" rx="10" fill="#030310" stroke="#00ffe140" stroke-width="2"/><text x="110" y="41" text-anchor="middle" font-size="10" fill="#00ffe1">Cyber</text>
+        <rect x="148" y="16" width="56" height="40" rx="10" fill="#0d0020" stroke="#ff71ce40" stroke-width="1"/><text x="176" y="41" text-anchor="middle" font-size="10" fill="#ff71ce">Vapor</text>
+        <rect x="214" y="16" width="56" height="40" rx="10" fill="#f5f5ff" stroke="#7c6aff40" stroke-width="1"/><text x="242" y="41" text-anchor="middle" font-size="10" fill="#6060a0">Light</text>
+        <rect x="280" y="16" width="56" height="40" rx="10" fill="#071007" stroke="#3dff8f40" stroke-width="1"/><text x="308" y="41" text-anchor="middle" font-size="10" fill="#3dff8f">Forest</text>
+        <rect x="346" y="16" width="38" height="40" rx="10" fill="#120008" stroke="#ff6af040" stroke-width="1"/><text x="365" y="41" text-anchor="middle" font-size="10" fill="#ff6af0">Rose</text>
+        <!-- color picker -->
+        <rect x="16" y="68" width="180" height="40" rx="10" fill="#181826" stroke="#2a2a3e" stroke-width="1"/>
+        <rect x="26" y="78" width="22" height="22" rx="6" fill="url(#themeGrad)"/>
+        <rect x="56" y="82" width="120" height="10" rx="5" fill="#2a2a3e"/>
+        <!-- button style -->
+        <rect x="208" y="68" width="80" height="40" rx="10" fill="#181826" stroke="#2a2a3e" stroke-width="1"/>
+        <rect x="216" y="82" width="64" height="16" rx="8" fill="url(#themeGrad)"/>
+        <text x="248" y="93" text-anchor="middle" font-size="9" fill="#fff" font-weight="600">Pill</text>
+        <rect x="298" y="68" width="86" height="40" rx="10" fill="#181826" stroke="#2a2a3e" stroke-width="1"/>
+        <rect x="306" y="82" width="70" height="16" rx="4" fill="#2a2a3e"/>
+        <text x="341" y="93" text-anchor="middle" font-size="9" fill="#6464a0" font-weight="600">Rounded</text>
+      </svg>
+    </div>
+    <h3>🎨 8 Themes</h3>
+    <p>Dark, Cyber, Vapor, Light, Midnight, Forest, Rose, Sand — plus a custom accent color picker.</p>
   </div>
   <div class="feat-card">
-    <div class="feat-icon">🚀</div>
-    <h3>GitHub-Ready</h3>
-    <p>Self-host on GitHub Pages in minutes. Your URL, your rules.</p>
+    <div class="feat-img">
+      <svg viewBox="0 0 400 120" xmlns="http://www.w3.org/2000/svg">
+        <rect width="400" height="120" fill="#030310"/>
+        <!-- particles -->
+        <circle cx="40" cy="30" r="2" fill="#00ffe1" opacity="0.6"/>
+        <circle cx="120" cy="55" r="1.5" fill="#7c6aff" opacity="0.5"/>
+        <circle cx="200" cy="20" r="2" fill="#ff71ce" opacity="0.4"/>
+        <circle cx="280" cy="70" r="1.5" fill="#00ffe1" opacity="0.7"/>
+        <circle cx="360" cy="40" r="2" fill="#7c6aff" opacity="0.5"/>
+        <circle cx="80" cy="90" r="1.5" fill="#ff71ce" opacity="0.3"/>
+        <circle cx="160" cy="85" r="2" fill="#00ffe1" opacity="0.4"/>
+        <circle cx="320" cy="100" r="1.5" fill="#7c6aff" opacity="0.6"/>
+        <!-- cursor trail -->
+        <circle cx="200" cy="60" r="6" fill="#7c6aff" opacity="0.7"/>
+        <circle cx="185" cy="52" r="5" fill="#7c6aff" opacity="0.5"/>
+        <circle cx="170" cy="46" r="4" fill="#7c6aff" opacity="0.3"/>
+        <circle cx="157" cy="42" r="3" fill="#7c6aff" opacity="0.15"/>
+        <!-- snowflakes -->
+        <text x="60" y="45" font-size="14" fill="#fff" opacity="0.4">❄</text>
+        <text x="300" y="80" font-size="10" fill="#fff" opacity="0.3">❅</text>
+        <text x="340" y="30" font-size="12" fill="#fff" opacity="0.35">❆</text>
+        <!-- label -->
+        <rect x="120" y="88" width="160" height="20" rx="10" fill="#0e0e28" stroke="#141432" stroke-width="1"/>
+        <text x="200" y="102" text-anchor="middle" font-size="10" fill="#6464a0">✦ Particles · Cursor Trail · Snow</text>
+      </svg>
+    </div>
+    <h3>✨ Visual Effects</h3>
+    <p>Particles, cursor trail, snowfall, spinning avatar ring — toggle any combination on your page.</p>
+  </div>
+  <div class="feat-card">
+    <div class="feat-img">
+      <svg viewBox="0 0 400 120" xmlns="http://www.w3.org/2000/svg">
+        <rect width="400" height="120" fill="#0e0e1a"/>
+        <!-- domain field -->
+        <rect x="16" y="20" width="280" height="38" rx="10" fill="#181826" stroke="#7c6aff60" stroke-width="1.5"/>
+        <text x="32" y="44" font-size="13" fill="#7c6aff" font-family="monospace">links.yourdomain.com</text>
+        <rect x="308" y="20" width="76" height="38" rx="10" fill="url(#themeGrad2)" stroke="none"/>
+        <defs><linearGradient id="themeGrad2" x1="0%" y1="0%" x2="100%" y2="100%"><stop offset="0%" style="stop-color:#7c6aff"/><stop offset="100%" style="stop-color:#ff6af0"/></linearGradient></defs>
+        <text x="346" y="44" text-anchor="middle" font-size="13" fill="#fff" font-weight="600">Save</text>
+        <!-- DNS table -->
+        <rect x="16" y="70" width="368" height="38" rx="10" fill="#181826" stroke="#2a2a3e" stroke-width="1"/>
+        <rect x="26" y="80" width="36" height="18" rx="4" fill="#7c6aff20" stroke="#7c6aff40" stroke-width="1"/>
+        <text x="44" y="92" text-anchor="middle" font-size="9" fill="#7c6aff" font-weight="700">CNAME</text>
+        <text x="80" y="93" font-size="11" fill="#6464a0" font-family="monospace">links</text>
+        <text x="140" y="93" font-size="11" fill="#7c6aff" font-family="monospace">yourname.github.io</text>
+        <circle cx="358" cy="89" r="8" fill="#3dff8f20" stroke="#3dff8f40" stroke-width="1"/>
+        <text x="358" y="93" text-anchor="middle" font-size="10" fill="#3dff8f">✓</text>
+      </svg>
+    </div>
+    <h3>🌐 Custom Domain</h3>
+    <p>Point your own domain with step-by-step DNS setup. Your URL updates instantly once verified.</p>
+  </div>
+  <div class="feat-card">
+    <div class="feat-img">
+      <svg viewBox="0 0 400 120" xmlns="http://www.w3.org/2000/svg">
+        <rect width="400" height="120" fill="#0e0e1a"/>
+        <!-- stat cards -->
+        <rect x="16" y="14" width="88" height="60" rx="10" fill="#181826" stroke="#7c6aff30" stroke-width="1"/>
+        <text x="60" y="42" text-anchor="middle" font-size="22" font-weight="700" fill="#ededff">3.8k</text>
+        <text x="60" y="58" text-anchor="middle" font-size="9" fill="#6464a0" letter-spacing="1">VIEWS</text>
+        <rect x="114" y="14" width="88" height="60" rx="10" fill="#181826" stroke="#ff6af030" stroke-width="1"/>
+        <text x="158" y="42" text-anchor="middle" font-size="22" font-weight="700" fill="#ededff">247</text>
+        <text x="158" y="58" text-anchor="middle" font-size="9" fill="#6464a0" letter-spacing="1">CLICKS</text>
+        <rect x="212" y="14" width="88" height="60" rx="10" fill="#181826" stroke="#3dff8f30" stroke-width="1"/>
+        <text x="256" y="42" text-anchor="middle" font-size="22" font-weight="700" fill="#3dff8f">6.5%</text>
+        <text x="256" y="58" text-anchor="middle" font-size="9" fill="#6464a0" letter-spacing="1">CTR</text>
+        <rect x="310" y="14" width="74" height="60" rx="10" fill="#181826" stroke="#ffd56a30" stroke-width="1"/>
+        <text x="347" y="42" text-anchor="middle" font-size="22" font-weight="700" fill="#ffd56a">12</text>
+        <text x="347" y="58" text-anchor="middle" font-size="9" fill="#6464a0" letter-spacing="1">LINKS</text>
+        <!-- mini bar chart -->
+        <rect x="16" y="88" width="368" height="20" rx="8" fill="#181826" stroke="#2a2a3e" stroke-width="1"/>
+        <rect x="24" y="93" width="80" height="10" rx="4" fill="#7c6aff" opacity="0.8"/>
+        <rect x="112" y="93" width="130" height="10" rx="4" fill="#ff6af0" opacity="0.6"/>
+        <rect x="250" y="93" width="60" height="10" rx="4" fill="#3dff8f" opacity="0.5"/>
+        <rect x="318" y="93" width="58" height="10" rx="4" fill="#7c6aff" opacity="0.3"/>
+      </svg>
+    </div>
+    <h3>📊 Analytics</h3>
+    <p>Views, link clicks, CTR, top pages, and content breakdown — all in a clean admin dashboard.</p>
+  </div>
+  <div class="feat-card">
+    <div class="feat-img">
+      <svg viewBox="0 0 400 120" xmlns="http://www.w3.org/2000/svg">
+        <rect width="400" height="120" fill="#0e0e1a"/>
+        <!-- QR canvas simulation -->
+        <rect x="16" y="10" width="100" height="100" rx="10" fill="#fff"/>
+        <!-- QR pattern -->
+        ${Array.from({length:8},(_,r)=>Array.from({length:8},(_,c)=>(r*c+r+c)%3===0?`<rect x="${22+c*11}" y="${16+r*11}" width="9" height="9" rx="1" fill="#0a0a0f"/>`:'').join('')).join('')}
+        <!-- QR corners -->
+        <rect x="22" y="16" width="27" height="27" rx="3" fill="#0a0a0f"/><rect x="25" y="19" width="21" height="21" rx="2" fill="#fff"/><rect x="28" y="22" width="15" height="15" rx="1" fill="#7c6aff"/>
+        <rect x="73" y="16" width="27" height="27" rx="3" fill="#0a0a0f"/><rect x="76" y="19" width="21" height="21" rx="2" fill="#fff"/><rect x="79" y="22" width="15" height="15" rx="1" fill="#7c6aff"/>
+        <rect x="22" y="67" width="27" height="27" rx="3" fill="#0a0a0f"/><rect x="25" y="70" width="21" height="21" rx="2" fill="#fff"/><rect x="28" y="73" width="15" height="15" rx="1" fill="#7c6aff"/>
+        <!-- share text -->
+        <rect x="130" y="18" width="254" height="28" rx="10" fill="#181826" stroke="#2a2a3e" stroke-width="1"/>
+        <text x="145" y="36" font-size="12" fill="#6464a0" font-family="monospace">yourname.github.io/bio…</text>
+        <rect x="130" y="56" width="120" height="28" rx="8" fill="#7c6aff"/>
+        <text x="190" y="74" text-anchor="middle" font-size="12" fill="#fff" font-weight="600">Copy Link</text>
+        <rect x="264" y="56" width="120" height="28" rx="8" fill="#181826" stroke="#2a2a3e" stroke-width="1"/>
+        <text x="324" y="74" text-anchor="middle" font-size="12" fill="#6464a0" font-weight="600">⬆ Share</text>
+        <text x="130" y="106" font-size="11" fill="#6464a0">✦ Mobile Web Share · Copy · QR · All devices</text>
+      </svg>
+    </div>
+    <h3>📱 Share Anywhere</h3>
+    <p>QR code modal, one-click copy, Web Share API for mobile. Works perfectly on every device.</p>
+  </div>
+</div>
+
+<!-- HOW IT WORKS -->
+<div class="sec-div"><span>How It Works</span></div>
+<div class="how-section">
+  <div class="how-steps">
+    <div class="how-step">
+      <div class="step-img">
+        <svg viewBox="0 0 260 160" xmlns="http://www.w3.org/2000/svg" width="100%">
+          <rect width="260" height="160" fill="#0e0e1a"/>
+          <!-- register form -->
+          <rect x="30" y="20" width="200" height="120" rx="14" fill="#181826" stroke="#2a2a3e" stroke-width="1"/>
+          <text x="130" y="44" text-anchor="middle" font-size="13" fill="#ededff" font-weight="600">Create Account</text>
+          <rect x="46" y="54" width="168" height="24" rx="8" fill="#11111c" stroke="#2a2a3e" stroke-width="1"/>
+          <text x="58" y="70" font-size="11" fill="#4a4a70">username</text>
+          <rect x="46" y="84" width="168" height="24" rx="8" fill="#11111c" stroke="#2a2a3e" stroke-width="1"/>
+          <text x="58" y="100" font-size="11" fill="#4a4a70">password</text>
+          <rect x="46" y="114" width="168" height="22" rx="11" fill="url(#g3)"/>
+          <defs><linearGradient id="g3"><stop offset="0%" style="stop-color:#7c6aff"/><stop offset="100%" style="stop-color:#ff6af0"/></linearGradient></defs>
+          <text x="130" y="129" text-anchor="middle" font-size="11" fill="#fff" font-weight="600">Create Account →</text>
+        </svg>
+      </div>
+      <div class="step-num">Step 01</div>
+      <div class="step-label">Register Free</div>
+      <div class="step-desc">Create your account in seconds. No card needed.</div>
+    </div>
+    <div class="how-step">
+      <div class="step-img">
+        <svg viewBox="0 0 260 160" xmlns="http://www.w3.org/2000/svg" width="100%">
+          <rect width="260" height="160" fill="#0e0e1a"/>
+          <rect x="20" y="14" width="220" height="132" rx="14" fill="#181826" stroke="#2a2a3e" stroke-width="1"/>
+          <!-- sidebar mini -->
+          <rect x="28" y="22" width="60" height="116" rx="10" fill="#11111c"/>
+          <rect x="34" y="34" width="48" height="10" rx="5" fill="#7c6aff30"/>
+          <rect x="34" y="50" width="48" height="8" rx="4" fill="#2a2a3e"/>
+          <rect x="34" y="64" width="48" height="8" rx="4" fill="#2a2a3e"/>
+          <rect x="34" y="78" width="48" height="8" rx="4" fill="#2a2a3e"/>
+          <rect x="34" y="92" width="48" height="8" rx="4" fill="#2a2a3e"/>
+          <!-- main content -->
+          <rect x="96" y="24" width="136" height="10" rx="5" fill="#2a2a3e"/>
+          <rect x="96" y="40" width="136" height="24" rx="8" fill="#11111c"/>
+          <text x="108" y="56" font-size="10" fill="#6464a0">Display Name</text>
+          <rect x="96" y="70" width="136" height="24" rx="8" fill="#11111c"/>
+          <text x="108" y="86" font-size="10" fill="#6464a0">Tagline · Roles</text>
+          <rect x="96" y="100" width="136" height="32" rx="8" fill="#11111c"/>
+          <text x="108" y="118" font-size="10" fill="#6464a0">Bio text…</text>
+          <rect x="168" y="120" width="56" height="18" rx="9" fill="url(#g3)"/>
+          <text x="196" y="132" text-anchor="middle" font-size="10" fill="#fff" font-weight="600">Save</text>
+        </svg>
+      </div>
+      <div class="step-num">Step 02</div>
+      <div class="step-label">Customize</div>
+      <div class="step-desc">Add links, music, video, gallery, effects, and more.</div>
+    </div>
+    <div class="how-step">
+      <div class="step-img">
+        <svg viewBox="0 0 260 160" xmlns="http://www.w3.org/2000/svg" width="100%">
+          <rect width="260" height="160" fill="#0e0e1a"/>
+          <!-- URL box -->
+          <rect x="20" y="30" width="220" height="44" rx="14" fill="#181826" stroke="#3dff8f40" stroke-width="1.5"/>
+          <text x="36" y="56" font-size="11" fill="#7c6aff" font-family="monospace">yourname.github.io/bio.html?u=you</text>
+          <rect x="20" y="86" width="104" height="32" rx="10" fill="url(#g3)"/>
+          <text x="72" y="106" text-anchor="middle" font-size="11" fill="#fff" font-weight="600">Copy Link</text>
+          <rect x="136" y="86" width="104" height="32" rx="10" fill="#181826" stroke="#2a2a3e" stroke-width="1"/>
+          <text x="188" y="106" text-anchor="middle" font-size="11" fill="#6464a0" font-weight="600">⬆ Share</text>
+          <!-- share icons -->
+          <text x="40" y="140" font-size="18">📸</text>
+          <text x="80" y="140" font-size="18">🎵</text>
+          <text x="120" y="140" font-size="18">🐦</text>
+          <text x="160" y="140" font-size="18">▶️</text>
+          <text x="200" y="140" font-size="18">💼</text>
+        </svg>
+      </div>
+      <div class="step-num">Step 03</div>
+      <div class="step-label">Share Your URL</div>
+      <div class="step-desc">Copy your unique URL and paste it everywhere.</div>
+    </div>
+  </div>
+</div>
+
+<!-- TESTIMONIALS -->
+<div class="sec-div"><span>Loved by Creators</span></div>
+<div class="testimonials">
+  <div class="testi-grid">
+    <div class="testi-card">
+      <div class="testi-stars">★★★★★</div>
+      <p class="testi-text">"Finally a Linktree alternative I actually own. The Spotify embed alone is worth it. My fans can listen while they browse my links!"</p>
+      <div class="testi-author">
+        <div class="testi-avatar"><svg viewBox="0 0 36 36"><rect width="36" height="36" fill="#1c0040"/><text x="18" y="24" text-anchor="middle" font-size="18" fill="#ff71ce">🎵</text></svg></div>
+        <div><div class="testi-name">@musicmaker</div><div class="testi-handle">Producer · 12k followers</div></div>
+      </div>
+    </div>
+    <div class="testi-card">
+      <div class="testi-stars">★★★★★</div>
+      <p class="testi-text">"Set up in 10 minutes on GitHub Pages. My custom domain worked first try. The cyber theme looks insane on mobile."</p>
+      <div class="testi-author">
+        <div class="testi-avatar"><svg viewBox="0 0 36 36"><rect width="36" height="36" fill="#030310"/><text x="18" y="24" text-anchor="middle" font-size="18" fill="#00ffe1">💻</text></svg></div>
+        <div><div class="testi-name">@devguru</div><div class="testi-handle">Developer · GitHub Stars</div></div>
+      </div>
+    </div>
+    <div class="testi-card">
+      <div class="testi-stars">★★★★★</div>
+      <p class="testi-text">"The gallery + video combo is perfect for my portfolio. Cursor trail and particles give it that premium feel. Zero cost!"</p>
+      <div class="testi-author">
+        <div class="testi-avatar"><svg viewBox="0 0 36 36"><rect width="36" height="36" fill="#071007"/><text x="18" y="24" text-anchor="middle" font-size="18" fill="#3dff8f">🎨</text></svg></div>
+        <div><div class="testi-name">@designstudio</div><div class="testi-handle">Visual Artist · Creator</div></div>
+      </div>
+    </div>
   </div>
 </div>
 
 <!-- PREVIEW BAR -->
 <div class="preview-bar">
-  <p>Your link will look like this</p>
-  <div class="preview-url">🌐 yoursite.github.io/bio.html?u=<strong>yourname</strong></div>
+  <p>Your BioLink will live at</p>
+  <div class="preview-url">🌐 yourname.github.io/bio.html?u=<strong>you</strong></div>
 </div>
 
 <!-- AUTH MODAL -->
 <div class="modal-overlay" id="auth-modal">
   <div class="modal-box">
-    <!-- Tabs -->
+    <div style="text-align:center;margin-bottom:20px">
+      <svg width="40" height="40" viewBox="0 0 64 64" style="display:block;margin:0 auto 10px"><defs><linearGradient id="mlg" x1="0%" y1="0%" x2="100%" y2="100%"><stop offset="0%" style="stop-color:#7c6aff"/><stop offset="100%" style="stop-color:#ff6af0"/></linearGradient></defs><rect width="64" height="64" rx="14" fill="#181826"/><text x="32" y="46" text-anchor="middle" font-size="38" fill="url(#mlg)">✦</text></svg>
+    </div>
     <div class="auth-tabs">
       <button class="auth-tab active" data-tab="login">Log In</button>
       <button class="auth-tab" data-tab="register">Register</button>
     </div>
-
-    <!-- LOGIN PANEL -->
     <div class="auth-panel active" id="tab-login">
-      <div class="field">
-        <label>Username</label>
-        <input type="text" id="login-user" placeholder="your_username" autocomplete="username" />
-      </div>
-      <div class="field">
-        <label>Password</label>
-        <input type="password" id="login-pass" placeholder="••••••••" autocomplete="current-password" />
+      <div class="field"><label>Username</label><input type="text" id="login-user" placeholder="your_username" autocomplete="username"/></div>
+      <div class="field"><label>Password</label><input type="password" id="login-pass" placeholder="••••••••" autocomplete="current-password"/></div>
+      <button class="btn btn-primary btn-full" id="do-login">Log In</button>
+      <div class="hint">Admin? username: <code>admin</code> · password: <code>admin123</code> · <a href="credits.html">Credits</a></div>
     </div>
-
-    <!-- REGISTER PANEL -->
     <div class="auth-panel" id="tab-register">
-      <div class="field">
-        <label>Username <small style="color:var(--muted)">(becomes your URL)</small></label>
-        <input type="text" id="reg-user" placeholder="coolname" autocomplete="username" />
-      </div>
-      <div class="field">
-        <label>Email</label>
-        <input type="email" id="reg-email" placeholder="you@email.com" autocomplete="email" />
-      </div>
-      <div class="field">
-        <label>Password</label>
-        <input type="password" id="reg-pass" placeholder="6+ characters" autocomplete="new-password" />
-      </div>
+      <div class="field"><label>Username <small style="color:var(--muted)">(becomes your URL)</small></label><input type="text" id="reg-user" placeholder="coolname" autocomplete="username"/></div>
+      <div class="field"><label>Email</label><input type="email" id="reg-email" placeholder="you@email.com" autocomplete="email"/></div>
+      <div class="field"><label>Password</label><input type="password" id="reg-pass" placeholder="6+ characters" autocomplete="new-password"/></div>
       <button class="btn btn-primary btn-full" id="do-register">Create Account →</button>
-      <div class="hint">Already have an account? <a href="#" id="goto-login">Log in</a></div>
+      <div class="hint">Already have one? <a href="#" id="goto-login">Log in</a></div>
     </div>
-
     <div class="divider" style="margin-top:4px"></div>
     <button class="btn btn-ghost btn-sm btn-full" id="close-modal">Cancel</button>
   </div>
 </div>
 
 <div id="toast"></div>
-
 <script src="app.js"></script>
 <script>
-  /* redirect if already logged in */
-  const sess = BL.currentUser();
-  if (sess) location.href = sess.role === 'admin' ? 'admin.html' : 'dashboard.html';
+const sess=BL.currentUser();
+if(sess){location.href=sess.role==='admin'?'admin.html':'dashboard.html';}
+document.getElementById('nav-credits').style.display='flex';
 
-  /* modal open/close */
-  const modal   = document.getElementById('auth-modal');
-  const openModal= tab => {
-    modal.classList.add('open');
-    switchTab(tab || 'login');
-  };
-  const closeModal = () => modal.classList.remove('open');
+const modal=document.getElementById('auth-modal');
+const openModal=tab=>{modal.classList.add('open');switchTab(tab||'login');};
+const closeModal=()=>modal.classList.remove('open');
 
-  document.getElementById('nav-login').addEventListener('click', () => openModal('login'));
-  document.getElementById('nav-register').addEventListener('click', () => openModal('register'));
-  document.getElementById('hero-register').addEventListener('click', () => openModal('register'));
-  document.getElementById('close-modal').addEventListener('click', closeModal);
-  document.getElementById('goto-login').addEventListener('click', e => { e.preventDefault(); switchTab('login'); });
-  modal.addEventListener('click', e => { if(e.target===modal) closeModal(); });
+document.getElementById('nav-login').addEventListener('click',()=>openModal('login'));
+document.getElementById('nav-register').addEventListener('click',()=>openModal('register'));
+document.getElementById('hero-register').addEventListener('click',()=>openModal('register'));
+document.getElementById('close-modal').addEventListener('click',closeModal);
+document.getElementById('goto-login').addEventListener('click',e=>{e.preventDefault();switchTab('login');});
+modal.addEventListener('click',e=>{if(e.target===modal)closeModal();});
+document.getElementById('hero-demo').addEventListener('click',()=>window.open('bio.html?u=admin','_blank'));
 
-  /* hero demo */
-  document.getElementById('hero-demo').addEventListener('click', () => {
-    window.open('bio.html?u=admin', '_blank');
-  });
+const tabs=document.querySelectorAll('.auth-tab'),panels=document.querySelectorAll('.auth-panel');
+const switchTab=name=>{tabs.forEach(t=>t.classList.toggle('active',t.dataset.tab===name));panels.forEach(p=>p.classList.toggle('active',p.id===`tab-${name}`));};
+tabs.forEach(t=>t.addEventListener('click',()=>switchTab(t.dataset.tab)));
 
-  /* tabs */
-  const tabs = document.querySelectorAll('.auth-tab');
-  const panels = document.querySelectorAll('.auth-panel');
-  const switchTab = name => {
-    tabs.forEach(t => t.classList.toggle('active', t.dataset.tab === name));
-    panels.forEach(p => p.classList.toggle('active', p.id === `tab-${name}`));
-  };
-  tabs.forEach(t => t.addEventListener('click', () => switchTab(t.dataset.tab)));
-
-  /* login */
-  document.getElementById('do-login').addEventListener('click', () => {
-    const u = document.getElementById('login-user').value.trim();
-    const p = document.getElementById('login-pass').value;
-    const r = BL.login(u, p);
-    if (!r.ok) { BL.toast(r.msg, 'error'); return; }
-    BL.toast('Welcome back, ' + r.user.username + '!');
-    setTimeout(() => {
-      location.href = r.user.role === 'admin' ? 'admin.html' : 'dashboard.html';
-    }, 800);
-  });
-
-  /* enter key login */
-  document.getElementById('login-pass').addEventListener('keydown', e => {
-    if (e.key === 'Enter') document.getElementById('do-login').click();
-  });
-
-  /* register */
-  document.getElementById('do-register').addEventListener('click', () => {
-    const u = document.getElementById('reg-user').value;
-    const e = document.getElementById('reg-email').value;
-    const p = document.getElementById('reg-pass').value;
-    const r = BL.register(u, e, p);
-    if (!r.ok) { BL.toast(r.msg, 'error'); return; }
-    // seed default bio
-    BL.saveBio(r.user.username, BL.defaultBio(r.user.username));
-    BL.toast('Account created! Redirecting…');
-    setTimeout(() => location.href = 'dashboard.html', 900);
-  });
+document.getElementById('do-login').addEventListener('click',()=>{
+  const u=document.getElementById('login-user').value.trim();
+  const p=document.getElementById('login-pass').value;
+  const r=BL.login(u,p);
+  if(!r.ok){BL.toast(r.msg,'error');return;}
+  BL.toast('Welcome back, '+r.user.username+'!');
+  setTimeout(()=>location.href=r.user.role==='admin'?'admin.html':'dashboard.html',800);
+});
+document.getElementById('login-pass').addEventListener('keydown',e=>{if(e.key==='Enter')document.getElementById('do-login').click();});
+document.getElementById('do-register').addEventListener('click',()=>{
+  const u=document.getElementById('reg-user').value;
+  const e=document.getElementById('reg-email').value;
+  const p=document.getElementById('reg-pass').value;
+  const r=BL.register(u,e,p);
+  if(!r.ok){BL.toast(r.msg,'error');return;}
+  BL.saveBio(r.user.username,BL.defaultBio(r.user.username));
+  BL.toast('Account created! Redirecting…');
+  setTimeout(()=>location.href='dashboard.html',900);
+});
 </script>
 </body>
 </html>
