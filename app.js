@@ -21,8 +21,8 @@ const BL = (() => {
       set('bl_bios', {
         admin: {
           username: 'admin',
-          displayName: 'BioLink Admin',
-          tagline: 'Platform Creator · Developer · Designer',
+          displayName: 'Thomas',
+          tagline: 'Designer',
           bio: 'Welcome to BioLink — the self-hosted link-in-bio platform. Register to create your own page! ✨',
           avatarUrl: 'https://api.dicebear.com/9.x/bottts-neutral/svg?seed=admin',
           theme: 'dark',
