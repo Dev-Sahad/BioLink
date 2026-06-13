@@ -33,7 +33,7 @@ const BL = (() => {
           published: true,
           links: [
             { title: 'GitHub Repository', url: 'https://github.com/Dev-Sahad/BioLink', desc: 'Star us on GitHub ⭐' },
-            { title: 'Documentation', url: 'Readme.md', desc: 'How to deploy & customize' },
+            { title: 'Documentation', url: 'README.md', desc: 'How to deploy & customize' },
             { title: 'Register Free', url: 'index.html', desc: 'Create your own BioLink page' }
           ],
           socials: {
