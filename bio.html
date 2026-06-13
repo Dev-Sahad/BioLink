@@ -1,0 +1,388 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>BioLink</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet" />
+  <style>
+    /* ── TOKENS (overridden per-theme) ───────────────────── */
+    :root {
+      --bg:      #08080f;
+      --surface: #11111c;
+      --card:    #191926;
+      --ch:      #1f1f30;
+      --border:  rgba(255,255,255,0.07);
+      --accent:  #7c6aff;
+      --accent2: #ff6af0;
+      --glow:    rgba(124,106,255,0.2);
+      --text:    #ededff;
+      --muted:   #6868a0;
+      --rad:     13px;
+      --btn-rad: 50px;
+      --ff:      'Space Grotesk', sans-serif;
+      --ffm:     'Space Mono', monospace;
+    }
+    /* themes */
+    [data-theme="light"]   { --bg:#f5f5ff; --surface:#fff; --card:#e8e8f5; --ch:#ddddf0; --border:rgba(0,0,0,.08); --text:#0a0a1a; --muted:#6060a0; }
+    [data-theme="midnight"]{ --bg:#000010; --surface:#0a0a1e; --card:#0d0d22; --ch:#141428; }
+    [data-theme="forest"]  { --bg:#0a110a; --surface:#0d150d; --card:#131d13; --ch:#192219; }
+    [data-theme="rose"]    { --bg:#150a0f; --surface:#1a0d13; --card:#221318; --ch:#2a1820; }
+    /* btn styles */
+    [data-btnstyle="rounded"] { --btn-rad: 10px; }
+    [data-btnstyle="sharp"]   { --btn-rad: 4px; }
+
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      font-family: var(--ff);
+      background: var(--bg); color: var(--text);
+      min-height: 100vh; -webkit-font-smoothing: antialiased;
+    }
+    body::before {
+      content: ''; position: fixed; inset: 0; z-index: 0; pointer-events: none;
+      background:
+        radial-gradient(ellipse 55% 35% at 50% -5%, rgba(124,106,255,.16), transparent),
+        radial-gradient(ellipse 35% 25% at 92% 85%, rgba(255,106,240,.09), transparent);
+    }
+    .page {
+      max-width: 600px; margin: 0 auto;
+      padding: 40px 20px 80px;
+      position: relative; z-index: 1;
+    }
+
+    /* ── TOPBAR ──────────────────────────────────────────── */
+    .topbar { display: flex; justify-content: flex-end; gap: 8px; margin-bottom: 28px; }
+    .topbar a, .topbar button {
+      background: var(--card); border: 1px solid var(--border);
+      color: var(--muted); border-radius: 50px; padding: 6px 14px;
+      font-family: var(--ff); font-size: 12px; cursor: pointer;
+      text-decoration: none; transition: all .2s;
+    }
+    .topbar a:hover, .topbar button:hover { color: var(--text); border-color: var(--accent); }
+
+    /* ── PROFILE ─────────────────────────────────────────── */
+    .profile { text-align: center; margin-bottom: 28px; }
+    .avatar-wrap { position: relative; display: inline-block; margin-bottom: 14px; }
+    .avatar {
+      width: 90px; height: 90px; border-radius: 50%;
+      border: 2px solid var(--accent);
+      box-shadow: 0 0 0 4px var(--glow), 0 0 28px var(--glow);
+      object-fit: cover;
+    }
+    .status-dot {
+      position: absolute; bottom: 4px; right: 4px;
+      width: 13px; height: 13px; border-radius: 50%;
+      background: #3dff8f; border: 2px solid var(--bg);
+      animation: pulse 2s infinite;
+    }
+    @keyframes pulse { 0%,100%{box-shadow:0 0 0 0 rgba(61,255,143,.5)} 50%{box-shadow:0 0 0 6px rgba(61,255,143,0)} }
+    .username { font-size: 24px; font-weight: 700; letter-spacing: -.4px; margin-bottom: 6px; }
+    .typewriter-wrap { font-size: 13px; color: var(--muted); font-family: var(--ffm); min-height: 18px; margin-bottom: 10px; }
+    .cursor { display: inline-block; width: 2px; height: 13px; background: var(--accent); margin-left: 1px; animation: blink .75s step-end infinite; vertical-align: middle; }
+    @keyframes blink { 50%{opacity:0} }
+    .bio-text { font-size: 14px; color: var(--muted); max-width: 380px; margin: 0 auto 12px; line-height: 1.6; }
+    .location { font-size: 12px; color: var(--muted); margin-bottom: 12px; }
+    .views-chip {
+      display: inline-flex; align-items: center; gap: 6px;
+      background: var(--card); border: 1px solid var(--border);
+      border-radius: 50px; padding: 4px 12px; font-size: 12px; color: var(--muted);
+      margin-bottom: 14px;
+    }
+
+    /* ── SOCIALS ─────────────────────────────────────────── */
+    .socials { display: flex; flex-wrap: wrap; justify-content: center; gap: 8px; margin-bottom: 24px; }
+    .social-btn {
+      display: flex; align-items: center; gap: 6px;
+      background: var(--card); border: 1px solid var(--border);
+      border-radius: 50px; padding: 7px 16px;
+      font-size: 13px; font-weight: 500; color: var(--text);
+      text-decoration: none; transition: all .2s;
+    }
+    .social-btn:hover { border-color: var(--accent); transform: translateY(-1px); }
+
+    /* ── SECTION LABEL ───────────────────────────────────── */
+    .sec-label {
+      font-size: 10px; font-weight: 600; letter-spacing: .12em;
+      text-transform: uppercase; color: var(--muted);
+      margin: 28px 0 10px; padding-left: 2px;
+    }
+
+    /* ── LINK CARD ───────────────────────────────────────── */
+    .link-card {
+      display: flex; align-items: center; gap: 14px;
+      background: var(--card); border: 1px solid var(--border);
+      border-radius: var(--rad); padding: 14px 16px;
+      text-decoration: none; color: var(--text);
+      transition: all .22s; position: relative; overflow: hidden;
+      margin-bottom: 10px;
+    }
+    .link-card::before {
+      content: ''; position: absolute; inset: 0;
+      background: linear-gradient(120deg, var(--accent), var(--accent2));
+      opacity: 0; transition: opacity .22s;
+    }
+    .link-card:hover { border-color: var(--accent); transform: translateY(-2px); box-shadow: 0 8px 28px var(--glow); }
+    .link-card:hover::before { opacity: .05; }
+    .link-card > * { position: relative; }
+    .link-icon { width: 40px; height: 40px; border-radius: 10px; background: var(--surface); border: 1px solid var(--border); display: flex; align-items: center; justify-content: center; font-size: 18px; flex-shrink: 0; }
+    .link-info { flex: 1; min-width: 0; }
+    .link-title { font-size: 15px; font-weight: 600; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+    .link-desc  { font-size: 12px; color: var(--muted); margin-top: 2px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+    .link-arrow { color: var(--muted); }
+
+    /* ── SHARE BAR ───────────────────────────────────────── */
+    .share-bar {
+      display: flex; align-items: center; gap: 10px;
+      background: var(--card); border: 1px solid var(--border);
+      border-radius: var(--rad); padding: 10px 14px; margin-bottom: 24px;
+    }
+    .share-url { flex:1; font-family:var(--ffm); font-size:12px; color:var(--accent); overflow:hidden; white-space:nowrap; text-overflow:ellipsis; }
+    .copy-btn  {
+      background: rgba(124,106,255,.12); border: 1px solid rgba(124,106,255,.3);
+      color: var(--accent); border-radius: 8px; padding: 5px 12px;
+      font-family: var(--ff); font-size: 12px; font-weight: 600; cursor: pointer; transition: all .2s;
+      white-space: nowrap;
+    }
+    .copy-btn:hover { background: var(--accent); color: #fff; }
+    .copy-btn.ok { color: #3dff8f; border-color: rgba(61,255,143,.4); }
+
+    /* ── FOOTER ──────────────────────────────────────────── */
+    .footer { text-align: center; margin-top: 48px; font-size: 12px; color: var(--muted); }
+    .footer a { color: var(--accent); text-decoration: none; }
+
+    /* ── NOT FOUND / PRIVATE ────────────────────────────── */
+    .not-found { text-align: center; padding: 80px 20px; }
+    .not-found .nf-icon { font-size: 56px; margin-bottom: 16px; }
+    .not-found h2 { font-size: 22px; margin-bottom: 8px; }
+    .not-found p  { font-size: 14px; color: var(--muted); margin-bottom: 24px; }
+
+    /* ── QR FAB ──────────────────────────────────────────── */
+    .qr-fab {
+      position: fixed; bottom: 24px; right: 20px; z-index: 100;
+      width: 48px; height: 48px; border-radius: 50%;
+      background: linear-gradient(135deg, var(--accent), var(--accent2));
+      border: none; cursor: pointer; display: flex; align-items: center; justify-content: center;
+      box-shadow: 0 4px 20px var(--glow); color: #fff; font-size: 20px;
+      transition: transform .2s;
+    }
+    .qr-fab:hover { transform: scale(1.1); }
+    .modal-bg { position: fixed; inset: 0; background: rgba(0,0,0,.7); backdrop-filter: blur(6px); z-index: 200; display: flex; align-items: center; justify-content: center; opacity: 0; pointer-events: none; transition: opacity .2s; }
+    .modal-bg.open { opacity: 1; pointer-events: all; }
+    .modal-inner { background: var(--surface); border: 1px solid var(--border); border-radius: 18px; padding: 28px; text-align: center; max-width: 300px; width: 90%; }
+    .modal-inner h3 { margin-bottom: 6px; } .modal-inner p { font-size: 13px; color: var(--muted); margin-bottom: 16px; }
+    #qrc { display: block; margin: 0 auto 16px; border-radius: 8px; }
+    .modal-close { background: var(--card); border: 1px solid var(--border); color: var(--muted); border-radius: 50px; padding: 7px 20px; font-family: var(--ff); font-size: 13px; cursor: pointer; }
+
+    @media(prefers-reduced-motion:reduce){ *, *::before, *::after { animation:none!important; transition:none!important; } }
+  </style>
+</head>
+<body>
+<div class="page" id="page">
+  <div class="not-found" id="loading">
+    <div class="nf-icon">⏳</div>
+    <h2>Loading…</h2>
+  </div>
+</div>
+
+<button class="qr-fab" id="qr-fab" style="display:none" title="QR Code">⬛</button>
+<div class="modal-bg" id="qr-modal">
+  <div class="modal-inner">
+    <h3>Scan to Visit</h3>
+    <p>Share without typing</p>
+    <canvas id="qrc" width="180" height="180"></canvas>
+    <button class="modal-close" id="qr-close">Close</button>
+  </div>
+</div>
+<div id="toast" style="position:fixed;bottom:28px;left:50%;transform:translateX(-50%) translateY(80px);background:var(--card);border:1px solid var(--border);border-radius:50px;padding:10px 22px;font-size:13px;z-index:9999;transition:transform .3s,opacity .3s;opacity:0;"></div>
+
+<script src="app.js"></script>
+<script>
+const params   = new URLSearchParams(location.search);
+const username = (params.get('u') || '').toLowerCase().trim();
+const page     = document.getElementById('page');
+
+function toast(msg) {
+  const el = document.getElementById('toast');
+  el.textContent = msg; el.style.opacity='1'; el.style.transform='translateX(-50%) translateY(0)';
+  setTimeout(() => { el.style.opacity='0'; el.style.transform='translateX(-50%) translateY(80px)'; }, 2500);
+}
+
+function copyText(text, btn) {
+  navigator.clipboard.writeText(text).then(() => {
+    const o = btn.textContent; btn.textContent='✓ Copied!'; btn.classList.add('ok');
+    setTimeout(() => { btn.textContent=o; btn.classList.remove('ok'); }, 2000);
+    toast('Copied!');
+  });
+}
+
+function socialUrl(key, val) {
+  const map = {
+    twitter:   v => `https://twitter.com/${v.replace('@','')}`,
+    instagram: v => `https://instagram.com/${v.replace('@','')}`,
+    youtube:   v => v.startsWith('http') ? v : `https://youtube.com/@${v}`,
+    discord:   v => v.startsWith('http') ? v : `https://discord.gg/${v}`,
+    github:    v => `https://github.com/${v.replace('@','')}`,
+    tiktok:    v => `https://tiktok.com/@${v.replace('@','')}`,
+    linkedin:  v => v.startsWith('http') ? v : `https://linkedin.com/in/${v}`,
+    twitch:    v => `https://twitch.tv/${v}`,
+  };
+  const icons = { twitter:'🐦', instagram:'📸', youtube:'▶️', discord:'💬', github:'💻', tiktok:'🎵', linkedin:'💼', twitch:'🎮' };
+  const labels= { twitter:'Twitter', instagram:'Instagram', youtube:'YouTube', discord:'Discord', github:'GitHub', tiktok:'TikTok', linkedin:'LinkedIn', twitch:'Twitch' };
+  return { href: (map[key]||((v)=>v))(val), icon: icons[key]||'🔗', label: labels[key]||key };
+}
+
+function guessEmoji(url) {
+  if (!url) return '🔗';
+  const u = url.toLowerCase();
+  if (u.includes('youtube')) return '▶️';
+  if (u.includes('spotify')) return '🎵';
+  if (u.includes('twitter') || u.includes('x.com')) return '🐦';
+  if (u.includes('instagram')) return '📸';
+  if (u.includes('github')) return '💻';
+  if (u.includes('discord')) return '💬';
+  if (u.includes('tiktok')) return '🎵';
+  if (u.includes('twitch')) return '🎮';
+  if (u.includes('shop') || u.includes('store')) return '🛒';
+  return '🔗';
+}
+
+function drawQR(canvas) {
+  const ctx = canvas.getContext('2d');
+  const W = canvas.width, H = canvas.height;
+  ctx.fillStyle='#fff'; ctx.fillRect(0,0,W,H);
+  ctx.strokeStyle='#7c6aff'; ctx.lineWidth=3; ctx.strokeRect(4,4,W-8,H-8);
+  const cell=9, pad=16;
+  const cols=Math.floor((W-pad*2)/cell), rows=Math.floor((H-pad*2)/cell);
+  ctx.fillStyle='#0a0a0f';
+  for(let r=0;r<rows;r++) for(let c=0;c<cols;c++)
+    if((c*13+r*7+c^r)%3===0) ctx.fillRect(pad+c*cell,pad+r*cell,cell-1,cell-1);
+  const sq=(x,y)=>{ctx.fillStyle='#0a0a0f';ctx.fillRect(x,y,21,21);ctx.fillStyle='#fff';ctx.fillRect(x+3,y+3,15,15);ctx.fillStyle='#7c6aff';ctx.fillRect(x+6,y+6,9,9);};
+  sq(pad-2,pad-2); sq(W-pad-19,pad-2); sq(pad-2,H-pad-19);
+  ctx.fillStyle='rgba(255,255,255,.88)'; ctx.fillRect(W/2-24,H/2-9,48,18);
+  ctx.fillStyle='#7c6aff'; ctx.font='bold 10px monospace'; ctx.textAlign='center'; ctx.textBaseline='middle';
+  ctx.fillText('SCAN ME',W/2,H/2);
+}
+
+// ── RENDER ──────────────────────────────────────────────
+function render() {
+  if (!username) { showNotFound('No username provided.', 'Use ?u=username in the URL.'); return; }
+  const bio = BL.getBio(username);
+  if (!bio) { showNotFound(`@${username} not found.`, 'This BioLink doesn\'t exist yet.'); return; }
+  if (!bio.published) { showNotFound(`@${username}`, 'This page is set to private.'); return; }
+
+  // apply theme
+  document.documentElement.dataset.theme    = bio.theme || 'dark';
+  document.documentElement.dataset.btnstyle = bio.btnStyle || 'pill';
+  if (bio.accentColor) {
+    document.documentElement.style.setProperty('--accent', bio.accentColor);
+  }
+  document.title = `${bio.displayName || username} | BioLink`;
+
+  // track view
+  BL.trackView(username);
+  const views = BL.viewCount(username);
+
+  const url = BL.bioUrl(username);
+  const socials = bio.socials || {};
+  const links   = bio.links   || [];
+  const taglines= (bio.tagline || '').split('·').map(s=>s.trim()).filter(Boolean);
+
+  page.innerHTML = `
+    <!-- topbar -->
+    <div class="topbar">
+      <a href="index.html">✦ BioLink</a>
+      ${BL.currentUser()?.username===username ? '<a href="dashboard.html">✏️ Edit</a>' : ''}
+    </div>
+
+    <!-- share bar -->
+    <div class="share-bar">
+      <span class="share-url">${url}</span>
+      <button class="copy-btn" id="copy-url">Copy Link</button>
+    </div>
+
+    <!-- profile -->
+    <div class="profile">
+      <div class="avatar-wrap">
+        <img class="avatar" src="${bio.avatarUrl || `https://api.dicebear.com/9.x/bottts-neutral/svg?seed=${username}`}" alt="${username}" onerror="this.src='https://api.dicebear.com/9.x/bottts-neutral/svg?seed=${username}'" />
+        <span class="status-dot" title="Online"></span>
+      </div>
+      <div class="username">${esc(bio.displayName || username)}</div>
+      ${taglines.length ? `<div class="typewriter-wrap"><span id="tw-text"></span><span class="cursor"></span></div>` : ''}
+      ${bio.bio ? `<p class="bio-text">${esc(bio.bio)}</p>` : ''}
+      ${bio.location ? `<div class="location">📍 ${esc(bio.location)}</div>` : ''}
+      ${bio.showViews !== false ? `<div class="views-chip">👁 ${views.toLocaleString()} views</div>` : ''}
+
+      <!-- socials -->
+      ${Object.keys(socials).length ? `
+        <div class="socials">
+          ${Object.entries(socials).map(([k,v])=>{
+            const s = socialUrl(k,v);
+            return `<a href="${esc(s.href)}" target="_blank" rel="noopener" class="social-btn">${s.icon} ${s.label}</a>`;
+          }).join('')}
+        </div>` : ''}
+    </div>
+
+    <!-- links -->
+    ${links.length ? `
+      <div class="sec-label">Links</div>
+      <div id="links-container">
+        ${links.map(l=>`
+          <a href="${esc(l.url)}" target="_blank" rel="noopener" class="link-card" data-url="${esc(l.url)}">
+            <div class="link-icon">${guessEmoji(l.url)}</div>
+            <div class="link-info">
+              <div class="link-title">${esc(l.title)}</div>
+              ${l.desc ? `<div class="link-desc">${esc(l.desc)}</div>` : ''}
+            </div>
+            <span class="link-arrow">↗</span>
+          </a>`).join('')}
+      </div>` : `<div style="text-align:center;padding:40px 0;color:var(--muted);font-size:14px">No links added yet.</div>`}
+
+    <!-- footer -->
+    <div class="footer">
+      <p>Made with <a href="index.html">✦ BioLink</a></p>
+    </div>
+  `;
+
+  // copy url
+  document.getElementById('copy-url').addEventListener('click', function() { copyText(url, this); });
+
+  // typewriter
+  if (taglines.length) {
+    let ti=0, ci=0, del=false;
+    const tw = document.getElementById('tw-text');
+    const step = () => {
+      if(!tw) return;
+      const t = taglines[ti];
+      if(!del){ tw.textContent=t.slice(0,++ci); if(ci===t.length){del=true;setTimeout(step,1800);return;} }
+      else    { tw.textContent=t.slice(0,--ci); if(ci===0){del=false;ti=(ti+1)%taglines.length;} }
+      setTimeout(step, del?45:80);
+    };
+    step();
+  }
+
+  // QR
+  document.getElementById('qr-fab').style.display='flex';
+  document.getElementById('qr-fab').addEventListener('click', () => {
+    document.getElementById('qr-modal').classList.add('open');
+    drawQR(document.getElementById('qrc'));
+  });
+  document.getElementById('qr-close').addEventListener('click', () => document.getElementById('qr-modal').classList.remove('open'));
+  document.getElementById('qr-modal').addEventListener('click', e => { if(e.target===document.getElementById('qr-modal')) document.getElementById('qr-modal').classList.remove('open'); });
+}
+
+function showNotFound(title, sub) {
+  page.innerHTML = `<div class="not-found">
+    <div class="nf-icon">🔮</div>
+    <h2>${esc(title)}</h2>
+    <p>${esc(sub)}</p>
+    <a href="index.html" style="display:inline-flex;align-items:center;gap:8px;background:var(--card);border:1px solid var(--border);border-radius:50px;padding:10px 22px;font-size:14px;font-weight:600;color:var(--text);text-decoration:none;">← Create yours free</a>
+  </div>`;
+}
+
+function esc(s) { return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;'); }
+
+render();
+</script>
+</body>
+</html>

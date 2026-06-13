@@ -1,0 +1,261 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>BioLink — Your link in bio, elevated</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="style.css" />
+  <style>
+    /* ── HERO ─────────────────────────────────────────── */
+    .hero {
+      min-height: calc(100vh - 60px);
+      display: flex; flex-direction: column;
+      align-items: center; justify-content: center;
+      text-align: center; padding: 60px 20px;
+      position: relative; z-index: 1;
+    }
+    .hero-eyebrow {
+      display: inline-flex; align-items: center; gap: 8px;
+      background: var(--accent-dim); border: 1px solid var(--border-focus);
+      border-radius: 50px; padding: 5px 14px;
+      font-size: 12px; font-weight: 600; color: var(--accent);
+      letter-spacing: .06em; text-transform: uppercase;
+      margin-bottom: 24px;
+    }
+    .hero h1 { margin-bottom: 20px; }
+    .hero h1 span {
+      background: linear-gradient(135deg, var(--accent), var(--accent2));
+      -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+    }
+    .hero-sub {
+      font-size: 18px; color: var(--muted); max-width: 480px;
+      margin: 0 auto 36px; line-height: 1.6;
+    }
+    .hero-btns { display: flex; gap: 12px; flex-wrap: wrap; justify-content: center; }
+
+    /* ── FEATURES STRIP ───────────────────────────────── */
+    .features {
+      display: grid; grid-template-columns: repeat(auto-fit, minmax(220px,1fr));
+      gap: 16px; padding: 80px 20px; max-width: 1080px; margin: 0 auto;
+      position: relative; z-index: 1;
+    }
+    .feat-card {
+      background: var(--card); border: 1px solid var(--border);
+      border-radius: var(--radius-lg); padding: 24px;
+      transition: all var(--trans);
+    }
+    .feat-card:hover { border-color: var(--accent); transform: translateY(-3px); box-shadow: 0 12px 32px var(--glow); }
+    .feat-icon { font-size: 28px; margin-bottom: 12px; }
+    .feat-card h3 { margin-bottom: 6px; }
+    .feat-card p  { font-size: 13px; color: var(--muted); line-height: 1.5; }
+
+    /* ── PREVIEW BAR ──────────────────────────────────── */
+    .preview-bar {
+      text-align: center; padding: 20px 20px 80px;
+      position: relative; z-index: 1;
+    }
+    .preview-bar p { font-size: 14px; color: var(--muted); margin-bottom: 12px; }
+    .preview-url {
+      display: inline-flex; align-items: center; gap: 8px;
+      background: var(--card); border: 1px solid var(--border);
+      border-radius: 50px; padding: 10px 20px;
+      font-family: var(--ff-mono); font-size: 14px; color: var(--accent);
+    }
+
+    /* ── AUTH MODAL SPECIFICS ─────────────────────────── */
+    .auth-tabs { display: flex; gap: 0; margin-bottom: 24px; border-radius: var(--radius); overflow: hidden; border: 1px solid var(--border); }
+    .auth-tab {
+      flex: 1; padding: 10px; text-align: center;
+      font-size: 14px; font-weight: 600; background: none;
+      border: none; color: var(--muted); transition: all var(--trans);
+    }
+    .auth-tab.active { background: var(--accent-dim); color: var(--accent); }
+    .auth-form { display: flex; flex-direction: column; gap: 14px; }
+    .auth-panel { display: none; }
+    .auth-panel.active { display: flex; flex-direction: column; gap: 14px; }
+    .divider { height: 1px; background: var(--border); margin: 4px 0; }
+    .hint { font-size: 12px; color: var(--muted); text-align: center; }
+    .hint a { color: var(--accent); }
+  </style>
+</head>
+<body class="ambient">
+
+<!-- NAV -->
+<nav class="nav">
+  <div class="nav-inner">
+    <span class="nav-logo">✦ BioLink</span>
+    <div class="nav-links">
+      <button class="btn btn-ghost btn-sm" id="nav-login">Log In</button>
+      <button class="btn btn-primary btn-sm" id="nav-register">Get Started</button>
+    </div>
+  </div>
+</nav>
+
+<!-- HERO -->
+<section class="hero">
+  <div class="hero-eyebrow">✦ Free forever · No credit card needed</div>
+  <h1>One link.<br/><span>Everything you are.</span></h1>
+  <p class="hero-sub">Create a beautiful bio page in seconds. Share your links, socials, gallery and more — with your own custom URL.</p>
+  <div class="hero-btns">
+    <button class="btn btn-primary" id="hero-register">Create my BioLink →</button>
+    <button class="btn btn-ghost" id="hero-demo">See an example</button>
+  </div>
+</section>
+
+<!-- FEATURES -->
+<div class="features">
+  <div class="feat-card">
+    <div class="feat-icon">🔗</div>
+    <h3>Unlimited Links</h3>
+    <p>Add as many links as you want with custom icons, titles, and descriptions.</p>
+  </div>
+  <div class="feat-card">
+    <div class="feat-icon">🎨</div>
+    <h3>Full Customization</h3>
+    <p>Themes, colors, fonts, badges, typewriter effect — make it yours.</p>
+  </div>
+  <div class="feat-card">
+    <div class="feat-icon">📊</div>
+    <h3>View Analytics</h3>
+    <p>See how many people visit your page and which links get the most clicks.</p>
+  </div>
+  <div class="feat-card">
+    <div class="feat-icon">🖼️</div>
+    <h3>Media Gallery</h3>
+    <p>Showcase your photos and videos directly on your bio page.</p>
+  </div>
+  <div class="feat-card">
+    <div class="feat-icon">🔒</div>
+    <h3>Secure & Private</h3>
+    <p>Your data stays in your browser. No ads, no tracking, no nonsense.</p>
+  </div>
+  <div class="feat-card">
+    <div class="feat-icon">🚀</div>
+    <h3>GitHub-Ready</h3>
+    <p>Self-host on GitHub Pages in minutes. Your URL, your rules.</p>
+  </div>
+</div>
+
+<!-- PREVIEW BAR -->
+<div class="preview-bar">
+  <p>Your link will look like this</p>
+  <div class="preview-url">🌐 yoursite.github.io/bio.html?u=<strong>yourname</strong></div>
+</div>
+
+<!-- AUTH MODAL -->
+<div class="modal-overlay" id="auth-modal">
+  <div class="modal-box">
+    <!-- Tabs -->
+    <div class="auth-tabs">
+      <button class="auth-tab active" data-tab="login">Log In</button>
+      <button class="auth-tab" data-tab="register">Register</button>
+    </div>
+
+    <!-- LOGIN PANEL -->
+    <div class="auth-panel active" id="tab-login">
+      <div class="field">
+        <label>Username</label>
+        <input type="text" id="login-user" placeholder="your_username" autocomplete="username" />
+      </div>
+      <div class="field">
+        <label>Password</label>
+        <input type="password" id="login-pass" placeholder="••••••••" autocomplete="current-password" />
+      </div>
+      <button class="btn btn-primary btn-full" id="do-login">Log In</button>
+      <div class="hint">Admin? username: <code>admin</code> · password: <code>admin123</code></div>
+    </div>
+
+    <!-- REGISTER PANEL -->
+    <div class="auth-panel" id="tab-register">
+      <div class="field">
+        <label>Username <small style="color:var(--muted)">(becomes your URL)</small></label>
+        <input type="text" id="reg-user" placeholder="coolname" autocomplete="username" />
+      </div>
+      <div class="field">
+        <label>Email</label>
+        <input type="email" id="reg-email" placeholder="you@email.com" autocomplete="email" />
+      </div>
+      <div class="field">
+        <label>Password</label>
+        <input type="password" id="reg-pass" placeholder="6+ characters" autocomplete="new-password" />
+      </div>
+      <button class="btn btn-primary btn-full" id="do-register">Create Account →</button>
+      <div class="hint">Already have an account? <a href="#" id="goto-login">Log in</a></div>
+    </div>
+
+    <div class="divider" style="margin-top:4px"></div>
+    <button class="btn btn-ghost btn-sm btn-full" id="close-modal">Cancel</button>
+  </div>
+</div>
+
+<div id="toast"></div>
+
+<script src="app.js"></script>
+<script>
+  /* redirect if already logged in */
+  const sess = BL.currentUser();
+  if (sess) location.href = sess.role === 'admin' ? 'admin.html' : 'dashboard.html';
+
+  /* modal open/close */
+  const modal   = document.getElementById('auth-modal');
+  const openModal= tab => {
+    modal.classList.add('open');
+    switchTab(tab || 'login');
+  };
+  const closeModal = () => modal.classList.remove('open');
+
+  document.getElementById('nav-login').addEventListener('click', () => openModal('login'));
+  document.getElementById('nav-register').addEventListener('click', () => openModal('register'));
+  document.getElementById('hero-register').addEventListener('click', () => openModal('register'));
+  document.getElementById('close-modal').addEventListener('click', closeModal);
+  document.getElementById('goto-login').addEventListener('click', e => { e.preventDefault(); switchTab('login'); });
+  modal.addEventListener('click', e => { if(e.target===modal) closeModal(); });
+
+  /* hero demo */
+  document.getElementById('hero-demo').addEventListener('click', () => {
+    window.open('bio.html?u=admin', '_blank');
+  });
+
+  /* tabs */
+  const tabs = document.querySelectorAll('.auth-tab');
+  const panels = document.querySelectorAll('.auth-panel');
+  const switchTab = name => {
+    tabs.forEach(t => t.classList.toggle('active', t.dataset.tab === name));
+    panels.forEach(p => p.classList.toggle('active', p.id === `tab-${name}`));
+  };
+  tabs.forEach(t => t.addEventListener('click', () => switchTab(t.dataset.tab)));
+
+  /* login */
+  document.getElementById('do-login').addEventListener('click', () => {
+    const u = document.getElementById('login-user').value.trim();
+    const p = document.getElementById('login-pass').value;
+    const r = BL.login(u, p);
+    if (!r.ok) { BL.toast(r.msg, 'error'); return; }
+    BL.toast('Welcome back, ' + r.user.username + '!');
+    setTimeout(() => {
+      location.href = r.user.role === 'admin' ? 'admin.html' : 'dashboard.html';
+    }, 800);
+  });
+
+  /* enter key login */
+  document.getElementById('login-pass').addEventListener('keydown', e => {
+    if (e.key === 'Enter') document.getElementById('do-login').click();
+  });
+
+  /* register */
+  document.getElementById('do-register').addEventListener('click', () => {
+    const u = document.getElementById('reg-user').value;
+    const e = document.getElementById('reg-email').value;
+    const p = document.getElementById('reg-pass').value;
+    const r = BL.register(u, e, p);
+    if (!r.ok) { BL.toast(r.msg, 'error'); return; }
+    // seed default bio
+    BL.saveBio(r.user.username, BL.defaultBio(r.user.username));
+    BL.toast('Account created! Redirecting…');
+    setTimeout(() => location.href = 'dashboard.html', 900);
+  });
+</script>
+</body>
+</html>

@@ -1,0 +1,490 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Dashboard — BioLink</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="style.css" />
+  <style>
+    body { background: var(--bg); }
+    .page-title { font-size: 22px; font-weight: 700; margin-bottom: 4px; }
+    .page-sub   { font-size: 14px; color: var(--muted); margin-bottom: 28px; }
+    .section-head { font-size: 16px; font-weight: 700; margin-bottom: 16px; display: flex; align-items: center; gap: 8px; }
+    .save-row { display: flex; justify-content: flex-end; margin-top: 20px; }
+    .add-link-btn {
+      width: 100%; border: 1px dashed var(--border); background: none;
+      border-radius: var(--radius); padding: 12px; color: var(--muted);
+      font-family: var(--ff); font-size: 14px; transition: all var(--trans);
+      margin-top: 6px;
+    }
+    .add-link-btn:hover { border-color: var(--accent); color: var(--accent); background: var(--accent-dim); }
+
+    /* social row */
+    .social-row { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+    @media(max-width:480px){ .social-row { grid-template-columns: 1fr; } }
+    .social-field { display: flex; align-items: center; gap: 8px; background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); padding: 8px 12px; }
+    .social-field span { font-size: 18px; flex-shrink: 0; }
+    .social-field input { background: none; border: none; color: var(--text); font-family: var(--ff); font-size: 13px; width: 100%; }
+    .social-field input:focus { outline: none; }
+
+    /* theme picker */
+    .theme-grid { display: flex; gap: 10px; flex-wrap: wrap; }
+    .theme-opt {
+      width: 60px; height: 40px; border-radius: 8px; cursor: pointer;
+      border: 2px solid transparent; transition: all var(--trans); position: relative;
+    }
+    .theme-opt.selected { border-color: var(--accent); box-shadow: 0 0 0 3px var(--accent-dim); }
+    .theme-opt label { position: absolute; bottom: -22px; left: 50%; transform: translateX(-50%); font-size: 11px; color: var(--muted); white-space: nowrap; cursor: pointer; }
+
+    /* stats panel */
+    .stats-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(160px,1fr)); gap: 12px; margin-bottom: 24px; }
+
+    /* URL success box */
+    .url-success {
+      background: linear-gradient(135deg, rgba(61,255,160,.06), rgba(124,106,255,.06));
+      border: 1px solid rgba(61,255,160,.2); border-radius: var(--radius-lg);
+      padding: 24px; margin-bottom: 24px; text-align: center;
+    }
+    .url-success h3 { margin-bottom: 8px; }
+    .url-success p  { font-size: 13px; color: var(--muted); margin-bottom: 16px; }
+    .visit-btn { display: inline-flex; align-items: center; gap: 6px; margin-top: 10px; }
+
+    /* mobile bottom nav */
+    .mobile-nav {
+      display: none; position: fixed; bottom: 0; left: 0; right: 0; z-index: 50;
+      background: rgba(8,8,15,.95); backdrop-filter: blur(16px);
+      border-top: 1px solid var(--border); padding: 8px 0;
+    }
+    .mobile-nav-inner { display: flex; justify-content: space-around; }
+    .m-nav-btn { display: flex; flex-direction: column; align-items: center; gap: 3px; background: none; border: none; color: var(--muted); font-size: 10px; padding: 6px 12px; transition: color var(--trans); }
+    .m-nav-btn.active { color: var(--accent); }
+    .m-nav-btn span { font-size: 20px; }
+    @media(max-width:768px){ .mobile-nav { display: block; } body { padding-bottom: 70px; } }
+  </style>
+</head>
+<body>
+
+<!-- NAV -->
+<nav class="nav">
+  <div class="nav-inner">
+    <a href="index.html" class="nav-logo">✦ BioLink</a>
+    <div class="nav-links" id="nav-right">
+      <!-- filled by JS -->
+    </div>
+  </div>
+</nav>
+
+<div class="app-layout">
+  <!-- SIDEBAR -->
+  <aside class="sidebar">
+    <button class="sidebar-item active" data-panel="overview">📊 Overview</button>
+    <button class="sidebar-item" data-panel="profile">👤 Profile</button>
+    <button class="sidebar-item" data-panel="links">🔗 Links</button>
+    <button class="sidebar-item" data-panel="socials">📱 Socials</button>
+    <button class="sidebar-item" data-panel="appearance">🎨 Appearance</button>
+    <button class="sidebar-item" data-panel="myurl">🌐 My URL</button>
+    <div style="flex:1"></div>
+    <button class="sidebar-item" id="sidebar-logout" style="color:var(--danger)">← Log Out</button>
+  </aside>
+
+  <!-- MAIN -->
+  <main class="main-content">
+
+    <!-- OVERVIEW -->
+    <section class="panel active" id="panel-overview">
+      <div class="page-title">Welcome back, <span id="ov-name"></span> 👋</div>
+      <div class="page-sub">Here's how your BioLink is doing.</div>
+
+      <div class="stats-grid">
+        <div class="stat-card">
+          <div class="s-lbl">Page Views</div>
+          <div class="s-num" id="ov-views">0</div>
+        </div>
+        <div class="stat-card">
+          <div class="s-lbl">Links</div>
+          <div class="s-num" id="ov-links">0</div>
+        </div>
+        <div class="stat-card">
+          <div class="s-lbl">Status</div>
+          <div class="s-num" id="ov-status">—</div>
+        </div>
+      </div>
+
+      <!-- URL box -->
+      <div class="url-success">
+        <h3>🎉 Your BioLink is live!</h3>
+        <p>Share this URL anywhere — socials, email, QR code, anywhere.</p>
+        <div class="url-box" id="ov-url-box">
+          <span class="url-text" id="ov-url-text"></span>
+          <button class="copy-btn" id="ov-copy">Copy</button>
+        </div>
+        <a href="#" id="ov-visit" target="_blank" class="btn btn-ghost btn-sm visit-btn">↗ Open my page</a>
+      </div>
+
+      <div class="card">
+        <div class="section-head">⚡ Quick Actions</div>
+        <div style="display:flex; gap:10px; flex-wrap:wrap;">
+          <button class="btn btn-ghost btn-sm" data-panel="links">+ Add a link</button>
+          <button class="btn btn-ghost btn-sm" data-panel="appearance">🎨 Change theme</button>
+          <button class="btn btn-ghost btn-sm" data-panel="profile">✏️ Edit bio</button>
+        </div>
+      </div>
+    </section>
+
+    <!-- PROFILE -->
+    <section class="panel" id="panel-profile">
+      <div class="page-title">Profile</div>
+      <div class="page-sub">What visitors see at the top of your page.</div>
+      <div class="card" style="display:flex;flex-direction:column;gap:16px">
+        <div class="field">
+          <label>Display Name</label>
+          <input type="text" id="p-name" placeholder="Your Name" />
+        </div>
+        <div class="field">
+          <label>Tagline <small style="color:var(--muted)">(typewriter animation)</small></label>
+          <input type="text" id="p-tagline" placeholder="Developer · Creator · Dreamer" />
+        </div>
+        <div class="field">
+          <label>Bio</label>
+          <textarea id="p-bio" placeholder="Tell the world who you are..."></textarea>
+        </div>
+        <div class="field">
+          <label>Avatar URL</label>
+          <input type="url" id="p-avatar" placeholder="https://..." />
+        </div>
+        <div class="field">
+          <label>Location</label>
+          <input type="text" id="p-location" placeholder="Earth 🌍" />
+        </div>
+        <div class="toggle-wrap">
+          <label class="toggle">
+            <input type="checkbox" id="p-show-views" checked />
+            <span class="toggle-slider"></span>
+          </label>
+          <span style="font-size:14px">Show view count publicly</span>
+        </div>
+        <div class="toggle-wrap">
+          <label class="toggle">
+            <input type="checkbox" id="p-published" checked />
+            <span class="toggle-slider"></span>
+          </label>
+          <span style="font-size:14px">Page is published (visible to everyone)</span>
+        </div>
+        <div class="save-row"><button class="btn btn-primary" id="save-profile">Save Profile</button></div>
+      </div>
+    </section>
+
+    <!-- LINKS -->
+    <section class="panel" id="panel-links">
+      <div class="page-title">Links</div>
+      <div class="page-sub">Drag to reorder. Each link appears as a card on your page.</div>
+      <div class="card">
+        <div id="links-list"></div>
+        <button class="add-link-btn" id="add-link">+ Add a link</button>
+        <div class="save-row"><button class="btn btn-primary" id="save-links">Save Links</button></div>
+      </div>
+    </section>
+
+    <!-- SOCIALS -->
+    <section class="panel" id="panel-socials">
+      <div class="page-title">Social Icons</div>
+      <div class="page-sub">Add your handles — they'll appear as quick-links below your avatar.</div>
+      <div class="card">
+        <div class="social-row" id="socials-form">
+          <!-- filled by JS -->
+        </div>
+        <div class="save-row"><button class="btn btn-primary" id="save-socials">Save Socials</button></div>
+      </div>
+    </section>
+
+    <!-- APPEARANCE -->
+    <section class="panel" id="panel-appearance">
+      <div class="page-title">Appearance</div>
+      <div class="page-sub">Personalize the look and feel of your page.</div>
+      <div class="card" style="display:flex;flex-direction:column;gap:22px">
+        <div>
+          <div class="section-head">Theme</div>
+          <div class="theme-grid" id="theme-grid" style="padding-bottom:28px">
+            <!-- filled by JS -->
+          </div>
+        </div>
+        <div class="field">
+          <label>Accent Color</label>
+          <div style="display:flex;align-items:center;gap:12px">
+            <input type="color" id="a-color" value="#7c6aff" style="width:48px;height:40px;border:1px solid var(--border);border-radius:8px;background:none;cursor:pointer;padding:2px" />
+            <span id="a-color-hex" style="font-family:var(--ff-mono);font-size:13px;color:var(--muted)">#7c6aff</span>
+          </div>
+        </div>
+        <div class="field">
+          <label>Button Style</label>
+          <select id="a-btn-style">
+            <option value="pill">Pill (rounded)</option>
+            <option value="rounded">Rounded</option>
+            <option value="sharp">Sharp</option>
+          </select>
+        </div>
+        <div class="save-row"><button class="btn btn-primary" id="save-appearance">Save Appearance</button></div>
+      </div>
+    </section>
+
+    <!-- MY URL -->
+    <section class="panel" id="panel-myurl">
+      <div class="page-title">My URL</div>
+      <div class="page-sub">Share this link to let people visit your BioLink page.</div>
+      <div class="url-success">
+        <h3>🌐 Your BioLink URL</h3>
+        <p>Copy and paste this into your Instagram, TikTok, Twitter, YouTube bio — anywhere you want.</p>
+        <div class="url-box">
+          <span class="url-text" id="url-text"></span>
+          <button class="copy-btn" id="url-copy">Copy</button>
+        </div>
+        <a href="#" id="url-visit" target="_blank" class="btn btn-ghost btn-sm visit-btn">↗ Open my page</a>
+      </div>
+
+      <div class="card">
+        <div class="section-head">📲 Share Everywhere</div>
+        <p style="font-size:14px;color:var(--muted);margin-bottom:16px">Use your BioLink URL in these places to maximize clicks:</p>
+        <ul style="list-style:none;display:flex;flex-direction:column;gap:10px">
+          <li style="font-size:14px">📸 <strong>Instagram</strong> — Edit profile → Website</li>
+          <li style="font-size:14px">🎵 <strong>TikTok</strong> — Edit profile → Website</li>
+          <li style="font-size:14px">🐦 <strong>Twitter/X</strong> — Edit profile → Website</li>
+          <li style="font-size:14px">▶️ <strong>YouTube</strong> — Channel → About → Links</li>
+          <li style="font-size:14px">💼 <strong>LinkedIn</strong> — Edit profile → Website</li>
+        </ul>
+      </div>
+    </section>
+
+  </main>
+</div>
+
+<!-- Mobile Nav -->
+<nav class="mobile-nav">
+  <div class="mobile-nav-inner">
+    <button class="m-nav-btn active" data-panel="overview"><span>📊</span>Overview</button>
+    <button class="m-nav-btn" data-panel="profile"><span>👤</span>Profile</button>
+    <button class="m-nav-btn" data-panel="links"><span>🔗</span>Links</button>
+    <button class="m-nav-btn" data-panel="appearance"><span>🎨</span>Style</button>
+    <button class="m-nav-btn" data-panel="myurl"><span>🌐</span>URL</button>
+  </div>
+</nav>
+
+<div id="toast"></div>
+<script src="app.js"></script>
+<script>
+if (!BL.requireAuth()) throw '';
+const user = BL.currentUser();
+
+/* ── NAV ───────────────────────────────────────────────── */
+document.getElementById('nav-right').innerHTML = `
+  <span style="font-size:13px;color:var(--muted);margin-right:8px">@${user.username}</span>
+  ${user.role==='admin' ? '<a href="admin.html" class="btn btn-ghost btn-sm">Admin</a>' : ''}
+  <button class="btn btn-ghost btn-sm" id="nav-logout">Log Out</button>
+`;
+document.getElementById('nav-logout').addEventListener('click', () => { BL.logout(); location.href='index.html'; });
+document.getElementById('sidebar-logout').addEventListener('click', () => { BL.logout(); location.href='index.html'; });
+
+/* ── PANEL NAVIGATION ──────────────────────────────────── */
+const allPanels = document.querySelectorAll('.panel');
+const sideItems = document.querySelectorAll('.sidebar-item[data-panel]');
+const mNavBtns  = document.querySelectorAll('.m-nav-btn[data-panel]');
+
+function goPanel(name) {
+  allPanels.forEach(p => p.classList.toggle('active', p.id === `panel-${name}`));
+  sideItems.forEach(s => s.classList.toggle('active', s.dataset.panel === name));
+  mNavBtns.forEach(b => b.classList.toggle('active', b.dataset.panel === name));
+  if (name === 'overview') renderOverview();
+  if (name === 'profile') loadProfile();
+  if (name === 'links') loadLinks();
+  if (name === 'socials') loadSocials();
+  if (name === 'appearance') loadAppearance();
+  if (name === 'myurl') loadUrl();
+}
+
+sideItems.forEach(s => s.addEventListener('click', () => goPanel(s.dataset.panel)));
+mNavBtns.forEach(b => b.addEventListener('click', () => goPanel(b.dataset.panel)));
+document.querySelectorAll('[data-panel]').forEach(el => {
+  if (el.classList.contains('btn')) el.addEventListener('click', () => goPanel(el.dataset.panel));
+});
+
+/* ── BIO DATA ──────────────────────────────────────────── */
+const getBio = () => BL.getBio(user.username) || BL.defaultBio(user.username);
+
+/* ── OVERVIEW ──────────────────────────────────────────── */
+function renderOverview() {
+  const bio = getBio();
+  document.getElementById('ov-name').textContent = bio.displayName || user.username;
+  document.getElementById('ov-views').textContent = BL.viewCount(user.username).toLocaleString();
+  document.getElementById('ov-links').textContent = (bio.links||[]).length;
+  document.getElementById('ov-status').innerHTML = bio.published
+    ? '<span class="badge badge-active">Live</span>'
+    : '<span class="badge" style="color:var(--muted);border-color:var(--border)">Draft</span>';
+  const url = BL.bioUrl(user.username);
+  document.getElementById('ov-url-text').textContent = url;
+  document.getElementById('ov-visit').href = url;
+  document.getElementById('ov-copy').addEventListener('click', () => copyText(url, document.getElementById('ov-copy')));
+}
+renderOverview();
+
+/* ── PROFILE ───────────────────────────────────────────── */
+function loadProfile() {
+  const bio = getBio();
+  document.getElementById('p-name').value     = bio.displayName || '';
+  document.getElementById('p-tagline').value  = bio.tagline     || '';
+  document.getElementById('p-bio').value      = bio.bio         || '';
+  document.getElementById('p-avatar').value   = bio.avatarUrl   || '';
+  document.getElementById('p-location').value = bio.location    || '';
+  document.getElementById('p-show-views').checked = bio.showViews !== false;
+  document.getElementById('p-published').checked  = bio.published  !== false;
+}
+document.getElementById('save-profile').addEventListener('click', () => {
+  const bio = getBio();
+  bio.displayName = document.getElementById('p-name').value.trim() || user.username;
+  bio.tagline     = document.getElementById('p-tagline').value.trim();
+  bio.bio         = document.getElementById('p-bio').value.trim();
+  bio.avatarUrl   = document.getElementById('p-avatar').value.trim() || `https://api.dicebear.com/9.x/bottts-neutral/svg?seed=${user.username}`;
+  bio.location    = document.getElementById('p-location').value.trim();
+  bio.showViews   = document.getElementById('p-show-views').checked;
+  bio.published   = document.getElementById('p-published').checked;
+  BL.saveBio(user.username, bio);
+  BL.toast('Profile saved ✓');
+});
+
+/* ── LINKS ─────────────────────────────────────────────── */
+function loadLinks() {
+  const bio = getBio();
+  const list = document.getElementById('links-list');
+  list.innerHTML = '';
+  (bio.links || []).forEach((lnk, i) => renderLinkItem(lnk, i));
+}
+function renderLinkItem(lnk, idx) {
+  const list = document.getElementById('links-list');
+  const div  = document.createElement('div');
+  div.className = 'link-item';
+  div.dataset.idx = idx;
+  div.innerHTML = `
+    <span class="drag-handle">⠿</span>
+    <div class="link-inputs">
+      <input type="text" placeholder="Label  e.g. My Website" value="${escHtml(lnk.title||'')}" data-field="title" />
+      <input type="url"  placeholder="URL    https://..." value="${escHtml(lnk.url||'')}" data-field="url" />
+      <input type="text" placeholder="Description (optional)" value="${escHtml(lnk.desc||'')}" data-field="desc" />
+    </div>
+    <button class="del-link" title="Remove">✕</button>
+  `;
+  div.querySelector('.del-link').addEventListener('click', () => { div.remove(); });
+  list.appendChild(div);
+}
+document.getElementById('add-link').addEventListener('click', () => {
+  const idx = document.querySelectorAll('.link-item').length;
+  renderLinkItem({ title:'', url:'', desc:'' }, idx);
+});
+document.getElementById('save-links').addEventListener('click', () => {
+  const bio = getBio();
+  const items = document.querySelectorAll('.link-item');
+  bio.links = Array.from(items).map(item => ({
+    title: item.querySelector('[data-field="title"]').value.trim(),
+    url:   item.querySelector('[data-field="url"]').value.trim(),
+    desc:  item.querySelector('[data-field="desc"]').value.trim()
+  })).filter(l => l.title && l.url);
+  BL.saveBio(user.username, bio);
+  BL.toast(`${bio.links.length} links saved ✓`);
+  loadLinks();
+});
+
+/* ── SOCIALS ───────────────────────────────────────────── */
+const SOCIALS = [
+  { key:'twitter',   icon:'🐦', label:'Twitter handle'   },
+  { key:'instagram', icon:'📸', label:'Instagram handle' },
+  { key:'youtube',   icon:'▶️', label:'YouTube URL'      },
+  { key:'discord',   icon:'💬', label:'Discord invite'   },
+  { key:'github',    icon:'💻', label:'GitHub username'  },
+  { key:'tiktok',    icon:'🎵', label:'TikTok handle'    },
+  { key:'linkedin',  icon:'💼', label:'LinkedIn URL'     },
+  { key:'twitch',    icon:'🎮', label:'Twitch username'  },
+];
+function loadSocials() {
+  const bio = getBio();
+  const form = document.getElementById('socials-form');
+  form.innerHTML = '';
+  SOCIALS.forEach(s => {
+    const d = document.createElement('div');
+    d.className = 'social-field';
+    d.innerHTML = `<span title="${s.label}">${s.icon}</span><input type="text" id="soc-${s.key}" placeholder="${s.label}" value="${escHtml((bio.socials||{})[s.key]||'')}" />`;
+    form.appendChild(d);
+  });
+}
+document.getElementById('save-socials').addEventListener('click', () => {
+  const bio = getBio();
+  bio.socials = {};
+  SOCIALS.forEach(s => {
+    const v = document.getElementById(`soc-${s.key}`).value.trim();
+    if (v) bio.socials[s.key] = v;
+  });
+  BL.saveBio(user.username, bio);
+  BL.toast('Socials saved ✓');
+});
+
+/* ── APPEARANCE ────────────────────────────────────────── */
+const THEMES = [
+  { id:'dark',    label:'Dark',    bg:'#0a0a0f', card:'#1c1c28' },
+  { id:'light',   label:'Light',   bg:'#f5f5ff', card:'#e8e8f5' },
+  { id:'midnight',label:'Midnight',bg:'#000010', card:'#0d0d22' },
+  { id:'forest',  label:'Forest',  bg:'#0a110a', card:'#131d13' },
+  { id:'rose',    label:'Rose',    bg:'#150a0f', card:'#221318' },
+];
+function loadAppearance() {
+  const bio = getBio();
+  const grid = document.getElementById('theme-grid');
+  grid.innerHTML = '';
+  THEMES.forEach(t => {
+    const d = document.createElement('div');
+    d.className = 'theme-opt' + (bio.theme === t.id ? ' selected' : '');
+    d.style.cssText = `background:linear-gradient(135deg,${t.bg},${t.card})`;
+    d.dataset.theme = t.id;
+    d.innerHTML = `<label>${t.label}</label>`;
+    d.addEventListener('click', () => {
+      document.querySelectorAll('.theme-opt').forEach(x => x.classList.remove('selected'));
+      d.classList.add('selected');
+    });
+    grid.appendChild(d);
+  });
+  const ac = document.getElementById('a-color');
+  ac.value = bio.accentColor || '#7c6aff';
+  document.getElementById('a-color-hex').textContent = ac.value;
+  ac.addEventListener('input', () => document.getElementById('a-color-hex').textContent = ac.value);
+  document.getElementById('a-btn-style').value = bio.btnStyle || 'pill';
+}
+document.getElementById('save-appearance').addEventListener('click', () => {
+  const bio = getBio();
+  const sel = document.querySelector('.theme-opt.selected');
+  bio.theme     = sel ? sel.dataset.theme : 'dark';
+  bio.accentColor = document.getElementById('a-color').value;
+  bio.btnStyle  = document.getElementById('a-btn-style').value;
+  BL.saveBio(user.username, bio);
+  BL.toast('Appearance saved ✓');
+});
+
+/* ── MY URL ────────────────────────────────────────────── */
+function loadUrl() {
+  const url = BL.bioUrl(user.username);
+  document.getElementById('url-text').textContent = url;
+  document.getElementById('url-visit').href = url;
+  document.getElementById('url-copy').onclick = () => copyText(url, document.getElementById('url-copy'));
+}
+
+/* ── COPY HELPER ───────────────────────────────────────── */
+function copyText(text, btn) {
+  navigator.clipboard.writeText(text).then(() => {
+    const orig = btn.textContent;
+    btn.textContent = '✓ Copied!';
+    setTimeout(() => btn.textContent = orig, 2000);
+    BL.toast('Link copied to clipboard ✓');
+  });
+}
+function escHtml(s) {
+  return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+}
+</script>
+</body>
+</html>
