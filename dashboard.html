@@ -1,95 +1,76 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width,initial-scale=1.0"/>
   <title>Dashboard — BioLink</title>
-  <link rel="preconnect" href="https://fonts.googleapis.com" />
-  <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet" />
-  <link rel="stylesheet" href="style.css" />
+  <link rel="icon" type="image/svg+xml" href="assets/favicon.svg"/>
+  <link rel="stylesheet" href="style.css"/>
   <style>
-    body { background: var(--bg); }
-    .page-title { font-size: 22px; font-weight: 700; margin-bottom: 4px; }
-    .page-sub   { font-size: 14px; color: var(--muted); margin-bottom: 28px; }
-    .section-head { font-size: 16px; font-weight: 700; margin-bottom: 16px; display: flex; align-items: center; gap: 8px; }
-    .save-row { display: flex; justify-content: flex-end; margin-top: 20px; }
-    .add-link-btn {
-      width: 100%; border: 1px dashed var(--border); background: none;
-      border-radius: var(--radius); padding: 12px; color: var(--muted);
-      font-family: var(--ff); font-size: 14px; transition: all var(--trans);
-      margin-top: 6px;
-    }
-    .add-link-btn:hover { border-color: var(--accent); color: var(--accent); background: var(--accent-dim); }
-
-    /* social row */
-    .social-row { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
-    @media(max-width:480px){ .social-row { grid-template-columns: 1fr; } }
-    .social-field { display: flex; align-items: center; gap: 8px; background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); padding: 8px 12px; }
-    .social-field span { font-size: 18px; flex-shrink: 0; }
-    .social-field input { background: none; border: none; color: var(--text); font-family: var(--ff); font-size: 13px; width: 100%; }
-    .social-field input:focus { outline: none; }
-
-    /* theme picker */
-    .theme-grid { display: flex; gap: 10px; flex-wrap: wrap; }
-    .theme-opt {
-      width: 60px; height: 40px; border-radius: 8px; cursor: pointer;
-      border: 2px solid transparent; transition: all var(--trans); position: relative;
-    }
-    .theme-opt.selected { border-color: var(--accent); box-shadow: 0 0 0 3px var(--accent-dim); }
-    .theme-opt label { position: absolute; bottom: -22px; left: 50%; transform: translateX(-50%); font-size: 11px; color: var(--muted); white-space: nowrap; cursor: pointer; }
-
-    /* stats panel */
-    .stats-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(160px,1fr)); gap: 12px; margin-bottom: 24px; }
-
-    /* URL success box */
-    .url-success {
-      background: linear-gradient(135deg, rgba(61,255,160,.06), rgba(124,106,255,.06));
-      border: 1px solid rgba(61,255,160,.2); border-radius: var(--radius-lg);
-      padding: 24px; margin-bottom: 24px; text-align: center;
-    }
-    .url-success h3 { margin-bottom: 8px; }
-    .url-success p  { font-size: 13px; color: var(--muted); margin-bottom: 16px; }
-    .visit-btn { display: inline-flex; align-items: center; gap: 6px; margin-top: 10px; }
-
-    /* mobile bottom nav */
-    .mobile-nav {
-      display: none; position: fixed; bottom: 0; left: 0; right: 0; z-index: 50;
-      background: rgba(8,8,15,.95); backdrop-filter: blur(16px);
-      border-top: 1px solid var(--border); padding: 8px 0;
-    }
-    .mobile-nav-inner { display: flex; justify-content: space-around; }
-    .m-nav-btn { display: flex; flex-direction: column; align-items: center; gap: 3px; background: none; border: none; color: var(--muted); font-size: 10px; padding: 6px 12px; transition: color var(--trans); }
-    .m-nav-btn.active { color: var(--accent); }
-    .m-nav-btn span { font-size: 20px; }
-    @media(max-width:768px){ .mobile-nav { display: block; } body { padding-bottom: 70px; } }
+    .stats-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:12px;margin-bottom:28px;}
+    .url-success{background:linear-gradient(135deg,rgba(61,255,160,.06),rgba(124,106,255,.06));border:1px solid rgba(61,255,160,.2);border-radius:var(--rad-lg);padding:22px;margin-bottom:24px;text-align:center;}
+    .url-success h3{margin-bottom:8px;} .url-success p{font-size:13px;color:var(--muted);margin-bottom:14px;}
+    .add-link-btn{width:100%;border:1.5px dashed var(--border);background:none;border-radius:var(--rad);padding:12px;color:var(--muted);font-family:var(--ff);font-size:14px;transition:all var(--trans);margin-top:6px;cursor:pointer;}
+    .add-link-btn:hover{border-color:var(--accent);color:var(--accent);background:var(--accent-d);}
+    .theme-grid{display:flex;gap:12px;flex-wrap:wrap;padding-bottom:28px;}
+    .theme-opt{width:64px;height:44px;border-radius:10px;cursor:pointer;border:2px solid transparent;transition:all var(--trans);position:relative;}
+    .theme-opt.selected{border-color:var(--accent);box-shadow:0 0 0 3px var(--accent-d);}
+    .theme-opt label{position:absolute;bottom:-22px;left:50%;transform:translateX(-50%);font-size:11px;color:var(--muted);white-space:nowrap;cursor:pointer;}
+    .gallery-grid-ed{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin-bottom:12px;}
+    @media(max-width:480px){.gallery-grid-ed{grid-template-columns:repeat(3,1fr);}}
+    .gal-item{aspect-ratio:1;border-radius:8px;overflow:hidden;background:var(--card);border:1px solid var(--border);position:relative;}
+    .gal-item img{width:100%;height:100%;object-fit:cover;}
+    .gal-del{position:absolute;top:3px;right:3px;background:rgba(0,0,0,.7);border:none;color:#fff;border-radius:50%;width:20px;height:20px;font-size:11px;cursor:pointer;display:flex;align-items:center;justify-content:center;}
+    .gal-add{aspect-ratio:1;border:1.5px dashed var(--border);border-radius:8px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:3px;cursor:pointer;color:var(--muted);font-size:11px;transition:all var(--trans);background:none;}
+    .gal-add:hover{border-color:var(--accent);color:var(--accent);background:var(--accent-d);}
+    .gal-add span{font-size:20px;}
+    .domain-row{display:flex;gap:8px;align-items:center;}
+    .domain-row input{flex:1;}
+    .dns-hint{background:var(--surface);border:1px solid var(--border);border-radius:var(--rad);padding:14px;font-size:13px;font-family:var(--ffm);margin-top:10px;display:none;}
+    .dns-hint.show{display:block;}
+    .dns-row{display:flex;gap:8px;margin-bottom:6px;flex-wrap:wrap;}
+    .dns-cell{background:var(--card);border:1px solid var(--border);border-radius:6px;padding:4px 8px;font-size:12px;}
+    .badge-input-row{display:flex;gap:8px;align-items:center;}
+    .badge-input-row input{flex:1;}
+    .badges-preview{display:flex;flex-wrap:wrap;gap:6px;margin-top:8px;}
+    .badge-chip{display:inline-flex;align-items:center;gap:5px;background:var(--accent-d);border:1px solid rgba(124,106,255,.25);border-radius:50px;padding:4px 10px;font-size:12px;font-weight:600;color:var(--accent);}
+    .badge-chip button{background:none;border:none;color:var(--muted);cursor:pointer;font-size:13px;padding:0;line-height:1;}
+    .effect-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px;}
+    @media(max-width:480px){.effect-grid{grid-template-columns:1fr;}}
+    .effect-card{background:var(--surface);border:1px solid var(--border);border-radius:var(--rad);padding:14px;display:flex;align-items:center;gap:12px;}
+    .effect-card .eff-icon{font-size:24px;flex-shrink:0;}
+    .effect-card .eff-info{flex:1;}
+    .effect-card .eff-name{font-size:14px;font-weight:600;margin-bottom:2px;}
+    .effect-card .eff-desc{font-size:12px;color:var(--muted);}
   </style>
 </head>
 <body>
-
-<!-- NAV -->
 <nav class="nav">
   <div class="nav-inner">
     <a href="index.html" class="nav-logo">✦ BioLink</a>
-    <div class="nav-links" id="nav-right">
-      <!-- filled by JS -->
-    </div>
+    <div class="nav-links" id="nav-right"></div>
   </div>
 </nav>
 
 <div class="app-layout">
-  <!-- SIDEBAR -->
   <aside class="sidebar">
     <button class="sidebar-item active" data-panel="overview">📊 Overview</button>
     <button class="sidebar-item" data-panel="profile">👤 Profile</button>
     <button class="sidebar-item" data-panel="links">🔗 Links</button>
     <button class="sidebar-item" data-panel="socials">📱 Socials</button>
+    <button class="sidebar-item" data-panel="media">🎬 Media</button>
+    <button class="sidebar-item" data-panel="gallery">🖼️ Gallery</button>
     <button class="sidebar-item" data-panel="appearance">🎨 Appearance</button>
-    <button class="sidebar-item" data-panel="myurl">🌐 My URL</button>
+    <button class="sidebar-item" data-panel="effects">✨ Effects</button>
+    <button class="sidebar-item" data-panel="domain">🌐 Custom Domain</button>
+    <button class="sidebar-item" data-panel="myurl">🔗 My URL</button>
+    <div class="sidebar-sep"></div>
+    <a href="credits.html" class="sidebar-item" style="text-decoration:none">ℹ Credits</a>
     <div style="flex:1"></div>
-    <button class="sidebar-item" id="sidebar-logout" style="color:var(--danger)">← Log Out</button>
+    <button class="sidebar-item" id="sb-logout" style="color:var(--danger)">← Log Out</button>
+    <div style="text-align:center;font-size:11px;color:var(--muted);padding:10px 14px 2px">Dev by <a href="https://github.com" target="_blank" style="color:var(--muted);text-decoration:none">Your Name</a></div>
   </aside>
 
-  <!-- MAIN -->
   <main class="main-content">
 
     <!-- OVERVIEW -->
@@ -97,38 +78,56 @@
       <div class="page-title">Welcome back, <span id="ov-name"></span> 👋</div>
       <div class="page-sub">Here's how your BioLink is doing.</div>
 
-      <div class="stats-grid">
-        <div class="stat-card">
-          <div class="s-lbl">Page Views</div>
-          <div class="s-num" id="ov-views">0</div>
-        </div>
-        <div class="stat-card">
-          <div class="s-lbl">Links</div>
-          <div class="s-num" id="ov-links">0</div>
-        </div>
-        <div class="stat-card">
-          <div class="s-lbl">Status</div>
-          <div class="s-num" id="ov-status">—</div>
-        </div>
+      <!-- hero illustration banner -->
+      <div class="card" style="padding:0;overflow:hidden;margin-bottom:20px;background:linear-gradient(135deg,rgba(124,106,255,.08),rgba(255,106,240,.04));border-color:rgba(124,106,255,.2)">
+        <svg viewBox="0 0 800 140" xmlns="http://www.w3.org/2000/svg" style="display:block;width:100%;height:auto">
+          <defs><linearGradient id="hg" x1="0%" y1="0%" x2="100%" y2="100%"><stop offset="0%" style="stop-color:#7c6aff"/><stop offset="100%" style="stop-color:#ff6af0"/></linearGradient></defs>
+          <!-- floating particles -->
+          <circle cx="60" cy="30" r="2" fill="#7c6aff" opacity="0.4"/>
+          <circle cx="740" cy="40" r="2.5" fill="#ff6af0" opacity="0.3"/>
+          <circle cx="700" cy="100" r="1.5" fill="#7c6aff" opacity="0.5"/>
+          <circle cx="40" cy="100" r="2" fill="#ff6af0" opacity="0.4"/>
+          <!-- left text block -->
+          <text x="36" y="50" font-size="22" font-weight="700" fill="#ededff" font-family="system-ui,sans-serif">Your page, your way</text>
+          <text x="36" y="76" font-size="13" fill="#6464a0" font-family="system-ui,sans-serif">Add links, music, video &amp; galleries — then share your URL anywhere.</text>
+          <rect x="36" y="92" width="120" height="28" rx="14" fill="url(#hg)"/>
+          <text x="96" y="110" text-anchor="middle" font-size="12" fill="#fff" font-weight="600">+ Add a link</text>
+          <rect x="166" y="92" width="100" height="28" rx="14" fill="none" stroke="#2a2a3e" stroke-width="1"/>
+          <text x="216" y="110" text-anchor="middle" font-size="12" fill="#6464a0" font-weight="600">🎬 Media</text>
+          <!-- mini phone preview right -->
+          <g transform="translate(640,12)">
+            <rect width="110" height="116" rx="14" fill="#181826" stroke="#2a2a3e" stroke-width="1.5"/>
+            <circle cx="55" cy="34" r="16" fill="#11111c" stroke="#7c6aff" stroke-width="1.5"/>
+            <text x="55" y="40" text-anchor="middle" font-size="14" fill="#7c6aff">🤖</text>
+            <rect x="35" y="56" width="40" height="6" rx="3" fill="#2a2a3e"/>
+            <rect x="14" y="70" width="82" height="14" rx="6" fill="#11111c" stroke="#2a2a3e" stroke-width="1"/>
+            <rect x="14" y="88" width="82" height="14" rx="6" fill="#11111c" stroke="#2a2a3e" stroke-width="1"/>
+            <rect x="14" y="106" width="38" height="6" rx="3" fill="#11111c"/>
+            <rect x="58" y="106" width="38" height="6" rx="3" fill="#11111c"/>
+          </g>
+        </svg>
       </div>
 
-      <!-- URL box -->
+      <div class="stats-grid">
+        <div class="stat-card accent"><div class="s-lbl">Page Views</div><div class="s-num" id="ov-views">0</div></div>
+        <div class="stat-card accent"><div class="s-lbl">Link Clicks</div><div class="s-num" id="ov-clicks">0</div></div>
+        <div class="stat-card accent"><div class="s-lbl">Links</div><div class="s-num" id="ov-links">0</div></div>
+        <div class="stat-card accent"><div class="s-lbl">Status</div><div class="s-num" id="ov-status">—</div></div>
+      </div>
       <div class="url-success">
         <h3>🎉 Your BioLink is live!</h3>
-        <p>Share this URL anywhere — socials, email, QR code, anywhere.</p>
-        <div class="url-box" id="ov-url-box">
-          <span class="url-text" id="ov-url-text"></span>
-          <button class="copy-btn" id="ov-copy">Copy</button>
-        </div>
-        <a href="#" id="ov-visit" target="_blank" class="btn btn-ghost btn-sm visit-btn">↗ Open my page</a>
+        <p>Share this URL on all your social profiles.</p>
+        <div class="url-box"><span class="url-text" id="ov-url-text"></span><button class="copy-btn" id="ov-copy">Copy</button></div>
+        <a href="#" id="ov-visit" target="_blank" class="btn btn-ghost btn-sm" style="margin-top:10px;display:inline-flex">↗ Open my page</a>
       </div>
-
       <div class="card">
         <div class="section-head">⚡ Quick Actions</div>
-        <div style="display:flex; gap:10px; flex-wrap:wrap;">
-          <button class="btn btn-ghost btn-sm" data-panel="links">+ Add a link</button>
-          <button class="btn btn-ghost btn-sm" data-panel="appearance">🎨 Change theme</button>
-          <button class="btn btn-ghost btn-sm" data-panel="profile">✏️ Edit bio</button>
+        <div style="display:flex;gap:10px;flex-wrap:wrap;">
+          <button class="btn btn-ghost btn-sm" data-goto="links">+ Add link</button>
+          <button class="btn btn-ghost btn-sm" data-goto="media">🎬 Add media</button>
+          <button class="btn btn-ghost btn-sm" data-goto="appearance">🎨 Change theme</button>
+          <button class="btn btn-ghost btn-sm" data-goto="effects">✨ Add effects</button>
+          <button class="btn btn-ghost btn-sm" data-goto="domain">🌐 Custom domain</button>
         </div>
       </div>
     </section>
@@ -138,40 +137,24 @@
       <div class="page-title">Profile</div>
       <div class="page-sub">What visitors see at the top of your page.</div>
       <div class="card" style="display:flex;flex-direction:column;gap:16px">
-        <div class="field">
-          <label>Display Name</label>
-          <input type="text" id="p-name" placeholder="Your Name" />
+        <div class="field-row">
+          <div class="field"><label>Display Name</label><input type="text" id="p-name" placeholder="Your Name"/></div>
+          <div class="field"><label>Pronouns</label><input type="text" id="p-pronouns" placeholder="they/them"/></div>
         </div>
-        <div class="field">
-          <label>Tagline <small style="color:var(--muted)">(typewriter animation)</small></label>
-          <input type="text" id="p-tagline" placeholder="Developer · Creator · Dreamer" />
+        <div class="field"><label>Tagline <small style="color:var(--muted)">(separate multiple with ·)</small></label><input type="text" id="p-tagline" placeholder="Developer · Creator · Dreamer"/></div>
+        <div class="field"><label>Bio</label><textarea id="p-bio" placeholder="Tell the world who you are..."></textarea></div>
+        <div class="field"><label>Avatar URL</label><input type="url" id="p-avatar" placeholder="https://..."/></div>
+        <div class="field"><label>Location</label><input type="text" id="p-location" placeholder="Earth 🌍"/></div>
+        <div>
+          <div class="section-head" style="margin-bottom:10px">Profile Badges</div>
+          <div class="badge-input-row">
+            <input type="text" id="badge-input" placeholder="e.g. 🔥 Verified" style="background:var(--surface);border:1px solid var(--border);border-radius:var(--rad);padding:10px 12px;font-family:var(--ff);font-size:14px;color:var(--text);flex:1;"/>
+            <button class="btn btn-ghost btn-sm" id="badge-add">+ Add</button>
+          </div>
+          <div class="badges-preview" id="badges-preview"></div>
         </div>
-        <div class="field">
-          <label>Bio</label>
-          <textarea id="p-bio" placeholder="Tell the world who you are..."></textarea>
-        </div>
-        <div class="field">
-          <label>Avatar URL</label>
-          <input type="url" id="p-avatar" placeholder="https://..." />
-        </div>
-        <div class="field">
-          <label>Location</label>
-          <input type="text" id="p-location" placeholder="Earth 🌍" />
-        </div>
-        <div class="toggle-wrap">
-          <label class="toggle">
-            <input type="checkbox" id="p-show-views" checked />
-            <span class="toggle-slider"></span>
-          </label>
-          <span style="font-size:14px">Show view count publicly</span>
-        </div>
-        <div class="toggle-wrap">
-          <label class="toggle">
-            <input type="checkbox" id="p-published" checked />
-            <span class="toggle-slider"></span>
-          </label>
-          <span style="font-size:14px">Page is published (visible to everyone)</span>
-        </div>
+        <div class="toggle-wrap"><label class="toggle"><input type="checkbox" id="p-show-views" checked/><span class="toggle-slider"></span></label><span style="font-size:14px">Show view count publicly</span></div>
+        <div class="toggle-wrap"><label class="toggle"><input type="checkbox" id="p-published" checked/><span class="toggle-slider"></span></label><span style="font-size:14px">Page is published (visible to everyone)</span></div>
         <div class="save-row"><button class="btn btn-primary" id="save-profile">Save Profile</button></div>
       </div>
     </section>
@@ -179,7 +162,7 @@
     <!-- LINKS -->
     <section class="panel" id="panel-links">
       <div class="page-title">Links</div>
-      <div class="page-sub">Drag to reorder. Each link appears as a card on your page.</div>
+      <div class="page-sub">Add links with labels, descriptions, icons, and tags.</div>
       <div class="card">
         <div id="links-list"></div>
         <button class="add-link-btn" id="add-link">+ Add a link</button>
@@ -190,68 +173,203 @@
     <!-- SOCIALS -->
     <section class="panel" id="panel-socials">
       <div class="page-title">Social Icons</div>
-      <div class="page-sub">Add your handles — they'll appear as quick-links below your avatar.</div>
+      <div class="page-sub">Quick-link icons shown below your avatar.</div>
       <div class="card">
-        <div class="social-row" id="socials-form">
-          <!-- filled by JS -->
-        </div>
+        <div class="social-row" id="socials-form"></div>
         <div class="save-row"><button class="btn btn-primary" id="save-socials">Save Socials</button></div>
+      </div>
+    </section>
+
+    <!-- MEDIA -->
+    <section class="panel" id="panel-media">
+      <div class="page-title">Music & Video</div>
+      <div class="page-sub">Embed a track or video directly on your bio page.</div>
+      <div class="card" style="display:flex;flex-direction:column;gap:20px">
+        <div>
+          <div class="section-head">🎵 Music</div>
+          <div class="field" style="margin-bottom:10px"><label>Source</label>
+            <select id="music-type">
+              <option value="none">None</option>
+              <option value="spotify">Spotify Embed</option>
+              <option value="soundcloud">SoundCloud</option>
+              <option value="custom">Custom Audio URL (.mp3)</option>
+            </select>
+          </div>
+          <div class="field" id="music-url-wrap"><label>Embed URL / Track URL</label><input type="text" id="music-url" placeholder="Paste Spotify embed URL or audio link"/></div>
+          <div class="field" id="music-title-wrap" style="display:none"><label>Track Title</label><input type="text" id="music-title" placeholder="Song name"/></div>
+          <div class="toggle-wrap" style="margin-top:8px"><label class="toggle"><input type="checkbox" id="music-autoplay"/><span class="toggle-slider"></span></label><span style="font-size:13px;color:var(--muted)">Autoplay (may be blocked by browser)</span></div>
+          <p style="font-size:12px;color:var(--muted);margin-top:6px">For Spotify: open track → Share → Embed → copy the src URL from the iframe code.</p>
+        </div>
+        <hr style="border:none;border-top:1px solid var(--border)"/>
+        <div>
+          <div class="section-head">📺 Video</div>
+          <div class="field" style="margin-bottom:10px"><label>Source</label>
+            <select id="video-type">
+              <option value="none">None</option>
+              <option value="youtube">YouTube</option>
+              <option value="vimeo">Vimeo</option>
+              <option value="custom">Custom Video URL (.mp4)</option>
+            </select>
+          </div>
+          <div class="field"><label>Video URL</label><input type="text" id="video-url" placeholder="https://youtube.com/watch?v=..."/></div>
+          <div class="field"><label>Video Title (optional)</label><input type="text" id="video-title" placeholder="Watch my latest video"/></div>
+        </div>
+        <div class="save-row"><button class="btn btn-primary" id="save-media">Save Media</button></div>
+      </div>
+    </section>
+
+    <!-- GALLERY -->
+    <section class="panel" id="panel-gallery">
+      <div class="page-title">Photo Gallery</div>
+      <div class="page-sub">Add image URLs to showcase a gallery grid on your page.</div>
+      <div class="card">
+        <div class="gallery-grid-ed" id="gal-grid"></div>
+        <div class="field" style="margin-top:8px">
+          <label>Add Image URL</label>
+          <div style="display:flex;gap:8px">
+            <input type="url" id="gal-url-input" placeholder="https://..." style="flex:1"/>
+            <button class="btn btn-ghost btn-sm" id="gal-add-btn">+ Add</button>
+          </div>
+        </div>
+        <p style="font-size:12px;color:var(--muted);margin-top:8px">Tip: Use direct image links from Imgur, Unsplash, or your own host. Max 12 images.</p>
+        <div class="save-row"><button class="btn btn-primary" id="save-gallery">Save Gallery</button></div>
       </div>
     </section>
 
     <!-- APPEARANCE -->
     <section class="panel" id="panel-appearance">
       <div class="page-title">Appearance</div>
-      <div class="page-sub">Personalize the look and feel of your page.</div>
+      <div class="page-sub">Themes, colors, and button styles for your page.</div>
       <div class="card" style="display:flex;flex-direction:column;gap:22px">
         <div>
           <div class="section-head">Theme</div>
-          <div class="theme-grid" id="theme-grid" style="padding-bottom:28px">
-            <!-- filled by JS -->
-          </div>
+          <div class="theme-grid" id="theme-grid"></div>
         </div>
-        <div class="field">
-          <label>Accent Color</label>
-          <div style="display:flex;align-items:center;gap:12px">
-            <input type="color" id="a-color" value="#7c6aff" style="width:48px;height:40px;border:1px solid var(--border);border-radius:8px;background:none;cursor:pointer;padding:2px" />
-            <span id="a-color-hex" style="font-family:var(--ff-mono);font-size:13px;color:var(--muted)">#7c6aff</span>
+        <div class="field-row">
+          <div class="field">
+            <label>Accent Color</label>
+            <div style="display:flex;align-items:center;gap:12px">
+              <input type="color" id="a-color" value="#7c6aff" style="width:48px;height:40px;border:1px solid var(--border);border-radius:8px;background:none;cursor:pointer;padding:2px"/>
+              <span id="a-color-hex" style="font-family:var(--ffm);font-size:13px;color:var(--muted)">#7c6aff</span>
+            </div>
           </div>
-        </div>
-        <div class="field">
-          <label>Button Style</label>
-          <select id="a-btn-style">
-            <option value="pill">Pill (rounded)</option>
-            <option value="rounded">Rounded</option>
-            <option value="sharp">Sharp</option>
-          </select>
+          <div class="field"><label>Button Style</label>
+            <select id="a-btn-style">
+              <option value="pill">Pill (rounded)</option>
+              <option value="rounded">Rounded</option>
+              <option value="sharp">Sharp</option>
+            </select>
+          </div>
         </div>
         <div class="save-row"><button class="btn btn-primary" id="save-appearance">Save Appearance</button></div>
+      </div>
+    </section>
+
+    <!-- EFFECTS -->
+    <section class="panel" id="panel-effects">
+      <div class="page-title">Visual Effects</div>
+      <div class="page-sub">Unique animations and interactivity for your page.</div>
+      <div class="card">
+        <div class="effect-grid">
+          <div class="effect-card">
+            <span class="eff-icon">✦</span>
+            <div class="eff-info">
+              <div class="eff-name">Particles</div>
+              <div class="eff-desc">Floating ambient dots</div>
+            </div>
+            <label class="toggle"><input type="checkbox" id="eff-particles"/><span class="toggle-slider"></span></label>
+          </div>
+          <div class="effect-card">
+            <span class="eff-icon">🌟</span>
+            <div class="eff-info">
+              <div class="eff-name">Cursor Trail</div>
+              <div class="eff-desc">Glowing mouse trail</div>
+            </div>
+            <label class="toggle"><input type="checkbox" id="eff-cursor"/><span class="toggle-slider"></span></label>
+          </div>
+          <div class="effect-card">
+            <span class="eff-icon">❄️</span>
+            <div class="eff-info">
+              <div class="eff-name">Snowfall</div>
+              <div class="eff-desc">Falling snowflakes</div>
+            </div>
+            <label class="toggle"><input type="checkbox" id="eff-snow"/><span class="toggle-slider"></span></label>
+          </div>
+          <div class="effect-card">
+            <span class="eff-icon">💫</span>
+            <div class="eff-info">
+              <div class="eff-name">Avatar Ring</div>
+              <div class="eff-desc">Spinning orbit ring</div>
+            </div>
+            <label class="toggle"><input type="checkbox" id="eff-ring" checked/><span class="toggle-slider"></span></label>
+          </div>
+        </div>
+        <div class="save-row" style="margin-top:20px"><button class="btn btn-primary" id="save-effects">Save Effects</button></div>
+      </div>
+    </section>
+
+    <!-- CUSTOM DOMAIN -->
+    <section class="panel" id="panel-domain">
+      <div class="page-title">Custom Domain</div>
+      <div class="page-sub">Point your own domain to your BioLink page.</div>
+      <div class="card" style="display:flex;flex-direction:column;gap:18px">
+        <div class="field">
+          <label>Your Domain</label>
+          <div class="domain-row">
+            <input type="text" id="domain-input" placeholder="links.yourdomain.com"/>
+            <button class="btn btn-primary btn-sm" id="domain-save">Save</button>
+          </div>
+          <div id="domain-status" style="margin-top:10px;font-size:13px;color:var(--muted)"></div>
+        </div>
+
+        <div id="dns-instructions" style="display:none">
+          <div class="section-head">📋 DNS Setup</div>
+          <p style="font-size:13px;color:var(--muted);margin-bottom:12px">Add this record to your DNS provider (Cloudflare, Namecheap, GoDaddy, etc.):</p>
+          <div style="background:var(--surface);border:1px solid var(--border);border-radius:var(--rad);overflow:hidden;">
+            <table style="width:100%;border-collapse:collapse;font-size:13px;font-family:var(--ffm)">
+              <thead><tr><th style="text-align:left;padding:10px 12px;color:var(--muted);font-size:11px;border-bottom:1px solid var(--border)">Type</th><th style="text-align:left;padding:10px 12px;color:var(--muted);font-size:11px;border-bottom:1px solid var(--border)">Name</th><th style="text-align:left;padding:10px 12px;color:var(--muted);font-size:11px;border-bottom:1px solid var(--border)">Value</th></tr></thead>
+              <tbody><tr>
+                <td style="padding:10px 12px;border-top:1px solid rgba(255,255,255,.04)"><span style="background:var(--accent-d);color:var(--accent);border-radius:4px;padding:2px 6px;">CNAME</span></td>
+                <td style="padding:10px 12px" id="dns-name">@</td>
+                <td style="padding:10px 12px;color:var(--accent)" id="dns-value">yourname.github.io</td>
+              </tr></tbody>
+            </table>
+          </div>
+          <p style="font-size:12px;color:var(--muted);margin-top:10px">⏱ DNS changes can take up to 48 hours to propagate.</p>
+          <button class="btn btn-success btn-sm" id="domain-verify" style="margin-top:10px">✓ Mark as Verified</button>
+        </div>
+
+        <div style="background:var(--surface);border:1px solid var(--border);border-radius:var(--rad);padding:16px;">
+          <div class="section-head" style="margin-bottom:8px">How It Works</div>
+          <ul style="list-style:none;display:flex;flex-direction:column;gap:8px;font-size:13px;color:var(--muted)">
+            <li>1️⃣ Enter your domain or subdomain above</li>
+            <li>2️⃣ Add the CNAME record shown to your DNS</li>
+            <li>3️⃣ Wait for DNS propagation (up to 48h)</li>
+            <li>4️⃣ Click "Mark as Verified" — your URL updates instantly</li>
+          </ul>
+        </div>
       </div>
     </section>
 
     <!-- MY URL -->
     <section class="panel" id="panel-myurl">
       <div class="page-title">My URL</div>
-      <div class="page-sub">Share this link to let people visit your BioLink page.</div>
-      <div class="url-success">
+      <div class="page-sub">Your unique BioLink address to share everywhere.</div>
+      <div class="url-success" style="margin-bottom:24px">
         <h3>🌐 Your BioLink URL</h3>
-        <p>Copy and paste this into your Instagram, TikTok, Twitter, YouTube bio — anywhere you want.</p>
-        <div class="url-box">
-          <span class="url-text" id="url-text"></span>
-          <button class="copy-btn" id="url-copy">Copy</button>
-        </div>
-        <a href="#" id="url-visit" target="_blank" class="btn btn-ghost btn-sm visit-btn">↗ Open my page</a>
+        <p>Paste this into your Instagram, TikTok, Twitter, YouTube bio and everywhere else.</p>
+        <div class="url-box"><span class="url-text" id="url-text"></span><button class="copy-btn" id="url-copy">Copy</button></div>
+        <a href="#" id="url-visit" target="_blank" class="btn btn-ghost btn-sm" style="margin-top:10px;display:inline-flex">↗ Open my page</a>
       </div>
-
       <div class="card">
         <div class="section-head">📲 Share Everywhere</div>
-        <p style="font-size:14px;color:var(--muted);margin-bottom:16px">Use your BioLink URL in these places to maximize clicks:</p>
         <ul style="list-style:none;display:flex;flex-direction:column;gap:10px">
           <li style="font-size:14px">📸 <strong>Instagram</strong> — Edit profile → Website</li>
           <li style="font-size:14px">🎵 <strong>TikTok</strong> — Edit profile → Website</li>
           <li style="font-size:14px">🐦 <strong>Twitter/X</strong> — Edit profile → Website</li>
           <li style="font-size:14px">▶️ <strong>YouTube</strong> — Channel → About → Links</li>
           <li style="font-size:14px">💼 <strong>LinkedIn</strong> — Edit profile → Website</li>
+          <li style="font-size:14px">🎮 <strong>Discord</strong> — Edit profile → About Me</li>
         </ul>
       </div>
     </section>
@@ -259,231 +377,285 @@
   </main>
 </div>
 
-<!-- Mobile Nav -->
+<!-- MOBILE NAV -->
 <nav class="mobile-nav">
   <div class="mobile-nav-inner">
-    <button class="m-nav-btn active" data-panel="overview"><span>📊</span>Overview</button>
-    <button class="m-nav-btn" data-panel="profile"><span>👤</span>Profile</button>
-    <button class="m-nav-btn" data-panel="links"><span>🔗</span>Links</button>
-    <button class="m-nav-btn" data-panel="appearance"><span>🎨</span>Style</button>
-    <button class="m-nav-btn" data-panel="myurl"><span>🌐</span>URL</button>
+    <button class="m-nav-btn active" data-panel="overview"><span class="icon">📊</span>Overview</button>
+    <button class="m-nav-btn" data-panel="profile"><span class="icon">👤</span>Profile</button>
+    <button class="m-nav-btn" data-panel="links"><span class="icon">🔗</span>Links</button>
+    <button class="m-nav-btn" data-panel="media"><span class="icon">🎬</span>Media</button>
+    <button class="m-nav-btn" data-panel="myurl"><span class="icon">🌐</span>URL</button>
   </div>
 </nav>
 
 <div id="toast"></div>
 <script src="app.js"></script>
 <script>
-if (!BL.requireAuth()) throw '';
-const user = BL.currentUser();
+if(!BL.requireAuth())throw'';
+const user=BL.currentUser();
 
-/* ── NAV ───────────────────────────────────────────────── */
-document.getElementById('nav-right').innerHTML = `
-  <span style="font-size:13px;color:var(--muted);margin-right:8px">@${user.username}</span>
-  ${user.role==='admin' ? '<a href="admin.html" class="btn btn-ghost btn-sm">Admin</a>' : ''}
-  <button class="btn btn-ghost btn-sm" id="nav-logout">Log Out</button>
-`;
-document.getElementById('nav-logout').addEventListener('click', () => { BL.logout(); location.href='index.html'; });
-document.getElementById('sidebar-logout').addEventListener('click', () => { BL.logout(); location.href='index.html'; });
+/* NAV */
+document.getElementById('nav-right').innerHTML=`<span style="font-size:13px;color:var(--muted);margin-right:6px">@${user.username}</span>${user.role==='admin'?'<a href="admin.html" class="btn btn-ghost btn-sm">Admin</a>':''}<button class="btn btn-ghost btn-sm" id="nav-logout">Log Out</button>`;
+document.getElementById('nav-logout').addEventListener('click',()=>{BL.logout();location.href='index.html';});
+document.getElementById('sb-logout').addEventListener('click',()=>{BL.logout();location.href='index.html';});
 
-/* ── PANEL NAVIGATION ──────────────────────────────────── */
-const allPanels = document.querySelectorAll('.panel');
-const sideItems = document.querySelectorAll('.sidebar-item[data-panel]');
-const mNavBtns  = document.querySelectorAll('.m-nav-btn[data-panel]');
-
-function goPanel(name) {
-  allPanels.forEach(p => p.classList.toggle('active', p.id === `panel-${name}`));
-  sideItems.forEach(s => s.classList.toggle('active', s.dataset.panel === name));
-  mNavBtns.forEach(b => b.classList.toggle('active', b.dataset.panel === name));
-  if (name === 'overview') renderOverview();
-  if (name === 'profile') loadProfile();
-  if (name === 'links') loadLinks();
-  if (name === 'socials') loadSocials();
-  if (name === 'appearance') loadAppearance();
-  if (name === 'myurl') loadUrl();
+/* PANELS */
+const allPanels=document.querySelectorAll('.panel');
+const sideItems=document.querySelectorAll('.sidebar-item[data-panel]');
+const mBtns=document.querySelectorAll('.m-nav-btn[data-panel]');
+function goPanel(name){
+  allPanels.forEach(p=>p.classList.toggle('active',p.id===`panel-${name}`));
+  sideItems.forEach(s=>s.classList.toggle('active',s.dataset.panel===name));
+  mBtns.forEach(b=>b.classList.toggle('active',b.dataset.panel===name));
+  const loaders={overview:renderOverview,profile:loadProfile,links:loadLinks,socials:loadSocials,media:loadMedia,gallery:loadGallery,appearance:loadAppearance,effects:loadEffects,domain:loadDomain,myurl:loadUrl};
+  if(loaders[name])loaders[name]();
 }
+sideItems.forEach(s=>s.addEventListener('click',()=>goPanel(s.dataset.panel)));
+mBtns.forEach(b=>b.addEventListener('click',()=>goPanel(b.dataset.panel)));
+document.querySelectorAll('[data-goto]').forEach(el=>el.addEventListener('click',()=>goPanel(el.dataset.goto)));
 
-sideItems.forEach(s => s.addEventListener('click', () => goPanel(s.dataset.panel)));
-mNavBtns.forEach(b => b.addEventListener('click', () => goPanel(b.dataset.panel)));
-document.querySelectorAll('[data-panel]').forEach(el => {
-  if (el.classList.contains('btn')) el.addEventListener('click', () => goPanel(el.dataset.panel));
-});
+const getBio=()=>BL.getBio(user.username)||BL.defaultBio(user.username);
+function esc(s){return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');}
+function copyText(text,btn){navigator.clipboard.writeText(text).then(()=>{const o=btn.textContent;btn.textContent='✓ Copied!';setTimeout(()=>btn.textContent=o,2000);BL.toast('Copied ✓');});}
 
-/* ── BIO DATA ──────────────────────────────────────────── */
-const getBio = () => BL.getBio(user.username) || BL.defaultBio(user.username);
-
-/* ── OVERVIEW ──────────────────────────────────────────── */
-function renderOverview() {
-  const bio = getBio();
-  document.getElementById('ov-name').textContent = bio.displayName || user.username;
-  document.getElementById('ov-views').textContent = BL.viewCount(user.username).toLocaleString();
-  document.getElementById('ov-links').textContent = (bio.links||[]).length;
-  document.getElementById('ov-status').innerHTML = bio.published
-    ? '<span class="badge badge-active">Live</span>'
-    : '<span class="badge" style="color:var(--muted);border-color:var(--border)">Draft</span>';
-  const url = BL.bioUrl(user.username);
-  document.getElementById('ov-url-text').textContent = url;
-  document.getElementById('ov-visit').href = url;
-  document.getElementById('ov-copy').addEventListener('click', () => copyText(url, document.getElementById('ov-copy')));
+/* OVERVIEW */
+function renderOverview(){
+  const bio=getBio();
+  document.getElementById('ov-name').textContent=bio.displayName||user.username;
+  document.getElementById('ov-views').textContent=BL.viewCount(user.username).toLocaleString();
+  document.getElementById('ov-clicks').textContent=BL.clickCount(user.username).toLocaleString();
+  document.getElementById('ov-links').textContent=(bio.links||[]).length;
+  document.getElementById('ov-status').innerHTML=bio.published?'<span class="badge badge-active">Live</span>':'<span class="badge badge-warn">Draft</span>';
+  const url=BL.bioUrl(user.username);
+  document.getElementById('ov-url-text').textContent=url;
+  document.getElementById('ov-visit').href=url;
+  document.getElementById('ov-copy').onclick=function(){copyText(url,this);};
 }
 renderOverview();
 
-/* ── PROFILE ───────────────────────────────────────────── */
-function loadProfile() {
-  const bio = getBio();
-  document.getElementById('p-name').value     = bio.displayName || '';
-  document.getElementById('p-tagline').value  = bio.tagline     || '';
-  document.getElementById('p-bio').value      = bio.bio         || '';
-  document.getElementById('p-avatar').value   = bio.avatarUrl   || '';
-  document.getElementById('p-location').value = bio.location    || '';
-  document.getElementById('p-show-views').checked = bio.showViews !== false;
-  document.getElementById('p-published').checked  = bio.published  !== false;
+/* PROFILE */
+let currentBadges=[];
+function loadProfile(){
+  const bio=getBio();
+  document.getElementById('p-name').value=bio.displayName||'';
+  document.getElementById('p-pronouns').value=bio.pronouns||'';
+  document.getElementById('p-tagline').value=bio.tagline||'';
+  document.getElementById('p-bio').value=bio.bio||'';
+  document.getElementById('p-avatar').value=bio.avatarUrl||'';
+  document.getElementById('p-location').value=bio.location||'';
+  document.getElementById('p-show-views').checked=bio.showViews!==false;
+  document.getElementById('p-published').checked=bio.published!==false;
+  currentBadges=[...(bio.badges||[])];
+  renderBadges();
 }
-document.getElementById('save-profile').addEventListener('click', () => {
-  const bio = getBio();
-  bio.displayName = document.getElementById('p-name').value.trim() || user.username;
-  bio.tagline     = document.getElementById('p-tagline').value.trim();
-  bio.bio         = document.getElementById('p-bio').value.trim();
-  bio.avatarUrl   = document.getElementById('p-avatar').value.trim() || `https://api.dicebear.com/9.x/bottts-neutral/svg?seed=${user.username}`;
-  bio.location    = document.getElementById('p-location').value.trim();
-  bio.showViews   = document.getElementById('p-show-views').checked;
-  bio.published   = document.getElementById('p-published').checked;
-  BL.saveBio(user.username, bio);
-  BL.toast('Profile saved ✓');
+function renderBadges(){
+  const preview=document.getElementById('badges-preview');
+  preview.innerHTML=currentBadges.map((b,i)=>`<span class="badge-chip">${esc(b)}<button onclick="removeBadge(${i})">×</button></span>`).join('');
+}
+window.removeBadge=i=>{currentBadges.splice(i,1);renderBadges();};
+document.getElementById('badge-add').addEventListener('click',()=>{
+  const v=document.getElementById('badge-input').value.trim();
+  if(v&&currentBadges.length<6){currentBadges.push(v);document.getElementById('badge-input').value='';renderBadges();}
+});
+document.getElementById('save-profile').addEventListener('click',()=>{
+  const bio=getBio();
+  bio.displayName=document.getElementById('p-name').value.trim()||user.username;
+  bio.pronouns=document.getElementById('p-pronouns').value.trim();
+  bio.tagline=document.getElementById('p-tagline').value.trim();
+  bio.bio=document.getElementById('p-bio').value.trim();
+  bio.avatarUrl=document.getElementById('p-avatar').value.trim()||`https://api.dicebear.com/9.x/bottts-neutral/svg?seed=${user.username}`;
+  bio.location=document.getElementById('p-location').value.trim();
+  bio.showViews=document.getElementById('p-show-views').checked;
+  bio.published=document.getElementById('p-published').checked;
+  bio.badges=currentBadges;
+  BL.saveBio(user.username,bio);BL.toast('Profile saved ✓');
 });
 
-/* ── LINKS ─────────────────────────────────────────────── */
-function loadLinks() {
-  const bio = getBio();
-  const list = document.getElementById('links-list');
-  list.innerHTML = '';
-  (bio.links || []).forEach((lnk, i) => renderLinkItem(lnk, i));
+/* LINKS */
+function loadLinks(){
+  const bio=getBio();
+  const list=document.getElementById('links-list');list.innerHTML='';
+  if(!(bio.links||[]).length){
+    list.innerHTML=`<div style="text-align:center;padding:30px 10px;">
+      <svg width="140" height="90" viewBox="0 0 140 90" style="margin:0 auto 12px;display:block" xmlns="http://www.w3.org/2000/svg">
+        <defs><linearGradient id="leg" x1="0%" y1="0%" x2="100%" y2="100%"><stop offset="0%" style="stop-color:#7c6aff"/><stop offset="100%" style="stop-color:#ff6af0"/></linearGradient></defs>
+        <rect x="10" y="8" width="120" height="26" rx="8" fill="#11111c" stroke="#2a2a3e" stroke-width="1" stroke-dasharray="4 3"/>
+        <rect x="10" y="42" width="120" height="26" rx="8" fill="#11111c" stroke="#2a2a3e" stroke-width="1" stroke-dasharray="4 3"/>
+        <circle cx="70" cy="80" r="9" fill="url(#leg)"/>
+        <text x="70" y="84" text-anchor="middle" font-size="12" fill="#fff" font-weight="700">+</text>
+      </svg>
+      <p style="color:var(--muted);font-size:13px">No links yet — add your first one below.</p>
+    </div>`;
+  }
+  (bio.links||[]).forEach((l,i)=>renderLinkItem(l,i));
 }
-function renderLinkItem(lnk, idx) {
-  const list = document.getElementById('links-list');
-  const div  = document.createElement('div');
-  div.className = 'link-item';
-  div.dataset.idx = idx;
-  div.innerHTML = `
-    <span class="drag-handle">⠿</span>
-    <div class="link-inputs">
-      <input type="text" placeholder="Label  e.g. My Website" value="${escHtml(lnk.title||'')}" data-field="title" />
-      <input type="url"  placeholder="URL    https://..." value="${escHtml(lnk.url||'')}" data-field="url" />
-      <input type="text" placeholder="Description (optional)" value="${escHtml(lnk.desc||'')}" data-field="desc" />
-    </div>
-    <button class="del-link" title="Remove">✕</button>
-  `;
-  div.querySelector('.del-link').addEventListener('click', () => { div.remove(); });
+function renderLinkItem(l,idx){
+  const list=document.getElementById('links-list');
+  const div=document.createElement('div');div.className='link-item';div.dataset.idx=idx;
+  div.innerHTML=`<span class="drag-handle">⠿</span>
+  <div class="link-inputs">
+    <input type="text" placeholder="Title" value="${esc(l.title||'')}" data-field="title"/>
+    <input type="url" placeholder="URL https://..." value="${esc(l.url||'')}" data-field="url"/>
+    <input type="text" placeholder="Description (optional)" value="${esc(l.desc||'')}" data-field="desc" class="full"/>
+    <input type="text" placeholder="Icon emoji (e.g. 🔗)" value="${esc(l.icon||'')}" data-field="icon"/>
+    <input type="text" placeholder='Tag (e.g. "new","free")' value="${esc(l.tag||'')}" data-field="tag"/>
+  </div>
+  <button class="del-link" title="Remove">✕</button>`;
+  div.querySelector('.del-link').addEventListener('click',()=>div.remove());
   list.appendChild(div);
 }
-document.getElementById('add-link').addEventListener('click', () => {
-  const idx = document.querySelectorAll('.link-item').length;
-  renderLinkItem({ title:'', url:'', desc:'' }, idx);
-});
-document.getElementById('save-links').addEventListener('click', () => {
-  const bio = getBio();
-  const items = document.querySelectorAll('.link-item');
-  bio.links = Array.from(items).map(item => ({
-    title: item.querySelector('[data-field="title"]').value.trim(),
-    url:   item.querySelector('[data-field="url"]').value.trim(),
-    desc:  item.querySelector('[data-field="desc"]').value.trim()
-  })).filter(l => l.title && l.url);
-  BL.saveBio(user.username, bio);
-  BL.toast(`${bio.links.length} links saved ✓`);
-  loadLinks();
+document.getElementById('add-link').addEventListener('click',()=>renderLinkItem({title:'',url:'',desc:'',icon:'',tag:''},document.querySelectorAll('.link-item').length));
+document.getElementById('save-links').addEventListener('click',()=>{
+  const bio=getBio();
+  bio.links=Array.from(document.querySelectorAll('.link-item')).map(item=>({
+    title:item.querySelector('[data-field="title"]').value.trim(),
+    url:item.querySelector('[data-field="url"]').value.trim(),
+    desc:item.querySelector('[data-field="desc"]').value.trim(),
+    icon:item.querySelector('[data-field="icon"]').value.trim(),
+    tag:item.querySelector('[data-field="tag"]').value.trim()
+  })).filter(l=>l.title&&l.url);
+  BL.saveBio(user.username,bio);BL.toast(`${bio.links.length} links saved ✓`);loadLinks();
 });
 
-/* ── SOCIALS ───────────────────────────────────────────── */
-const SOCIALS = [
-  { key:'twitter',   icon:'🐦', label:'Twitter handle'   },
-  { key:'instagram', icon:'📸', label:'Instagram handle' },
-  { key:'youtube',   icon:'▶️', label:'YouTube URL'      },
-  { key:'discord',   icon:'💬', label:'Discord invite'   },
-  { key:'github',    icon:'💻', label:'GitHub username'  },
-  { key:'tiktok',    icon:'🎵', label:'TikTok handle'    },
-  { key:'linkedin',  icon:'💼', label:'LinkedIn URL'     },
-  { key:'twitch',    icon:'🎮', label:'Twitch username'  },
+/* SOCIALS */
+const SOCIALS=[
+  {key:'twitter',icon:'🐦',label:'Twitter handle'},{key:'instagram',icon:'📸',label:'Instagram handle'},
+  {key:'youtube',icon:'▶️',label:'YouTube URL'},{key:'tiktok',icon:'🎵',label:'TikTok handle'},
+  {key:'discord',icon:'💬',label:'Discord invite'},{key:'github',icon:'💻',label:'GitHub username'},
+  {key:'linkedin',icon:'💼',label:'LinkedIn URL'},{key:'twitch',icon:'🎮',label:'Twitch username'},
+  {key:'snapchat',icon:'👻',label:'Snapchat username'},{key:'spotify',icon:'🎧',label:'Spotify URL'},
+  {key:'reddit',icon:'🤖',label:'Reddit username'},{key:'paypal',icon:'💰',label:'PayPal.me handle'},
 ];
-function loadSocials() {
-  const bio = getBio();
-  const form = document.getElementById('socials-form');
-  form.innerHTML = '';
-  SOCIALS.forEach(s => {
-    const d = document.createElement('div');
-    d.className = 'social-field';
-    d.innerHTML = `<span title="${s.label}">${s.icon}</span><input type="text" id="soc-${s.key}" placeholder="${s.label}" value="${escHtml((bio.socials||{})[s.key]||'')}" />`;
-    form.appendChild(d);
-  });
+function loadSocials(){
+  const bio=getBio();const form=document.getElementById('socials-form');form.innerHTML='';
+  SOCIALS.forEach(s=>{const d=document.createElement('div');d.className='social-field';d.innerHTML=`<span>${s.icon}</span><input type="text" id="soc-${s.key}" placeholder="${s.label}" value="${esc((bio.socials||{})[s.key]||'')}"/>`;form.appendChild(d);});
 }
-document.getElementById('save-socials').addEventListener('click', () => {
-  const bio = getBio();
-  bio.socials = {};
-  SOCIALS.forEach(s => {
-    const v = document.getElementById(`soc-${s.key}`).value.trim();
-    if (v) bio.socials[s.key] = v;
-  });
-  BL.saveBio(user.username, bio);
-  BL.toast('Socials saved ✓');
+document.getElementById('save-socials').addEventListener('click',()=>{
+  const bio=getBio();bio.socials={};
+  SOCIALS.forEach(s=>{const v=document.getElementById(`soc-${s.key}`).value.trim();if(v)bio.socials[s.key]=v;});
+  BL.saveBio(user.username,bio);BL.toast('Socials saved ✓');
 });
 
-/* ── APPEARANCE ────────────────────────────────────────── */
-const THEMES = [
-  { id:'dark',    label:'Dark',    bg:'#0a0a0f', card:'#1c1c28' },
-  { id:'light',   label:'Light',   bg:'#f5f5ff', card:'#e8e8f5' },
-  { id:'midnight',label:'Midnight',bg:'#000010', card:'#0d0d22' },
-  { id:'forest',  label:'Forest',  bg:'#0a110a', card:'#131d13' },
-  { id:'rose',    label:'Rose',    bg:'#150a0f', card:'#221318' },
-];
-function loadAppearance() {
-  const bio = getBio();
-  const grid = document.getElementById('theme-grid');
-  grid.innerHTML = '';
-  THEMES.forEach(t => {
-    const d = document.createElement('div');
-    d.className = 'theme-opt' + (bio.theme === t.id ? ' selected' : '');
-    d.style.cssText = `background:linear-gradient(135deg,${t.bg},${t.card})`;
-    d.dataset.theme = t.id;
-    d.innerHTML = `<label>${t.label}</label>`;
-    d.addEventListener('click', () => {
-      document.querySelectorAll('.theme-opt').forEach(x => x.classList.remove('selected'));
-      d.classList.add('selected');
-    });
+/* MEDIA */
+function loadMedia(){
+  const bio=getBio();const music=bio.music||{};const video=bio.video||{};
+  document.getElementById('music-type').value=music.type||'none';
+  document.getElementById('music-url').value=music.url||'';
+  document.getElementById('music-title').value=music.title||'';
+  document.getElementById('music-autoplay').checked=music.autoplay||false;
+  document.getElementById('video-type').value=video.type||'none';
+  document.getElementById('video-url').value=video.url||'';
+  document.getElementById('video-title').value=video.title||'';
+  const mt=document.getElementById('music-type');
+  const updateMusicFields=()=>{
+    document.getElementById('music-title-wrap').style.display=mt.value==='custom'?'flex':'none';
+    document.getElementById('music-url-wrap').style.display=mt.value==='none'?'none':'flex';
+  };
+  mt.addEventListener('change',updateMusicFields);updateMusicFields();
+}
+document.getElementById('save-media').addEventListener('click',()=>{
+  const bio=getBio();
+  bio.music={type:document.getElementById('music-type').value,url:document.getElementById('music-url').value.trim(),title:document.getElementById('music-title').value.trim(),autoplay:document.getElementById('music-autoplay').checked};
+  bio.video={type:document.getElementById('video-type').value,url:document.getElementById('video-url').value.trim(),title:document.getElementById('video-title').value.trim()};
+  BL.saveBio(user.username,bio);BL.toast('Media saved ✓');
+});
+
+/* GALLERY */
+let currentGallery=[];
+function loadGallery(){
+  const bio=getBio();currentGallery=[...(bio.gallery||[])];renderGalleryEditor();
+}
+function renderGalleryEditor(){
+  const grid=document.getElementById('gal-grid');grid.innerHTML='';
+  currentGallery.forEach((src,i)=>{
+    const d=document.createElement('div');d.className='gal-item';
+    d.innerHTML=`<img src="${esc(src)}" alt=""/><button class="gal-del" onclick="removeGalItem(${i})">×</button>`;
     grid.appendChild(d);
   });
-  const ac = document.getElementById('a-color');
-  ac.value = bio.accentColor || '#7c6aff';
-  document.getElementById('a-color-hex').textContent = ac.value;
-  ac.addEventListener('input', () => document.getElementById('a-color-hex').textContent = ac.value);
-  document.getElementById('a-btn-style').value = bio.btnStyle || 'pill';
+  if(currentGallery.length<12){const btn=document.createElement('button');btn.className='gal-add';btn.innerHTML='<span>+</span>Add';btn.addEventListener('click',()=>{const url=document.getElementById('gal-url-input').value.trim();if(url){currentGallery.push(url);document.getElementById('gal-url-input').value='';renderGalleryEditor();}});grid.appendChild(btn);}
 }
-document.getElementById('save-appearance').addEventListener('click', () => {
-  const bio = getBio();
-  const sel = document.querySelector('.theme-opt.selected');
-  bio.theme     = sel ? sel.dataset.theme : 'dark';
-  bio.accentColor = document.getElementById('a-color').value;
-  bio.btnStyle  = document.getElementById('a-btn-style').value;
-  BL.saveBio(user.username, bio);
-  BL.toast('Appearance saved ✓');
+window.removeGalItem=i=>{currentGallery.splice(i,1);renderGalleryEditor();};
+document.getElementById('gal-add-btn').addEventListener('click',()=>{
+  const url=document.getElementById('gal-url-input').value.trim();
+  if(url&&currentGallery.length<12){currentGallery.push(url);document.getElementById('gal-url-input').value='';renderGalleryEditor();}
+});
+document.getElementById('save-gallery').addEventListener('click',()=>{
+  const bio=getBio();bio.gallery=currentGallery;BL.saveBio(user.username,bio);BL.toast(`${currentGallery.length} photos saved ✓`);
 });
 
-/* ── MY URL ────────────────────────────────────────────── */
-function loadUrl() {
-  const url = BL.bioUrl(user.username);
-  document.getElementById('url-text').textContent = url;
-  document.getElementById('url-visit').href = url;
-  document.getElementById('url-copy').onclick = () => copyText(url, document.getElementById('url-copy'));
-}
-
-/* ── COPY HELPER ───────────────────────────────────────── */
-function copyText(text, btn) {
-  navigator.clipboard.writeText(text).then(() => {
-    const orig = btn.textContent;
-    btn.textContent = '✓ Copied!';
-    setTimeout(() => btn.textContent = orig, 2000);
-    BL.toast('Link copied to clipboard ✓');
+/* APPEARANCE */
+const THEMES=[
+  {id:'dark',label:'Dark',bg:'#0a0a0f',card:'#1c1c28'},{id:'light',label:'Light',bg:'#f5f5ff',card:'#e8e8f5'},
+  {id:'cyber',label:'Cyber',bg:'#030310',card:'#0e0e28'},{id:'midnight',label:'Midnight',bg:'#000010',card:'#0d0d22'},
+  {id:'forest',label:'Forest',bg:'#071007',card:'#101d10'},{id:'rose',label:'Rose',bg:'#120008',card:'#200014'},
+  {id:'vapor',label:'Vapor',bg:'#0d0020',card:'#1c0040'},{id:'sand',label:'Sand',bg:'#f5f0e8',card:'#ede8df'},
+];
+function loadAppearance(){
+  const bio=getBio();const grid=document.getElementById('theme-grid');grid.innerHTML='';
+  THEMES.forEach(t=>{
+    const d=document.createElement('div');d.className='theme-opt'+(bio.theme===t.id?' selected':'');
+    d.style.cssText=`background:linear-gradient(135deg,${t.bg},${t.card})`;d.dataset.theme=t.id;
+    d.innerHTML=`<label>${t.label}</label>`;
+    d.addEventListener('click',()=>{document.querySelectorAll('.theme-opt').forEach(x=>x.classList.remove('selected'));d.classList.add('selected');});
+    grid.appendChild(d);
   });
+  const ac=document.getElementById('a-color');ac.value=bio.accentColor||'#7c6aff';
+  document.getElementById('a-color-hex').textContent=ac.value;
+  ac.addEventListener('input',()=>document.getElementById('a-color-hex').textContent=ac.value);
+  document.getElementById('a-btn-style').value=bio.btnStyle||'pill';
 }
-function escHtml(s) {
-  return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+document.getElementById('save-appearance').addEventListener('click',()=>{
+  const bio=getBio();const sel=document.querySelector('.theme-opt.selected');
+  bio.theme=sel?sel.dataset.theme:'dark';bio.accentColor=document.getElementById('a-color').value;bio.btnStyle=document.getElementById('a-btn-style').value;
+  BL.saveBio(user.username,bio);BL.toast('Appearance saved ✓');
+});
+
+/* EFFECTS */
+function loadEffects(){
+  const bio=getBio();
+  document.getElementById('eff-particles').checked=bio.particlesEnabled!==false;
+  document.getElementById('eff-cursor').checked=bio.cursorTrail||false;
+  document.getElementById('eff-snow').checked=bio.snowEnabled||false;
+  document.getElementById('eff-ring').checked=bio.avatarRing!==false;
+}
+document.getElementById('save-effects').addEventListener('click',()=>{
+  const bio=getBio();
+  bio.particlesEnabled=document.getElementById('eff-particles').checked;
+  bio.cursorTrail=document.getElementById('eff-cursor').checked;
+  bio.snowEnabled=document.getElementById('eff-snow').checked;
+  bio.avatarRing=document.getElementById('eff-ring').checked;
+  BL.saveBio(user.username,bio);BL.toast('Effects saved ✓');
+});
+
+/* CUSTOM DOMAIN */
+function loadDomain(){
+  const bio=getBio();
+  document.getElementById('domain-input').value=bio.customDomain||'';
+  const status=document.getElementById('domain-status');
+  const dns=document.getElementById('dns-instructions');
+  if(bio.customDomain){
+    dns.style.display='block';
+    document.getElementById('dns-name').textContent=bio.customDomain.includes('.')?bio.customDomain.split('.')[0]:'@';
+    document.getElementById('dns-value').textContent=location.hostname;
+    status.innerHTML=bio.domainVerified?'<span style="color:var(--success)">✓ Domain verified and active</span>':'<span style="color:var(--warn)">⏳ Awaiting DNS verification</span>';
+  } else {dns.style.display='none';status.textContent='';}
+}
+document.getElementById('domain-save').addEventListener('click',()=>{
+  const domain=document.getElementById('domain-input').value.trim();
+  if(!domain){BL.toast('Enter a domain first','error');return;}
+  BL.setCustomDomain(user.username,domain);BL.toast('Domain saved — set up your DNS ✓');loadDomain();
+});
+document.getElementById('domain-verify').addEventListener('click',()=>{
+  const bio=getBio();bio.domainVerified=true;BL.saveBio(user.username,bio);
+  BL.toast('Domain marked as verified ✓');loadDomain();
+});
+
+/* MY URL */
+function loadUrl(){
+  const url=BL.bioUrl(user.username);
+  document.getElementById('url-text').textContent=url;
+  document.getElementById('url-visit').href=url;
+  document.getElementById('url-copy').onclick=function(){copyText(url,this);};
 }
 </script>
 </body>
