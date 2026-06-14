@@ -30,8 +30,8 @@ const BL = (() => {
           badges: ['✦ Creator', '🔥 Verified'],
           pronouns: 'they/them',
           links: [
-            { title: 'GitHub', url: 'https://github.com', desc: 'Star us ⭐', icon: '💻', tag: 'new' },
-            { title: 'Documentation', url: 'https://github.com', desc: 'Deploy guide', icon: '📖', tag: '' },
+            { title: 'GitHub', url: 'https://github.com/BioLink', desc: 'Star us ⭐', icon: '💻', tag: 'new' },
+            { title: 'Documentation', url: 'https://github.com/Dev-Sahad/BioLink/blob/main/README.md', desc: 'Deploy guide', icon: '📖', tag: '' },
             { title: 'Create your page', url: 'index.html', desc: 'Free forever', icon: '✦', tag: 'free' }
           ],
           socials: { twitter: 'biolink', github: 'biolink', discord: 'biolink' },
