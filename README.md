@@ -5,17 +5,6 @@ No backend, no database, no monthly fees — everything runs in the browser via 
 
 ---
 
-## 🔐 Default Admin Credentials
-
-| Field    | Value      |
-|----------|------------|
-| Username | `admin`    |
-| Password | `admin123` |
-
-> ⚠️ **Change the admin password immediately after first login.**
-> Go to Admin → Users → Edit admin → set a new password.
-
----
 
 ## 🌐 How Bio URLs Work
 
