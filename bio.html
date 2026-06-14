@@ -5,6 +5,7 @@
   <meta name="viewport" content="width=device-width,initial-scale=1.0"/>
   <title>BioLink</title>
   <meta name="theme-color" content="#7c6aff"/>
+  <link rel="icon" type="image/svg+xml" href="assets/favicon.svg"/>
   <link rel="stylesheet" href="style.css"/>
   <style>
     /* ── PUBLIC PAGE TOKENS ───── themes override these ── */
@@ -381,7 +382,7 @@ function render(){
     ${musicHTML}
     ${videoHTML}
 
-    ${links.length?`<div class="sec-label">Links</div>${links.map(l=>`
+    ${links.length ? `<div class="sec-label">Links</div>${links.map(l=>`
       <a href="${esc(l.url)}" target="_blank" rel="noopener" class="link-card" data-url="${esc(l.url)}">
         <div class="link-icon">${esc(l.icon||guessEmoji(l.url))}</div>
         <div class="link-info">
@@ -390,12 +391,26 @@ function render(){
         </div>
         ${l.tag?`<span class="link-tag">${esc(l.tag)}</span>`:''}
         <span class="link-arrow">↗</span>
-      </a>`).join('')}`:''}
+      </a>`).join('')}` : (BL.currentUser()?.username===username ? `
+      <div style="text-align:center;padding:40px 20px;">
+        <svg width="120" height="100" viewBox="0 0 120 100" style="margin:0 auto 14px;display:block" xmlns="http://www.w3.org/2000/svg">
+          <defs><linearGradient id="eg" x1="0%" y1="0%" x2="100%" y2="100%"><stop offset="0%" style="stop-color:#7c6aff"/><stop offset="100%" style="stop-color:#ff6af0"/></linearGradient></defs>
+          <rect x="10" y="14" width="100" height="24" rx="8" fill="#181826" stroke="#2a2a3e" stroke-width="1"/>
+          <rect x="10" y="44" width="100" height="24" rx="8" fill="#181826" stroke="#2a2a3e" stroke-width="1"/>
+          <rect x="10" y="74" width="100" height="20" rx="8" fill="none" stroke="url(#eg)" stroke-width="1.5" stroke-dasharray="5 4"/>
+          <text x="60" y="89" text-anchor="middle" font-size="13" fill="url(#eg)" font-weight="700">+ Add a link</text>
+          <circle cx="24" cy="26" r="6" fill="#11111c"/><text x="24" y="30" text-anchor="middle" font-size="6" fill="#6464a0">🔗</text>
+          <circle cx="24" cy="56" r="6" fill="#11111c"/><text x="24" y="60" text-anchor="middle" font-size="6" fill="#6464a0">🔗</text>
+        </svg>
+        <p style="color:var(--muted);font-size:13px;margin-bottom:14px">Your page is live, but you haven't added any links yet.</p>
+        <a href="dashboard.html" style="display:inline-flex;align-items:center;gap:6px;background:var(--card);border:1px solid var(--border);border-radius:50px;padding:9px 20px;font-size:13px;font-weight:600;color:var(--accent);text-decoration:none">✏️ Add your first link</a>
+      </div>` : '')}
 
     ${galleryHTML}
 
     <div class="credit-footer">
       <a href="credits.html" class="credit-badge">✦ Powered by BioLink — Create yours free</a>
+      <div style="margin-top:8px;font-size:11px;color:var(--muted)">Developed by <a href="credits.html" style="color:var(--accent);text-decoration:none">Your Name</a></div>
     </div>
   `;
 
@@ -458,7 +473,23 @@ document.addEventListener('keydown',e=>{if(e.key==='Escape'){document.getElement
 function updateTime(){const n=new Date();const t=document.getElementById('device-time');if(t)t.textContent=n.getHours().toString().padStart(2,'0')+':'+n.getMinutes().toString().padStart(2,'0');}
 updateTime();setInterval(updateTime,10000);
 
-function showNotFound(title,sub){page.innerHTML=`<div class="not-found"><div class="nf-icon">🔮</div><h2>${esc(title)}</h2><p>${esc(sub)}</p><a href="index.html" style="display:inline-flex;align-items:center;gap:8px;background:var(--card);border:1px solid var(--border);border-radius:50px;padding:10px 22px;font-size:14px;font-weight:600;color:var(--text);text-decoration:none;margin-top:8px">← Create yours free</a></div>`;}
+function showNotFound(title,sub){page.innerHTML=`<div class="not-found">
+  <svg width="160" height="160" viewBox="0 0 160 160" style="margin:0 auto 16px;display:block" xmlns="http://www.w3.org/2000/svg">
+    <defs><linearGradient id="nfg" x1="0%" y1="0%" x2="100%" y2="100%"><stop offset="0%" style="stop-color:#7c6aff"/><stop offset="100%" style="stop-color:#ff6af0"/></linearGradient></defs>
+    <circle cx="80" cy="80" r="70" fill="none" stroke="#181826" stroke-width="2"/>
+    <circle cx="80" cy="80" r="70" fill="none" stroke="url(#nfg)" stroke-width="2" stroke-dasharray="8 6" opacity="0.5"/>
+    <circle cx="80" cy="68" r="34" fill="#181826" stroke="url(#nfg)" stroke-width="2"/>
+    <text x="80" y="80" text-anchor="middle" font-size="30" fill="#6464a0">?</text>
+    <rect x="56" y="118" width="48" height="8" rx="4" fill="#181826"/>
+    <circle cx="36" cy="40" r="3" fill="#7c6aff" opacity="0.5"/>
+    <circle cx="128" cy="36" r="2" fill="#ff6af0" opacity="0.6"/>
+    <circle cx="132" cy="110" r="2.5" fill="#7c6aff" opacity="0.4"/>
+    <circle cx="28" cy="106" r="2" fill="#ff6af0" opacity="0.5"/>
+  </svg>
+  <h2>${esc(title)}</h2>
+  <p>${esc(sub)}</p>
+  <a href="index.html" style="display:inline-flex;align-items:center;gap:8px;background:var(--card);border:1px solid var(--border);border-radius:50px;padding:10px 22px;font-size:14px;font-weight:600;color:var(--text);text-decoration:none;margin-top:8px">← Create yours free</a>
+</div>`;}
 
 render();
 </script>
