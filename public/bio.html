@@ -1,0 +1,228 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title id="pageTitle">BioLink</title>
+  <meta name="description" content="" id="pageDesc"/>
+  <meta property="og:title" content="" id="ogTitle"/>
+  <meta property="og:description" content="" id="ogDesc"/>
+  <meta property="og:image" content="" id="ogImage"/>
+  <meta property="og:type" content="website"/>
+  <meta name="twitter:card" content="summary_large_image"/>
+  <meta name="twitter:image" content="" id="twImage"/>
+  <link rel="icon" type="image/svg+xml" href="/assets/avatar.svg"/>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet"/>
+  <link rel="stylesheet" href="/style.css"/>
+  <style>
+    .bio-page {
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: flex-start;
+      padding: 40px 20px;
+      position: relative;
+    }
+    .bio-card {
+      width: 100%;
+      max-width: 540px;
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: var(--rad-lg);
+      padding: 40px 32px;
+      text-align: center;
+      position: relative;
+      z-index: 1;
+      animation: scaleIn 0.5s ease-out;
+    }
+    .bio-avatar {
+      width: 120px; height: 120px;
+      border-radius: 50%;
+      margin: 0 auto 20px;
+      border: 3px solid var(--accent);
+      box-shadow: 0 0 30px rgba(124,106,255,0.3);
+      object-fit: cover;
+      animation: pulse-glow 3s ease-in-out infinite;
+    }
+    .bio-name { font-size: 1.6rem; font-weight: 700; margin-bottom: 4px; }
+    .bio-tagline { font-size: 14px; color: var(--muted); margin-bottom: 16px; }
+    .bio-bio { font-size: 14px; color: var(--text-2); margin-bottom: 24px; line-height: 1.7; }
+    .bio-link {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 14px 18px;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--rad);
+      margin-bottom: 10px;
+      transition: all var(--trans);
+      text-align: left;
+      cursor: pointer;
+    }
+    .bio-link:hover {
+      border-color: var(--accent);
+      transform: translateX(4px);
+      box-shadow: 0 0 20px rgba(124,106,255,0.1);
+    }
+    .bio-link-icon {
+      width: 40px; height: 40px;
+      border-radius: var(--rad-sm);
+      background: var(--accent-dim);
+      display: flex; align-items: center; justify-content: center;
+      flex-shrink: 0;
+      color: var(--accent);
+    }
+    .bio-link-info { flex: 1; min-width: 0; }
+    .bio-link-title { font-weight: 600; font-size: 14px; }
+    .bio-link-desc { font-size: 12px; color: var(--muted); }
+    .bio-link-tag {
+      font-size: 10px; font-weight: 600;
+      padding: 2px 8px;
+      border-radius: 50px;
+      background: var(--accent-dim);
+      color: var(--accent);
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+    }
+    .gallery-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 10px;
+      margin-top: 20px;
+    }
+    .gallery-grid img {
+      border-radius: var(--rad);
+      width: 100%;
+      aspect-ratio: 1;
+      object-fit: cover;
+      transition: all var(--trans);
+      border: 1px solid var(--border);
+      cursor: pointer;
+    }
+    .gallery-grid img:hover {
+      transform: scale(1.05);
+      border-color: var(--accent);
+      box-shadow: 0 4px 20px rgba(124,106,255,0.2);
+    }
+    .socials {
+      display: flex;
+      justify-content: center;
+      gap: 14px;
+      margin: 20px 0;
+    }
+    .social-icon {
+      width: 42px; height: 42px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      transition: all var(--trans);
+      color: var(--muted);
+      cursor: pointer;
+    }
+    .social-icon:hover {
+      border-color: var(--accent);
+      color: var(--accent);
+      box-shadow: 0 0 20px rgba(124,106,255,0.2);
+      transform: translateY(-2px);
+    }
+    .music-embed { margin-top: 20px; border-radius: var(--rad); overflow: hidden; }
+    .video-embed { margin-top: 20px; border-radius: var(--rad); overflow: hidden; }
+    .video-embed iframe { width: 100%; border: none; border-radius: var(--rad); }
+    .views-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      font-size: 12px;
+      color: var(--muted);
+      margin-top: 12px;
+    }
+    .bio-footer {
+      margin-top: 30px;
+      font-size: 11px;
+      color: var(--muted);
+      opacity: 0.6;
+    }
+    .bio-footer a {
+      color: var(--accent);
+      font-weight: 500;
+    }
+    .bio-footer a:hover {
+      text-decoration: underline;
+    }
+    .pronouns {
+      font-size: 12px;
+      color: var(--muted);
+      margin-bottom: 12px;
+    }
+    .location {
+      font-size: 12px;
+      color: var(--muted);
+      margin-bottom: 8px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 4px;
+    }
+    @media (max-width: 480px) {
+      .bio-card { padding: 28px 20px; }
+      .bio-avatar { width: 90px; height: 90px; }
+      .bio-name { font-size: 1.3rem; }
+      .gallery-grid { grid-template-columns: repeat(2, 1fr); gap: 8px; }
+    }
+    .light-theme {
+      --bg: #f5f5fa;
+      --bg-2: #eeeef5;
+      --surface: #fff;
+      --surface-2: #f0f0f8;
+      --card: #fff;
+      --card-hover: #fafaff;
+      --border: rgba(0,0,0,0.08);
+      --text: #1a1a2e;
+      --text-2: #4a4a6a;
+      --muted: #8888a8;
+      --accent-dim: rgba(124,106,255,0.08);
+    }
+    .light-theme .bio-card {
+      box-shadow: 0 8px 40px rgba(0,0,0,0.08);
+    }
+  </style>
+</head>
+<body>
+  <canvas id="particle-canvas"></canvas>
+  <div class="ambient-orb ambient-orb-1"></div>
+  <div class="ambient-orb ambient-orb-2"></div>
+
+  <div class="bio-page z1" id="bioPage">
+    <div class="bio-card" id="bioCard">
+      <img id="bioAvatar" class="bio-avatar" src="" alt="Avatar">
+      <div id="bioName" class="bio-name"></div>
+      <div id="bioTagline" class="bio-tagline"></div>
+      <div id="bioPronouns" class="pronouns"></div>
+      <div id="bioLocation" class="location"></div>
+      <div id="bioBio" class="bio-bio"></div>
+      <div class="socials" id="bioSocials"></div>
+      <div id="bioLinks"></div>
+      <div class="music-embed" id="bioMusic"></div>
+      <div class="video-embed" id="bioVideo"></div>
+      <div class="gallery-grid" id="bioGallery"></div>
+      <div class="views-badge" id="bioViews"></div>
+      <div class="bio-footer">
+        Made with <a href="/">BioLink Premium</a>
+      </div>
+    </div>
+  </div>
+
+  <script src="/js/app.js"></script>
+  <script src="/js/bio.js"></script>
+  <script>
+    const params = new URLSearchParams(window.location.search);
+    const username = params.get('u');
+    if (username) renderBioPage(username);
+  </script>
+</body>
+</html>

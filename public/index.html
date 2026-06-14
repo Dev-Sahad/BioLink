@@ -1,0 +1,492 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>BioLink Premium — One link. Everything you are.</title>
+  <meta name="description" content="Create a stunning bio page in seconds. Links, music, video, gallery, custom domain — all yours. The premium bio-link platform."/>
+  <link rel="icon" type="image/svg+xml" href="/assets/avatar.svg"/>
+  <link rel="preconnect" href="https://fonts.googleapis.com"/>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet"/>
+  <link rel="stylesheet" href="/style.css"/>
+  <style>
+    .hero {
+      min-height: calc(100vh - 64px);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+      padding: 60px 24px;
+      position: relative;
+    }
+    .hero-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 8px 18px;
+      border: 1px solid var(--border-glow);
+      border-radius: 50px;
+      font-size: 12px;
+      font-weight: 500;
+      color: var(--accent);
+      margin-bottom: 28px;
+      animation: neon-flicker 3s infinite;
+    }
+    .hero-badge .dot {
+      width: 6px; height: 6px;
+      background: var(--success);
+      border-radius: 50%;
+      animation: pulse-glow 2s infinite;
+    }
+    .hero-title {
+      max-width: 700px;
+      margin-bottom: 20px;
+    }
+    .hero-title .glitch-wrapper {
+      display: inline;
+      position: relative;
+    }
+    .hero-subtitle {
+      font-size: clamp(1rem, 2vw, 1.25rem);
+      color: var(--muted);
+      max-width: 520px;
+      margin-bottom: 36px;
+      line-height: 1.7;
+    }
+    .hero-actions {
+      display: flex;
+      gap: 14px;
+      flex-wrap: wrap;
+      justify-content: center;
+    }
+    .hero-preview {
+      margin-top: 60px;
+      position: relative;
+      width: 100%;
+      max-width: 900px;
+    }
+    .hero-preview-img {
+      width: 100%;
+      border-radius: var(--rad-lg);
+      border: 1px solid var(--border);
+      box-shadow: 0 20px 60px rgba(0,0,0,0.5);
+    }
+    .hero-float-card {
+      position: absolute;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--rad);
+      padding: 14px 18px;
+      font-size: 13px;
+      box-shadow: 0 8px 24px rgba(0,0,0,0.3);
+    }
+    .hero-float-card-1 {
+      top: 20px; right: -20px;
+      animation: float 5s ease-in-out infinite;
+    }
+    .hero-float-card-2 {
+      bottom: 40px; left: -20px;
+      animation: float 6s ease-in-out infinite reverse;
+    }
+    .features {
+      padding: 80px 24px;
+      position: relative;
+    }
+    .features-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+      gap: 24px;
+      margin-top: 48px;
+    }
+    .feature-card {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: var(--rad-lg);
+      padding: 32px;
+      transition: all var(--trans);
+      position: relative;
+      overflow: hidden;
+    }
+    .feature-card::before {
+      content: '';
+      position: absolute;
+      top: 0; left: 0; right: 0;
+      height: 2px;
+      background: linear-gradient(90deg, var(--accent), var(--accent-2), var(--accent-3));
+      opacity: 0;
+      transition: opacity var(--trans);
+    }
+    .feature-card:hover::before { opacity: 1; }
+    .feature-card:hover {
+      border-color: var(--border-glow);
+      transform: translateY(-4px);
+      box-shadow: 0 12px 40px rgba(124,106,255,0.1);
+    }
+    .feature-icon {
+      width: 48px; height: 48px;
+      border-radius: var(--rad);
+      background: var(--accent-dim);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: var(--accent);
+      margin-bottom: 20px;
+    }
+    .feature-card h3 {
+      font-size: 1.1rem;
+      font-weight: 700;
+      margin-bottom: 8px;
+    }
+    .feature-card p {
+      font-size: 14px;
+      color: var(--muted);
+      line-height: 1.6;
+    }
+    .cta-section {
+      padding: 80px 24px;
+      text-align: center;
+      position: relative;
+    }
+    .cta-card {
+      max-width: 600px;
+      margin: 0 auto;
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: var(--rad-lg);
+      padding: 48px;
+      position: relative;
+      overflow: hidden;
+    }
+    .cta-card::before {
+      content: '';
+      position: absolute;
+      top: -50%; left: -50%;
+      width: 200%; height: 200%;
+      background: radial-gradient(circle, rgba(124,106,255,0.08), transparent);
+      animation: float 8s ease-in-out infinite;
+    }
+    .footer {
+      padding: 40px 24px;
+      border-top: 1px solid var(--border);
+      text-align: center;
+      font-size: 13px;
+      color: var(--muted);
+    }
+    .login-glitch {
+      position: relative;
+      overflow: hidden;
+    }
+    .login-glitch::after {
+      content: '';
+      position: absolute;
+      top: 0; left: -100%;
+      width: 100%; height: 100%;
+      background: linear-gradient(90deg, transparent, rgba(124,106,255,0.1), transparent);
+      animation: shimmer 2s infinite;
+    }
+    @keyframes shimmer {
+      0% { left: -100%; }
+      100% { left: 100%; }
+    }
+  </style>
+</head>
+<body>
+  <canvas id="particle-canvas"></canvas>
+  <div class="ambient-orb ambient-orb-1"></div>
+  <div class="ambient-orb ambient-orb-2"></div>
+  <div class="ambient-orb ambient-orb-3"></div>
+
+  <nav class="nav z2">
+    <div class="nav-inner">
+      <a href="/" class="nav-logo">
+        <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="url(#logoGrad)" stroke-width="2.5">
+          <defs>
+            <linearGradient id="logoGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+              <stop offset="0%" stop-color="#7c6aff"/>
+              <stop offset="100%" stop-color="#ff6af0"/>
+            </linearGradient>
+          </defs>
+          <path d="M12 2L2 7l10 5 10-5-10-5z"/>
+          <path d="M2 17l10 5 10-5"/>
+          <path d="M2 12l10 5 10-5"/>
+        </svg>
+        <span>BioLink</span>
+      </a>
+      <div class="nav-links"></div>
+    </div>
+  </nav>
+
+  <main class="z1">
+    <!-- HERO -->
+    <section class="hero">
+      <div class="hero-badge">
+        <span class="dot"></span>
+        PREMIUM FEATURES · FREE TO START
+      </div>
+      <h1 class="hero-title">
+        One <span class="text-gradient">link</span>.<br>
+        <span class="glitch-text" data-text="Everything you are.">Everything you are.</span>
+      </h1>
+      <p class="hero-subtitle">
+        Create a stunning bio page in seconds. Links, music, video, gallery, particles, custom domain — all yours. The premium bio-link platform built for creators.
+      </p>
+      <div class="hero-actions">
+        <button onclick="openRegisterModal()" class="btn btn-primary">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2L2 7l10 5 10-5-10-5z"/><path d="M2 17l10 5 10-5"/></svg>
+          Get Started
+        </button>
+        <button onclick="window.location.href='/bio?u=admin'" class="btn btn-ghost">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>
+          Launch App
+        </button>
+      </div>
+      <div class="hero-preview">
+        <div class="glass" style="padding: 20px; border-radius: var(--rad-lg); margin-bottom: 20px;">
+          <div style="display: flex; gap: 16px; align-items: center; margin-bottom: 16px;">
+            <img src="/assets/avatar.svg" alt="Avatar" style="width: 48px; height: 48px; border-radius: 50%; border: 2px solid var(--accent);">
+            <div style="text-align: left;">
+              <div style="font-weight: 700; font-size: 14px;">admin</div>
+              <div style="font-size: 12px; color: var(--muted);">Platform Builder</div>
+            </div>
+          </div>
+          <div style="display: flex; flex-direction: column; gap: 8px;">
+            <div style="display: flex; align-items: center; gap: 12px; padding: 12px; background: var(--surface); border-radius: var(--rad); border: 1px solid var(--border);">
+              <div style="width: 36px; height: 36px; border-radius: var(--rad-sm); background: var(--accent-dim); display: flex; align-items: center; justify-content: center; color: var(--accent);">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"/><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"/></svg>
+              </div>
+              <div style="flex: 1;">
+                <div style="font-weight: 600; font-size: 13px;">GitHub</div>
+                <div style="font-size: 11px; color: var(--muted);">Star us</div>
+              </div>
+            </div>
+            <div style="display: flex; align-items: center; gap: 12px; padding: 12px; background: var(--surface); border-radius: var(--rad); border: 1px solid var(--border);">
+              <div style="width: 36px; height: 36px; border-radius: var(--rad-sm); background: var(--accent-dim); display: flex; align-items: center; justify-content: center; color: var(--accent);">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 18V5l12-2v13"/><circle cx="6" cy="18" r="3"/><circle cx="18" cy="16" r="3"/></svg>
+              </div>
+              <div style="flex: 1;">
+                <div style="font-weight: 600; font-size: 13px;">Music</div>
+                <div style="font-size: 11px; color: var(--muted);">Spotify embed</div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="hero-float-card hero-float-card-1">
+          <div style="display: flex; align-items: center; gap: 8px; color: var(--success);">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>
+            <span style="font-weight: 600;">3,821 views</span>
+          </div>
+        </div>
+        <div class="hero-float-card hero-float-card-2">
+          <div style="display: flex; align-items: center; gap: 8px; color: var(--accent);">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2L2 7l10 5 10-5-10-5z"/><path d="M2 17l10 5 10-5"/></svg>
+            <span style="font-weight: 600;">Custom Domain</span>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- FEATURES -->
+    <section class="features">
+      <div class="container">
+        <div style="text-align: center;">
+          <span class="badge badge-new" style="margin-bottom: 16px; display: inline-flex;">
+            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2L2 7l10 5 10-5-10-5z"/><path d="M2 17l10 5 10-5"/></svg>
+            FEATURES
+          </span>
+          <h2 class="text-gradient">Everything you need</h2>
+          <p style="color: var(--muted); max-width: 500px; margin: 12px auto 0;">
+            Premium tools for creators, influencers, and professionals who want to stand out.
+          </p>
+        </div>
+        <div class="features-grid">
+          <div class="feature-card reveal">
+            <div class="feature-icon">
+              <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"/><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"/></svg>
+            </div>
+            <h3>Custom Links</h3>
+            <p>Add unlimited links with icons, descriptions, tags, and drag-and-drop ordering.</p>
+          </div>
+          <div class="feature-card reveal">
+            <div class="feature-icon">
+              <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 18V5l12-2v13"/><circle cx="6" cy="18" r="3"/><circle cx="18" cy="16" r="3"/></svg>
+            </div>
+            <h3>Music & Video</h3>
+            <p>Embed Spotify, SoundCloud, YouTube, Vimeo, or MP4 directly on your page.</p>
+          </div>
+          <div class="feature-card reveal">
+            <div class="feature-icon">
+              <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg>
+            </div>
+            <h3>Photo Gallery</h3>
+            <p>Showcase your work with a beautiful 3-column responsive photo gallery.</p>
+          </div>
+          <div class="feature-card reveal">
+            <div class="feature-icon">
+              <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg>
+            </div>
+            <h3>Social Icons</h3>
+            <p>Connect your Twitter, GitHub, Discord, and more with custom social icons.</p>
+          </div>
+          <div class="feature-card reveal">
+            <div class="feature-icon">
+              <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 20V10"/><path d="M18 20V4"/><path d="M6 20v-4"/></svg>
+            </div>
+            <h3>Analytics</h3>
+            <p>Track views, clicks, and engagement with real-time analytics dashboard.</p>
+          </div>
+          <div class="feature-card reveal">
+            <div class="feature-icon">
+              <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20.24 12.24a6 6 0 0 0-8.49-8.49L5 10.5V19h8.5z"/><line x1="16" y1="8" x2="2" y2="22"/><line x1="17.5" y1="15" x2="9" y2="15"/></svg>
+            </div>
+            <h3>Custom Domain</h3>
+            <p>Use your own domain or our short link format for a professional look.</p>
+          </div>
+          <div class="feature-card reveal">
+            <div class="feature-icon">
+              <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M12 16v-4"/><path d="M12 8h.01"/></svg>
+            </div>
+            <h3>SEO Ready</h3>
+            <p>Custom meta tags, Open Graph, and Twitter cards for maximum visibility.</p>
+          </div>
+          <div class="feature-card reveal">
+            <div class="feature-icon">
+              <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06A1.65 1.65 0 0 0 4.67 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.67 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06A1.65 1.65 0 0 0 9 4.67a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>
+            </div>
+            <h3>Particle Effects</h3>
+            <p>Interactive canvas particles, cursor trails, snowfall, and neon glow effects.</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- CTA -->
+    <section class="cta-section">
+      <div class="container">
+        <div class="cta-card">
+          <h2 class="text-gradient" style="margin-bottom: 12px;">Ready to create?</h2>
+          <p style="color: var(--muted); margin-bottom: 28px;">
+            Join thousands of creators who trust BioLink for their online presence.
+          </p>
+          <button onclick="openRegisterModal()" class="btn btn-primary btn-full" style="max-width: 300px; margin: 0 auto;">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2L2 7l10 5 10-5-10-5z"/><path d="M2 17l10 5 10-5"/></svg>
+            Get Started Free
+          </button>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <footer class="footer">
+    <div class="container">
+      <p>BioLink Premium &mdash; Built for creators.</p>
+    </div>
+  </footer>
+
+  <!-- LOGIN MODAL -->
+  <div class="modal-overlay" id="loginModal">
+    <div class="modal login-glitch">
+      <div class="modal-header">
+        <h2 class="text-gradient">Log In</h2>
+        <button onclick="closeModal('loginModal')" class="modal-close">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+        </button>
+      </div>
+      <form id="loginForm" onsubmit="handleLogin(event)">
+        <div class="field" style="margin-bottom: 14px;">
+          <label>Username</label>
+          <input type="text" id="loginUser" required placeholder="Enter username" autocomplete="username">
+        </div>
+        <div class="field" style="margin-bottom: 20px;">
+          <label>Password</label>
+          <input type="password" id="loginPass" required placeholder="Enter password" autocomplete="current-password">
+        </div>
+        <button type="submit" class="btn btn-primary btn-full" id="loginBtn">
+          <span>Log In</span>
+        </button>
+      </form>
+      <p style="text-align: center; margin-top: 16px; font-size: 13px; color: var(--muted);">
+        No account? <button onclick="closeModal('loginModal'); openModal('registerModal')" style="color: var(--accent); font-weight: 600;">Create one</button>
+      </p>
+    </div>
+  </div>
+
+  <!-- REGISTER MODAL -->
+  <div class="modal-overlay" id="registerModal">
+    <div class="modal login-glitch">
+      <div class="modal-header">
+        <h2 class="text-gradient">Get Started</h2>
+        <button onclick="closeModal('registerModal')" class="modal-close">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+        </button>
+      </div>
+      <form id="registerForm" onsubmit="handleRegister(event)">
+        <div class="field" style="margin-bottom: 14px;">
+          <label>Username</label>
+          <input type="text" id="regUser" required placeholder="Choose a username" autocomplete="username">
+        </div>
+        <div class="field" style="margin-bottom: 14px;">
+          <label>Email</label>
+          <input type="email" id="regEmail" required placeholder="your@email.com" autocomplete="email">
+        </div>
+        <div class="field" style="margin-bottom: 20px;">
+          <label>Password</label>
+          <input type="password" id="regPass" required placeholder="Min 6 characters" autocomplete="new-password">
+        </div>
+        <button type="submit" class="btn btn-primary btn-full" id="regBtn">
+          <span>Create Account</span>
+        </button>
+      </form>
+      <p style="text-align: center; margin-top: 16px; font-size: 13px; color: var(--muted);">
+        Already have an account? <button onclick="closeModal('registerModal'); openModal('loginModal')" style="color: var(--accent); font-weight: 600;">Log In</button>
+      </p>
+    </div>
+  </div>
+
+  <script src="/js/app.js"></script>
+  <script>
+    /* ── AUTH HANDLERS ── */
+    async function handleLogin(e) {
+      e.preventDefault();
+      const btn = document.getElementById('loginBtn');
+      btn.innerHTML = '<span class="loading"></span>';
+      const r = await API.post('/api/auth/login', {
+        username: document.getElementById('loginUser').value,
+        password: document.getElementById('loginPass').value
+      });
+      if (r.ok) {
+        showToast('Welcome back!', 'success');
+        window.location.href = '/dashboard';
+      } else {
+        btn.innerHTML = '<span>Log In</span>';
+        showToast(r.msg || 'Login failed', 'error');
+      }
+    }
+    async function handleRegister(e) {
+      e.preventDefault();
+      const btn = document.getElementById('regBtn');
+      btn.innerHTML = '<span class="loading"></span>';
+      const r = await API.post('/api/auth/register', {
+        username: document.getElementById('regUser').value,
+        email: document.getElementById('regEmail').value,
+        password: document.getElementById('regPass').value
+      });
+      if (r.ok) {
+        showToast('Account created!', 'success');
+        window.location.href = '/dashboard';
+      } else {
+        btn.innerHTML = '<span>Create Account</span>';
+        showToast(r.msg || 'Registration failed', 'error');
+      }
+    }
+    function openLoginModal() { openModal('loginModal'); }
+    function openRegisterModal() { openModal('registerModal'); }
+
+    /* ── INIT ── */
+    initParticles('particle-canvas', { count: 70, connect: true });
+    initScrollReveal('.reveal');
+    initGlitch(document.querySelector('.glitch-text'));
+    checkAuth().then(updateNav);
+  </script>
+</body>
+</html>
