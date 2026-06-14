@@ -1,8 +1,8 @@
 {
   "name": "workspace",
   "version": "1.0.0",
-  "description": "A fully self-hosted, GitHub Pages-ready alternative to Linktree, Superbio, and Guns.lol. No backend, no database, no monthly fees — everything runs in the browser via `localStorage`.",
-  "main": "app.js",
+  "description": "A premium bio-link platform built with Node.js + Express + SQLite. Features animated themes, OAuth, analytics, QR codes, video/audio embeds, and more.",
+  "main": "server.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "start": "node server.js"
@@ -12,9 +12,16 @@
   "license": "ISC",
   "dependencies": {
     "bcryptjs": "^3.0.3",
+    "chart.js": "^4.5.1",
     "cookie-parser": "^1.4.7",
     "express-rate-limit": "^8.5.2",
+    "express-session": "^1.19.0",
     "jsonwebtoken": "^9.0.3",
+    "passport": "^0.7.0",
+    "passport-discord": "^0.1.4",
+    "passport-github2": "^0.1.12",
+    "passport-google-oauth20": "^2.0.0",
+    "qrcode": "^1.5.4",
     "sqlite3": "^6.0.1"
   }
 }

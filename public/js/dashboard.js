@@ -198,9 +198,13 @@ function populateAppearance() {
   document.getElementById('btnStyle').value = bioData.btnStyle || 'pill';
   document.getElementById('bgType').value = bioData.bgType || 'gradient';
   document.getElementById('bgValue').value = bioData.bgValue || '';
+  document.getElementById('bgVideo').value = bioData.bgVideo || '';
+  document.getElementById('customCSS').value = bioData.customCSS || '';
+  document.getElementById('audioUrl').value = bioData.audioUrl || '';
   document.getElementById('effParticles').checked = bioData.particlesEnabled === 1;
   document.getElementById('effCursor').checked = bioData.cursorTrail === 1;
   document.getElementById('effSnow').checked = bioData.snowEnabled === 1;
+  loadQR();
 }
 
 let selectedTheme = bioData?.theme || 'dark';
@@ -222,12 +226,23 @@ async function saveAppearance() {
     btnStyle: document.getElementById('btnStyle').value,
     bgType: document.getElementById('bgType').value,
     bgValue: document.getElementById('bgValue').value,
+    bgVideo: document.getElementById('bgVideo').value,
+    customCSS: document.getElementById('customCSS').value,
+    audioUrl: document.getElementById('audioUrl').value,
     particlesEnabled: document.getElementById('effParticles').checked ? 1 : 0,
     cursorTrail: document.getElementById('effCursor').checked ? 1 : 0,
     snowEnabled: document.getElementById('effSnow').checked ? 1 : 0,
   });
   if (r.ok) showToast('Appearance saved!', 'success');
   else showToast('Failed to save', 'error');
+}
+
+async function loadQR() {
+  const r = await API.get(`/api/bio/qr/${bioData.username}`);
+  const qrEl = document.getElementById('qrCode');
+  if (r.ok && r.qr && qrEl) {
+    qrEl.innerHTML = `<img src="${r.qr}" alt="QR Code" style="width:160px;height:160px;border-radius:var(--rad);border:2px solid var(--border);">`;
+  }
 }
 
 /* ── MEDIA ── */
@@ -357,6 +372,29 @@ async function populateAnalytics() {
     }).join('');
   }
 
+  // Click chart
+  const clickChart = document.getElementById('clickChart');
+  if (clickChart) {
+    const clickHistory = a.clickHistory || [];
+    if (clickHistory.length === 0) {
+      clickChart.innerHTML = '<p style="color: var(--muted); text-align: center;">No click data yet</p>';
+    } else {
+      const max = Math.max(...clickHistory.map(h => h.count), 1);
+      clickChart.innerHTML = clickHistory.map(h => {
+        const h_pct = (h.count / max) * 100;
+        return `
+          <div style="flex: 1; display: flex; flex-direction: column; align-items: center; gap: 6px;">
+            <div style="width: 100%; background: var(--surface); border-radius: var(--rad-sm); height: 120px; position: relative; overflow: hidden;">
+              <div style="position: absolute; bottom: 0; left: 0; right: 0; background: linear-gradient(to top, var(--accent-2), var(--accent-3)); height: ${h_pct}%; border-radius: var(--rad-sm); transition: height 0.6s ease-out;"></div>
+            </div>
+            <span style="font-size: 10px; color: var(--muted); text-transform: uppercase;">${h.day?.slice(5) || ''}</span>
+            <span style="font-size: 11px; font-weight: 600; color: var(--accent-2);">${h.count}</span>
+          </div>
+        `;
+      }).join('');
+    }
+  }
+
   // Top links
   const topLinks = document.getElementById('topLinks');
   if (a.topLinks && a.topLinks.length) {
@@ -371,7 +409,7 @@ async function populateAnalytics() {
             <div style="font-size: 11px; color: var(--muted);">${escapeHtml(l.url || '')}</div>
           </div>
         </div>
-        <div style="font-size: 14px; font-weight: 700; color: var(--accent);">${l.clicks || 0}</div>
+        <div style="font-size: 14px; font-weight: 700; color: var(--accent);">${l.clicks || 0} clicks</div>
       </div>
     `).join('');
   } else {

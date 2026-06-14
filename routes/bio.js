@@ -1,6 +1,7 @@
 const express = require('express');
 const { db } = require('../db');
 const { authMiddleware } = require('../middleware/auth');
+const QRCode = require('qrcode');
 const router = express.Router();
 
 router.get('/:username', (req, res) => {
@@ -21,6 +22,17 @@ router.get('/:username', (req, res) => {
       });
     });
   });
+});
+
+router.get('/qr/:username', async (req, res) => {
+  const { username } = req.params;
+  const url = `${req.protocol}://${req.get('host')}/bio?u=${username}`;
+  try {
+    const qr = await QRCode.toDataURL(url, { width: 400, margin: 2, color: { dark: '#7c6aff', light: '#0a0a1a' } });
+    res.json({ ok: true, qr });
+  } catch (e) {
+    res.status(500).json({ ok: false, msg: 'QR generation failed' });
+  }
 });
 
 router.get('/public/:username', (req, res) => {
@@ -44,7 +56,7 @@ router.get('/public/:username', (req, res) => {
 });
 
 router.put('/me', authMiddleware, (req, res) => {
-  const fields = ['displayName','tagline','bio','pronouns','avatarUrl','theme','accentColor','btnStyle','location','showViews','published','bgType','bgValue','particlesEnabled','cursorTrail','snowEnabled','socials','seoTitle','seoDesc','seoImage'];
+  const fields = ['displayName','tagline','bio','pronouns','avatarUrl','theme','accentColor','btnStyle','location','showViews','published','bgType','bgValue','particlesEnabled','cursorTrail','snowEnabled','bgVideo','customCSS','audioUrl','socials','seoTitle','seoDesc','seoImage'];
   const sets = [];
   const vals = [];
   fields.forEach(f => {

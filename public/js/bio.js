@@ -37,15 +37,54 @@ async function renderBioPage(username) {
   document.getElementById('twImage').content = bio.seoImage || bio.avatarUrl || '';
 
   // Apply theme
-  if (bio.theme === 'light') {
-    document.body.classList.add('light-theme');
-  }
+  if (bio.theme === 'light') document.body.classList.add('light-theme');
+  if (bio.theme === 'cyber') document.body.classList.add('cyber-theme');
+  if (bio.theme === 'neon') document.body.classList.add('neon-theme');
+  if (bio.theme === 'midnight') document.body.classList.add('midnight-theme');
+  if (bio.theme === 'sunset') document.body.classList.add('sunset-theme');
+  if (bio.theme === 'ocean') document.body.classList.add('ocean-theme');
+  if (bio.theme === 'forest') document.body.classList.add('forest-theme');
   if (bio.accentColor) {
     document.documentElement.style.setProperty('--accent', bio.accentColor);
   }
   if (bio.bgValue) {
     if (bio.bgType === 'solid') document.body.style.background = bio.bgValue;
     if (bio.bgType === 'gradient') document.body.style.background = bio.bgValue;
+  }
+
+  // Background video
+  if (bio.bgVideo) {
+    let videoBg = '';
+    const ytMatch = bio.bgVideo.match(/(?:v=|\/)([a-zA-Z0-9_-]{11})/);
+    if (ytMatch) {
+      videoBg = `<div style="position:fixed;inset:0;z-index:0;overflow:hidden;">
+        <iframe src="https://www.youtube.com/embed/${ytMatch[1]}?autoplay=1&mute=1&loop=1&controls=0&playlist=${ytMatch[1]}" frameborder="0" allow="autoplay" style="position:absolute;width:200%;height:200%;top:-50%;left:-50%;pointer-events:none;"></iframe>
+      </div>`;
+    } else {
+      videoBg = `<div style="position:fixed;inset:0;z-index:0;overflow:hidden;">
+        <video src="${bio.bgVideo}" autoplay muted loop playsinline style="position:absolute;width:100%;height:100%;object-fit:cover;pointer-events:none;"></video>
+      </div>`;
+    }
+    document.body.insertAdjacentHTML('afterbegin', videoBg);
+    document.body.style.background = 'transparent';
+  }
+
+  // Custom CSS
+  if (bio.customCSS) {
+    const style = document.createElement('style');
+    style.textContent = bio.customCSS;
+    document.head.appendChild(style);
+  }
+
+  // Audio
+  if (bio.audioUrl) {
+    const audio = document.createElement('audio');
+    audio.src = bio.audioUrl;
+    audio.autoplay = true;
+    audio.loop = true;
+    audio.volume = 0.3;
+    audio.style.display = 'none';
+    document.body.appendChild(audio);
   }
 
   // Avatar
@@ -78,20 +117,23 @@ async function renderBioPage(username) {
   });
   socialsEl.innerHTML = socialsHTML;
 
-  // Links
+  // Links with click count
   const linksEl = document.getElementById('bioLinks');
   linksEl.innerHTML = (bio.links || []).map(link => {
     const tag = link.tag ? `<span class="bio-link-tag">${escapeHtml(link.tag)}</span>` : '';
+    const clickCount = link.clicks ? `<span class="click-count">${link.clicks} clicks</span>` : '';
+    const lockIcon = link.password ? `<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="color:var(--warn);"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>` : '';
     return `
-      <div class="bio-link" onclick="trackClick(${link.id}, '${link.url}')">
+      <div class="bio-link" onclick="trackClick(${link.id}, '${link.url}', ${link.password ? `'${link.password}'` : 'null'})" style="${link.password ? 'border-color:var(--warn);' : ''}">
         <div class="bio-link-icon">
           <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"/><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"/></svg>
         </div>
         <div class="bio-link-info">
-          <div class="bio-link-title">${escapeHtml(link.title || '')}</div>
+          <div class="bio-link-title">${escapeHtml(link.title || '')} ${lockIcon}</div>
           <div class="bio-link-desc">${escapeHtml(link.description || '')}</div>
         </div>
         ${tag}
+        ${clickCount}
         <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="color:var(--muted);flex-shrink:0;"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>
       </div>
     `;
@@ -144,13 +186,54 @@ async function renderBioPage(username) {
     viewsEl.style.display = 'none';
   }
 
+  // QR code
+  const qrEl = document.getElementById('bioQR');
+  if (qrEl) {
+    fetch(`/api/bio/qr/${username}`).then(r => r.json()).then(r => {
+      if (r.ok && r.qr) qrEl.innerHTML = `<img src="${r.qr}" alt="QR" style="width:120px;height:120px;border-radius:var(--rad);border:2px solid var(--border);cursor:pointer;" onclick="window.open(this.src, '_blank')">`;
+    });
+  }
+
   // Particles
   if (bio.particlesEnabled) {
     initParticles('particle-canvas', { count: 50, connect: true, speed: 0.3 });
   }
+
+  // Snowfall
+  if (bio.snowEnabled) {
+    initSnowfall();
+  }
 }
 
-async function trackClick(linkId, url) {
+function initSnowfall() {
+  const canvas = document.getElementById('particle-canvas');
+  if (!canvas) return;
+  const ctx = canvas.getContext('2d');
+  let w = canvas.width = window.innerWidth;
+  let h = canvas.height = window.innerHeight;
+  const flakes = [];
+  for (let i = 0; i < 60; i++) {
+    flakes.push({ x: Math.random() * w, y: Math.random() * h, r: Math.random() * 3 + 1, s: Math.random() * 1 + 0.5, d: Math.random() * 2 });
+  }
+  function draw() {
+    ctx.clearRect(0, 0, w, h);
+    ctx.fillStyle = 'rgba(255,255,255,0.6)';
+    flakes.forEach(f => {
+      f.y += f.s; f.x += Math.sin(f.d) * 0.5;
+      if (f.y > h) { f.y = -10; f.x = Math.random() * w; }
+      ctx.beginPath(); ctx.arc(f.x, f.y, f.r, 0, Math.PI * 2); ctx.fill();
+    });
+    requestAnimationFrame(draw);
+  }
+  draw();
+  window.addEventListener('resize', () => { w = canvas.width = window.innerWidth; h = canvas.height = window.innerHeight; });
+}
+
+async function trackClick(linkId, url, password) {
+  if (password) {
+    const input = prompt('This link is password-protected. Enter password:');
+    if (input !== password) { alert('Incorrect password'); return; }
+  }
   if (linkId) {
     await fetch(`/api/analytics/click/${linkId}`, { method: 'POST', credentials: 'include' }).catch(() => {});
   }

@@ -14,6 +14,8 @@ function initDb() {
       role TEXT DEFAULT 'user' CHECK(role IN ('user','admin','mod')),
       displayName TEXT,
       avatarUrl TEXT,
+      oauthProvider TEXT,
+      oauthId TEXT,
       suspended INTEGER DEFAULT 0,
       createdAt TEXT DEFAULT CURRENT_TIMESTAMP
     )`);
@@ -40,6 +42,9 @@ function initDb() {
       particlesEnabled INTEGER DEFAULT 0,
       cursorTrail INTEGER DEFAULT 0,
       snowEnabled INTEGER DEFAULT 0,
+      bgVideo TEXT,
+      customCSS TEXT,
+      audioUrl TEXT,
       socials TEXT DEFAULT '{}',
       seoTitle TEXT,
       seoDesc TEXT,

@@ -445,6 +445,28 @@
               <input type="text" id="bgValue" placeholder="Color or URL">
             </div>
           </div>
+          <div class="field" style="margin-top: 14px;">
+            <label>Background Video (YouTube URL or MP4)</label>
+            <input type="text" id="bgVideo" placeholder="https://youtube.com/watch?v=... or https://...mp4">
+          </div>
+        </div>
+        <div class="card" style="margin-bottom: 20px;">
+          <h3 style="margin-bottom: 16px;">Custom Audio</h3>
+          <div class="field">
+            <label>Audio URL (MP3, auto-plays on page load)</label>
+            <input type="text" id="audioUrl" placeholder="https://...mp3">
+          </div>
+        </div>
+        <div class="card" style="margin-bottom: 20px;">
+          <h3 style="margin-bottom: 16px;">Custom CSS</h3>
+          <div class="field">
+            <textarea id="customCSS" placeholder="Your custom CSS here..." style="min-height: 100px; font-family: var(--ff-mono); font-size: 12px;"></textarea>
+          </div>
+        </div>
+        <div class="card" style="margin-bottom: 20px;">
+          <h3 style="margin-bottom: 16px;">QR Code</h3>
+          <div style="display:flex;justify-content:center;padding:20px;" id="qrCode"></div>
+          <p style="text-align:center;color:var(--muted);font-size:12px;">Scan to visit your bio page</p>
         </div>
         <div class="card">
           <h3 style="margin-bottom: 16px;">Effects</h3>
@@ -595,6 +617,12 @@
         <div class="card" style="margin-bottom: 20px;">
           <h3 style="margin-bottom: 16px;">View History (7 Days)</h3>
           <div id="viewChart" style="display: flex; align-items: flex-end; gap: 8px; height: 160px; padding: 20px;">
+            <!-- Bars rendered by JS -->
+          </div>
+        </div>
+        <div class="card" style="margin-bottom: 20px;">
+          <h3 style="margin-bottom: 16px;">Click History (7 Days)</h3>
+          <div id="clickChart" style="display: flex; align-items: flex-end; gap: 8px; height: 160px; padding: 20px;">
             <!-- Bars rendered by JS -->
           </div>
         </div>

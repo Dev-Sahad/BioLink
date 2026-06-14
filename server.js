@@ -2,15 +2,27 @@ const express = require('express');
 const path = require('path');
 const cookieParser = require('cookie-parser');
 const rateLimit = require('express-rate-limit');
+const passport = require('passport');
+const session = require('express-session');
 const { db, initDb } = require('./db');
 
 const app = express();
-const PORT = 5000;
-const HOST = '0.0.0.0';
+const PORT = process.env.PORT || 5000;
+const HOST = process.env.HOST || '0.0.0.0';
 
 app.use(express.json({ limit: '10mb' }));
 app.use(express.urlencoded({ extended: true }));
 app.use(cookieParser());
+
+// OAuth session
+app.use(session({
+  secret: process.env.JWT_SECRET || 'biolink-premium-secret-key-2026',
+  resave: false,
+  saveUninitialized: false,
+  cookie: { maxAge: 7 * 24 * 60 * 60 * 1000, secure: false }
+}));
+app.use(passport.initialize());
+app.use(passport.session());
 
 // Security headers
 app.use((req, res, next) => {
@@ -32,6 +44,7 @@ app.use('/api/', limiter);
 
 // Auth routes
 app.use('/api/auth', require('./routes/auth'));
+app.use('/api/auth/oauth', require('./routes/oauth'));
 app.use('/api/bio', require('./routes/bio'));
 app.use('/api/links', require('./routes/links'));
 app.use('/api/gallery', require('./routes/gallery'));

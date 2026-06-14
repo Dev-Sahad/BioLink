@@ -214,6 +214,7 @@
       <div class="bio-footer">
         Made with <a href="/">BioLink Premium</a>
       </div>
+      <div class="bio-qr" id="bioQR" style="margin-top:16px;display:flex;justify-content:center;"></div>
     </div>
   </div>
 
@@ -221,7 +222,7 @@
   <script src="/js/bio.js"></script>
   <script>
     const params = new URLSearchParams(window.location.search);
-    const username = params.get('u');
+    const username = params.get('u') || params.get('username') || window.location.pathname.split('/').pop();
     if (username) renderBioPage(username);
   </script>
 </body>

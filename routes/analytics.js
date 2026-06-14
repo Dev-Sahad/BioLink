@@ -29,8 +29,10 @@ router.get('/me', optionalAuth, (req, res) => {
       db.get(`SELECT COUNT(*) as totalClicks FROM clicks WHERE linkId IN (SELECT id FROM links WHERE userId = ?)`, [req.userId], (err, c) => {
         db.get(`SELECT COUNT(*) as todayClicks FROM clicks WHERE linkId IN (SELECT id FROM links WHERE userId = ?) AND date >= date('now')`, [req.userId], (err, tc) => {
           db.all(`SELECT date(date) as day, COUNT(*) as count FROM views WHERE userId = ? AND date >= date('now', '-7 days') GROUP BY day ORDER BY day`, [req.userId], (err, viewHistory) => {
-            db.all(`SELECT l.title, l.url, COUNT(c.id) as clicks FROM links l LEFT JOIN clicks c ON l.id = c.linkId WHERE l.userId = ? GROUP BY l.id ORDER BY clicks DESC LIMIT 5`, [req.userId], (err, topLinks) => {
-              res.json({ ok: true, analytics: { totalViews: v.totalViews, todayViews: tv.totalViews, totalClicks: c.totalClicks, todayClicks: tc.totalClicks, viewHistory, topLinks } });
+            db.all(`SELECT date(date) as day, COUNT(*) as count FROM clicks WHERE linkId IN (SELECT id FROM links WHERE userId = ?) AND date >= date('now', '-7 days') GROUP BY day ORDER BY day`, [req.userId], (err, clickHistory) => {
+              db.all(`SELECT l.id, l.title, l.url, COUNT(c.id) as clicks FROM links l LEFT JOIN clicks c ON l.id = c.linkId WHERE l.userId = ? GROUP BY l.id ORDER BY clicks DESC LIMIT 5`, [req.userId], (err, topLinks) => {
+                res.json({ ok: true, analytics: { totalViews: v.totalViews, todayViews: tv.totalViews, totalClicks: c.totalClicks, todayClicks: tc.totalClicks, viewHistory, clickHistory, topLinks } });
+              });
             });
           });
         });

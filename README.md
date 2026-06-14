@@ -1,129 +1,146 @@
-# ✦ BioLink — Self-hosted Link-in-Bio Platform
+# BioLink Premium
 
-A fully self-hosted, GitHub Pages-ready alternative to Linktree, Superbio, and Guns.lol.
-No backend, no database, no monthly fees — everything runs in the browser via `localStorage`.
+A premium, guns.lol-style bio-link platform built for creators. Every profile is a fully customizable landing page with animated themes, music, video, gallery, analytics, and more.
 
----
+## Live Demo
 
+Visit your own profile at `https://your-domain.com/bio?username=yourname`
 
-## 🌐 How Bio URLs Work
+## Features
 
-Every user gets a unique public URL:
+- **Premium Bio Pages** — Animated backgrounds, video embeds, music, gallery, custom CSS
+- **8 Themes** — Dark, Light, Cyber, Neon, Midnight, Sunset, Ocean, Forest
+- **Drag & Drop Link Builder** — Reorder links, icons, password protection
+- **Analytics Dashboard** — Views, clicks, 7-day charts, top links
+- **SEO & OG Cards** — Custom titles, descriptions, and social preview images
+- **QR Code Generation** — One-click QR for every bio page
+- **OAuth Login** — Google, GitHub, Discord (auto-profile creation)
+- **Admin Panel** — User management, platform settings, role-based access
+- **Particle & Snow Effects** — Animated canvas backgrounds
+- **Password-Protected Links** — Secure links with client-side verification
+
+## Tech Stack
+
+| Layer | Technology |
+|-------|------------|
+| Backend | Node.js 20, Express, SQLite |
+| Auth | JWT (HTTP-only cookies), bcrypt, Passport.js |
+| Frontend | Vanilla JS, Premium CSS (glassmorphism, neon, glitch) |
+| Icons | Custom SVG (no emojis) |
+| QR Codes | `qrcode` library |
+| Analytics | SQLite time-series |
+
+## Quick Start
+
+```bash
+# Install dependencies
+npm install
+
+# Start the server
+npm start
+# or
+node server.js
+
+# Visit http://localhost:5000
 ```
-bio.html?u=USERNAME
+
+## Environment Variables
+
+Create a `.env` file or set these in your environment:
+
+```env
+JWT_SECRET=your-secret-key
+GOOGLE_CLIENT_ID=...
+GOOGLE_CLIENT_SECRET=...
+GITHUB_CLIENT_ID=...
+GITHUB_CLIENT_SECRET=...
+DISCORD_CLIENT_ID=...
+DISCORD_CLIENT_SECRET=...
+OAUTH_CALLBACK=https://your-domain.com
+PORT=5000
 ```
 
-Users can find and copy their URL anytime from **Dashboard → My URL**, with one click.
+## API Endpoints
 
----
+### Auth
+- `POST /api/auth/register` — Register with username, email, password
+- `POST /api/auth/login` — Login with username/password
+- `POST /api/auth/logout` — Clear JWT cookie
+- `GET /api/auth/me` — Get current user
+- `GET /api/auth/oauth/google` — Google OAuth
+- `GET /api/auth/oauth/github` — GitHub OAuth
+- `GET /api/auth/oauth/discord` — Discord OAuth
 
-## ✨ Features
+### Bio
+- `GET /api/bio/public/:username` — Public bio data
+- `PUT /api/bio/me` — Update own bio
+- `GET /api/bio/qr/:username` — Generate QR code PNG
 
-### 🔗 Links & Profile
-- Unlimited links with custom emoji icons, descriptions, and tags (New, Free, Hot…)
-- Auto emoji detection based on link URL
-- Custom display name, bio, location, pronouns, and avatar
-- Typewriter tagline animation (cycle through multiple roles)
-- Up to 6 custom profile badges (Verified, Creator, Premium, etc.)
-- Page view counter with public/private toggle
-- Publish / Draft mode
+### Links
+- `GET /api/links/me` — Get own links
+- `PUT /api/links/me` — Save/reorder links
+- `POST /api/links/click/:linkId` — Track link click
 
-### 🎵 Music Embed
-- Spotify embed player
-- SoundCloud embed player
-- Custom MP3 player with play/pause, seek bar, time display, and volume control
-- Optional autoplay
+### Analytics
+- `POST /api/analytics/view/:username` — Track bio view
+- `GET /api/analytics/me` — Get analytics (views, clicks, charts)
 
-### 📺 Video Embed
-- YouTube — paste any link, auto-converts to embed
-- Vimeo — paste any link, auto-converts to embed
-- Custom MP4 — native video player
+### Admin
+- `GET /api/admin/users` — List users (admin only)
+- `PUT /api/admin/users/:id` — Update user (admin only)
 
-### 🖼️ Photo Gallery
-- 3-column responsive gallery grid
-- Fullscreen lightbox viewer
-- Add up to 12 images via URL
+## Project Structure
 
-### 🎨 Appearance
-- 8 built-in themes: Dark, Light, Cyber, Midnight, Forest, Rose, Vapor, Sand
-- Custom accent color picker
-- Button style selector (Pill, Rounded, Sharp)
+```
+├── server.js              # Express server, middleware, routes
+├── db.js                  # SQLite schema & initialization
+├── middleware/
+│   └── auth.js              # JWT auth, RBAC, role guards
+├── routes/
+│   ├── auth.js              # Login, register, JWT
+│   ├── oauth.js             # Google, GitHub, Discord OAuth
+│   ├── bio.js               # Bio CRUD, QR codes
+│   ├── links.js             # Link management
+│   ├── gallery.js           # Gallery images
+│   ├── media.js             # Music/video embeds
+│   ├── analytics.js         # Views, clicks, charts
+│   └── admin.js             # Admin panel API
+├── public/
+│   ├── index.html           # Landing page
+│   ├── dashboard.html       # Bio builder dashboard
+│   ├── admin.html           # Admin panel
+│   ├── bio.html             # Public bio page
+│   ├── style.css            # Premium design system
+│   ├── js/
+│   │   ├── app.js           # Global utilities, particles, auth
+│   │   ├── dashboard.js     # Bio builder logic
+│   │   ├── bio.js           # Bio page renderer
+│   │   ├── admin.js         # Admin panel logic
+│   │   ├── auth.js          # Auth API helpers
+│   │   ├── links.js         # Link drag-and-drop
+│   │   ├── gallery.js       # Gallery uploader
+│   │   ├── media.js         # Media embeds
+│   │   └── analytics.js     # Analytics charts
+│   ├── icons/
+│   └── assets/
+├── package.json
+├── README.md
+└── .gitignore
+```
 
-### ✨ Visual Effects
-- Floating ambient particles
-- Glowing cursor trail
-- Falling snowflakes
-- Spinning avatar ring
+## Themes
 
-### 📱 Social Icons
-12 networks supported: Twitter, Instagram, YouTube, TikTok, Discord, GitHub, LinkedIn, Twitch, Snapchat, Spotify, Reddit, PayPal
+| Theme | Description |
+|-------|-------------|
+| Dark | Default deep purple/black |
+| Light | Clean white/gray |
+| Cyber | Matrix green terminal |
+| Neon | Hot pink/magenta |
+| Midnight | Deep blue |
+| Sunset | Warm orange/red |
+| Ocean | Cool blue/cyan |
+| Forest | Green/nature |
 
-### 🌐 Custom Domain
-- Connect your own domain or subdomain
-- Step-by-step DNS (CNAME) setup guide
-- One-click verification
+## License
 
-### 📤 Sharing
-- One-click copy bio URL
-- Web Share API (native mobile share sheet)
-- QR code modal for offline sharing
-
-### 📱 Mobile & Desktop UI
-- Fully responsive layouts
-- Mobile bottom navigation
-- Mobile status bar simulation
-- Sidebar navigation on desktop
-
-### 🔐 Accounts & Auth
-- Register / Login / Logout
-- Role-based access (User / Admin)
-- Account suspension support
-
-### ⚙️ Admin Dashboard
-- Platform-wide stats (users, bio pages, views, clicks)
-- Full user management — create, edit, suspend, delete
-- Bio page management — view or delete any page
-- Analytics — top pages, CTR, content & theme breakdown
-- Platform settings — registration toggle, view count visibility
-- Export all data as JSON
-- Clear all view/click counts
-
-### ℹ️ Credits Page
-- Feature showcase, tech stack, theme gallery
-- Changelog and MIT license
-- Creator info and support links
-
----
-
-## 🛠️ Customization
-
-**Change the site name** — edit the `<title>` tags and `.nav-logo` text in each HTML file.
-
-**Change default theme / colors** — edit the `:root` CSS variables in `style.css`.
-
-**Add more social networks** — add entries to the `SOCIALS` array in `dashboard.html`, and add a URL builder in `bio.html`'s `socialUrl()` function.
-
-**Upgrade to a real backend** — replace the `localStorage` calls in `app.js` with `fetch()` calls to your own API. The interface layer is intentionally thin to make this easy.
-
----
-
-## ⚠️ Limitations (localStorage)
-
-Since this runs entirely in the browser:
-- Data is stored **per browser** — users on different devices won't share data
-- For a true multi-user production platform, replace `app.js` with a backend (Node.js + SQLite, Supabase, Firebase, etc.)
-- Passwords are stored in plain text in localStorage — fine for personal/demo use, not for production
-
----
-
-## 📄 License
-
-MIT — use freely, modify as you wish.
-
----
-
-<div align="center">
-
-Built with ❤️ by **[Dev-Sahad](https://instagram.com/sahad_____sha)** · [GitHub](https://github.com/Dev-Sahad) · 
-
-</div>
+MIT
