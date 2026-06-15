@@ -64,16 +64,21 @@ app.get('/bio', (req, res) => res.sendFile(path.join(__dirname, 'public', 'bio.h
 app.get('/login', (req, res) => res.sendFile(path.join(__dirname, 'public', 'index.html')));
 app.get('/register', (req, res) => res.sendFile(path.join(__dirname, 'public', 'index.html')));
 
-// Fallback for SPA
+// 404 handler
 app.use((req, res, next) => {
-  if (req.path.startsWith('/api/')) return res.status(404).json({ ok: false, msg: 'API endpoint not found' });
-  res.sendFile(path.join(__dirname, 'public', 'index.html'));
+  if (req.path.startsWith('/api/')) {
+    return res.status(404).json({ ok: false, msg: 'API endpoint not found' });
+  }
+  res.status(404).sendFile(path.join(__dirname, 'public', '404.html'));
 });
 
 // Error handler
 app.use((err, req, res, next) => {
   console.error(err);
-  res.status(500).json({ ok: false, msg: 'Internal server error' });
+  if (req.path.startsWith('/api/') || req.headers.accept?.includes('application/json')) {
+    return res.status(500).json({ ok: false, msg: 'Internal server error' });
+  }
+  res.status(500).sendFile(path.join(__dirname, 'public', '500.html'));
 });
 
 initDb();

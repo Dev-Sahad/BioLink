@@ -11,18 +11,40 @@ const socialIcons = {
   youtube: '<svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor"><path d="M23.498 6.186a3.016 3.016 0 0 0-2.122-2.136C19.505 3.545 12 3.545 12 3.545s-7.505 0-9.377.505A3.017 3.017 0 0 0 .502 6.186C0 8.07 0 12 0 12s0 3.93.502 5.814a3.016 3.016 0 0 0 2.122 2.136c1.871.505 9.376.505 9.376.505s7.505 0 9.377-.505a3.015 3.015 0 0 0 2.122-2.136C24 15.93 24 12 24 12s0-3.93-.502-5.814zM9.545 15.568V8.432L15.818 12l-6.273 3.568z"/></svg>',
 };
 
+function showBioError(title, message) {
+  document.title = `${title} — BioLink`;
+  const card = document.getElementById('bioCard');
+  if (card) {
+    card.innerHTML = `
+      <div style="padding: 20px 0;">
+        <div style="width:64px;height:64px;border-radius:50%;background:var(--accent-dim);display:flex;align-items:center;justify-content:center;margin:0 auto 24px;border:2px solid var(--border);">
+          <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="var(--accent)" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M12 16v-4"/><path d="M12 8h.01"/></svg>
+        </div>
+        <div style="font-size:1.4rem;font-weight:700;margin-bottom:10px;">${title}</div>
+        <p style="font-size:14px;color:var(--muted);line-height:1.7;margin-bottom:28px;">${message}</p>
+        <a href="/" class="btn btn-primary" style="display:inline-flex;align-items:center;gap:8px;text-decoration:none;">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
+          Back to Home
+        </a>
+      </div>
+    `;
+  }
+}
+
 async function renderBioPage(username) {
   // Track view
   await fetch(`/api/analytics/view/${username}`, { method: 'POST', credentials: 'include' }).catch(() => {});
 
-  const r = await fetch(`/api/bio/public/${username}`, { credentials: 'include' }).then(r => r.json());
-  if (!r.ok) {
-    document.body.innerHTML = `
-      <div style="min-height:100vh;display:flex;align-items:center;justify-content:center;flex-direction:column;gap:16px;">
-        <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="var(--muted)" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M12 16v-4"/><path d="M12 8h.01"/></svg>
-        <h2 style="color:var(--muted);">Bio not found</h2>
-        <a href="/" style="color:var(--accent);">Go home</a>
-      </div>`;
+  let r;
+  try {
+    const resp = await fetch(`/api/bio/public/${username}`, { credentials: 'include' });
+    r = await resp.json();
+    if (!r.ok) {
+      showBioError('Not found', `No bio page exists for <strong>@${escapeHtml(username)}</strong>. It may have been removed or the link is incorrect.`);
+      return;
+    }
+  } catch (e) {
+    showBioError('Something went wrong', 'We had trouble loading this page. Please try again in a moment.');
     return;
   }
 
