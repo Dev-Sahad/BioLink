@@ -221,9 +221,23 @@
   <script src="/js/app.js"></script>
   <script src="/js/bio.js"></script>
   <script>
-    const params = new URLSearchParams(window.location.search);
-    const username = params.get('u') || params.get('username') || window.location.pathname.split('/').pop();
-    if (username) renderBioPage(username);
+    (async () => {
+      const params = new URLSearchParams(window.location.search);
+      let username = params.get('u') || params.get('username');
+      if (!username) {
+        const pathPart = window.location.pathname.replace(/^\//, '').split('/')[0];
+        if (pathPart && pathPart !== 'bio') username = pathPart;
+      }
+      if (!username) {
+        try {
+          const r = await fetch(`/api/domains/resolve?host=${encodeURIComponent(window.location.hostname)}`);
+          const data = await r.json();
+          if (data.ok) username = data.username;
+        } catch (e) {}
+      }
+      if (username) renderBioPage(username);
+      else showBioError('Page not found', 'No bio page found at this address.');
+    })();
   </script>
 </body>
 </html>

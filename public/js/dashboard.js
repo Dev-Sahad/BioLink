@@ -417,6 +417,87 @@ async function populateAnalytics() {
   }
 }
 
+/* ── DOMAIN ── */
+async function populateDomain() {
+  const r = await API.get('/api/domains/me');
+  if (!r.ok) return;
+
+  const input = document.getElementById('domainInput');
+  const status = document.getElementById('domainStatus');
+  const label = document.getElementById('domainCurrentLabel');
+  const badge = document.getElementById('domainVerifiedBadge');
+  const instructions = document.getElementById('domainInstructions');
+  const txtValue = document.getElementById('domainTxtValue');
+  const removeCard = document.getElementById('domainRemoveCard');
+
+  if (r.customDomain) {
+    input.value = r.customDomain;
+    status.style.display = 'block';
+    label.textContent = r.customDomain;
+    removeCard.style.display = 'block';
+
+    if (r.domainVerified) {
+      badge.innerHTML = `<span class="badge badge-active" style="background: #1a3a1a; color: #3dffa0; border: 1px solid #3dffa0;">Verified</span>`;
+      instructions.style.display = 'none';
+    } else {
+      badge.innerHTML = `<span class="badge" style="background: var(--surface); color: var(--muted); border: 1px solid var(--border);">Pending verification</span>`;
+      instructions.style.display = 'block';
+      if (r.domainToken) {
+        txtValue.textContent = `biolink-verify=${r.domainToken}`;
+        const txtNameEl = document.getElementById('domainTxtName');
+        if (txtNameEl) {
+          const parts = r.customDomain.split('.');
+          txtNameEl.textContent = parts.length > 2 ? parts.slice(0, -2).join('.') : '@';
+        }
+      }
+    }
+  } else {
+    status.style.display = 'none';
+    removeCard.style.display = 'none';
+  }
+}
+
+async function saveDomain() {
+  const domain = document.getElementById('domainInput').value.trim();
+  if (!domain) { showToast('Enter a domain first', 'error'); return; }
+  const r = await API.post('/api/domains/me', { domain });
+  if (r.ok) {
+    showToast('Domain saved. Add the TXT record to verify.', 'success');
+    populateDomain();
+  } else {
+    showToast(r.msg || 'Failed to save domain', 'error');
+  }
+}
+
+async function verifyDomain() {
+  const msg = document.getElementById('domainVerifyMsg');
+  msg.textContent = 'Checking DNS...';
+  msg.style.color = 'var(--muted)';
+  const r = await API.post('/api/domains/verify', {});
+  if (r.ok && r.verified) {
+    msg.textContent = 'Domain verified!';
+    msg.style.color = '#3dffa0';
+    showToast('Domain verified!', 'success');
+    populateDomain();
+  } else {
+    msg.textContent = r.msg || 'Verification failed.';
+    msg.style.color = 'var(--danger)';
+  }
+}
+
+async function removeDomain() {
+  if (!confirm('Remove your custom domain?')) return;
+  const r = await API.del('/api/domains/me');
+  if (r.ok) {
+    showToast('Domain removed', 'success');
+    document.getElementById('domainInput').value = '';
+    document.getElementById('domainVerifyMsg').textContent = '';
+    populateDomain();
+  } else {
+    showToast('Failed to remove domain', 'error');
+  }
+}
+
 /* ── TABS ── */
 function switchTab(name) {
   document.querySelectorAll('.sidebar-item').forEach(el => el.classList.remove('active'));
@@ -424,4 +505,5 @@ function switchTab(name) {
   document.querySelector(`.sidebar-item[onclick="switchTab('${name}')"]`)?.classList.add('active');
   document.getElementById(`tab-${name}`)?.classList.add('active');
   if (name === 'analytics') populateAnalytics();
+  if (name === 'domain') populateDomain();
 }

@@ -10,6 +10,9 @@ const app = express();
 const PORT = process.env.PORT || 5000;
 const HOST = process.env.HOST || '0.0.0.0';
 
+// Trust proxy so express-rate-limit and req.ip work correctly behind Replit proxy
+app.set('trust proxy', 1);
+
 app.use(express.json({ limit: '10mb' }));
 app.use(express.urlencoded({ extended: true }));
 app.use(cookieParser());
@@ -51,6 +54,39 @@ app.use('/api/gallery', require('./routes/gallery'));
 app.use('/api/media', require('./routes/media'));
 app.use('/api/admin', require('./routes/admin'));
 app.use('/api/analytics', require('./routes/analytics'));
+app.use('/api/domains', require('./routes/domains'));
+
+// Custom domain middleware — serve bio page when request comes from a verified custom domain
+app.use((req, res, next) => {
+  const host = req.hostname;
+  const ownHosts = [
+    'localhost',
+    '0.0.0.0',
+    process.env.REPLIT_DEV_DOMAIN,
+    process.env.REPLIT_DOMAINS,
+  ].filter(Boolean);
+
+  const isOwnHost = ownHosts.some(h => host === h || host.endsWith('.' + h)) ||
+    host.endsWith('.replit.app') || host.endsWith('.replit.dev');
+  if (isOwnHost) return next();
+
+  // Pass through API routes, asset directories, and any path that looks like a static file
+  const staticPrefixes = ['/api/', '/assets/', '/js/', '/icons/', '/style'];
+  const hasFileExtension = /\.[a-zA-Z0-9]{1,8}$/.test(req.path);
+  if (staticPrefixes.some(p => req.path.startsWith(p)) || hasFileExtension) {
+    return next();
+  }
+
+  const { db } = require('./db');
+  db.get(
+    `SELECT b.username FROM bios b WHERE b.customDomain = ? AND b.domainVerified = 1 AND b.published = 1`,
+    [host],
+    (err, row) => {
+      if (err || !row) return next();
+      res.sendFile(path.join(__dirname, 'public', 'bio.html'));
+    }
+  );
+});
 
 // Static files
 app.use(express.static(path.join(__dirname, 'public')));

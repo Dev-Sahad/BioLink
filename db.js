@@ -148,6 +148,8 @@ function initDb() {
     });
 
     db.run(`INSERT OR IGNORE INTO settings (id) VALUES (1)`);
+
+    db.run(`ALTER TABLE bios ADD COLUMN domainToken TEXT`, () => {});
   });
 }
 
