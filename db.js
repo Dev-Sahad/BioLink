@@ -257,18 +257,29 @@ async function initDb() {
       FOREIGN KEY(userId) REFERENCES users(id)
     )`);
 
-    // Seed or update admin user password synchronously
+    // Seed or update admin user password
     const bcrypt = require('bcryptjs');
     const hash = bcrypt.hashSync('bioadmin', 10);
-    db.run(
-      `INSERT INTO users (id, username, email, password, role, displayName) VALUES (1, 'admin', 'admin@biolink.local', ?, 'admin', 'Platform Admin') ON CONFLICT(username) DO UPDATE SET password = excluded.password, role = 'admin'`,
-      [hash]
-    );
-    db.run(`UPDATE users SET password = ? WHERE LOWER(username) = 'admin'`, [hash]);
 
-    db.run(
-      `INSERT INTO bios (userId, username, displayName, tagline, bio, theme, accentColor, bgType, particlesEnabled, socials, seoTitle, seoDesc, published) VALUES (1, 'admin', 'Platform Admin', 'Builder of the future', 'Welcome to the premium bio-link platform.', 'cyber', '#7c6aff', 'gradient', 1, '{}', 'BioLink Admin', 'Premium bio-link platform', 1) ON CONFLICT(username) DO NOTHING`
-    );
+    db.get(`SELECT id FROM users WHERE LOWER(username) = 'admin'`, (err, row) => {
+      if (!row) {
+        db.run(
+          `INSERT INTO users (username, email, password, role, displayName) VALUES (?, ?, ?, ?, ?)`,
+          ['admin', 'admin@biolink.local', hash, 'admin', 'Platform Admin'],
+          function(err) {
+            if (!err && this.lastID) {
+              const userId = this.lastID;
+              db.run(
+                `INSERT INTO bios (userId, username, displayName, tagline, bio, theme, accentColor, bgType, particlesEnabled, socials, seoTitle, seoDesc, published) VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?)`,
+                [userId, 'admin', 'Platform Admin', 'Builder of the future', 'Welcome to the premium bio-link platform.', 'cyber', '#7c6aff', 'gradient', 1, '{}', 'BioLink Admin', 'Premium bio-link platform', 1]
+              );
+            }
+          }
+        );
+      } else {
+        db.run(`UPDATE users SET password = ?, role = 'admin' WHERE id = ?`, [hash, row.id]);
+      }
+    });
 
     db.run(`INSERT OR IGNORE INTO settings (id) VALUES (1)`);
 
