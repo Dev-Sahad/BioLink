@@ -115,6 +115,8 @@ const db = {
 };
 
 async function initDb() {
+  if (sqlDb) return;
+
   if (!SQL) {
     try {
       const wasmBinary = require('./wasmBuffer');
@@ -123,8 +125,9 @@ async function initDb() {
       console.warn('Embedded wasmBinary failed, falling back to default initSqlJs():', e.message);
       SQL = await initSqlJs();
     }
-    loadDb();
   }
+
+  loadDb();
 
   sqlDb.run('PRAGMA foreign_keys = ON;');
   sqlDb.run(`CREATE TABLE IF NOT EXISTS users (
