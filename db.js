@@ -114,7 +114,15 @@ const db = {
 
 async function initDb() {
   if (!SQL) {
-    SQL = await initSqlJs();
+    SQL = await initSqlJs({
+      locateFile: file => {
+        const p1 = path.join(process.cwd(), 'node_modules', 'sql.js', 'dist', file);
+        if (fs.existsSync(p1)) return p1;
+        const p2 = path.join(__dirname, 'node_modules', 'sql.js', 'dist', file);
+        if (fs.existsSync(p2)) return p2;
+        return file;
+      }
+    });
     loadDb();
   }
 
