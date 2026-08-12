@@ -51,8 +51,14 @@ async function logout() {
   window.location.href = '/';
 }
 
-function updateNav() {
-  const navLinks = document.querySelector('.nav-links');
+/* updateNav can be called with no args (uses currentUser) or overridden per-page */
+function updateNav(authResponse) {
+  // If called from checkAuth().then(updateNav), authResponse is {ok, user}
+  // Update currentUser if provided
+  if (authResponse && typeof authResponse === 'object' && 'ok' in authResponse) {
+    if (authResponse.ok && authResponse.user) currentUser = authResponse.user;
+  }
+  const navLinks = document.getElementById('navLinks') || document.querySelector('.nav-links');
   if (!navLinks) return;
   if (currentUser) {
     navLinks.innerHTML = `
@@ -60,7 +66,7 @@ function updateNav() {
       ${currentUser.role === 'admin' ? '<a href="/admin" class="btn btn-ghost btn-sm">Admin</a>' : ''}
       <span class="badge badge-active">${escapeHtml(currentUser.username)}</span>
       <button onclick="logout()" class="btn btn-ghost btn-sm" title="Logout">
-        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>
       </button>
     `;
   } else {
@@ -69,6 +75,21 @@ function updateNav() {
       <button onclick="openRegisterModal()" class="btn btn-primary btn-sm">Get Started</button>
     `;
   }
+}
+
+/* ── GLOBAL MODAL STUBS (pages override these if they have modals) ── */
+function openLoginModal() {
+  const m = document.getElementById('loginModal');
+  if (m) openModal('loginModal');
+  else window.location.href = '/?login=1';
+}
+function openRegisterModal() {
+  const m = document.getElementById('registerModal');
+  if (m) openModal('registerModal');
+  else window.location.href = '/?register=1';
+}
+function oauthLogin(provider) {
+  window.location.href = `/api/auth/oauth/${provider}`;
 }
 
 function escapeHtml(str) {

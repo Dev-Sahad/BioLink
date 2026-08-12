@@ -30,7 +30,7 @@ async function loadDashboard() {
   if (!auth.ok) { window.location.href = '/'; return; }
 
   const full = await API.get('/api/bio/me/full');
-  if (!full.ok) { showToast('Failed to load bio', 'error'); return; }
+  if (!full.ok) { showToast('Failed to load bio data', 'error'); return; }
 
   bioData = full.bio;
   linksData = full.bio.links || [];
@@ -43,9 +43,11 @@ async function loadDashboard() {
   populateGallery();
   populateSeo();
   populateAnalytics();
+  populateDomain();
 
   updateNav();
 }
+
 
 /* ── PROFILE ── */
 function populateProfile() {

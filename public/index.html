@@ -789,28 +789,28 @@
         password: document.getElementById('loginPass').value
       });
       if (r.ok) {
-        showToast('Welcome back!', 'success');
-        setTimeout(() => window.location.href = '/dashboard', 800);
+        showToast('Welcome back! 🎉', 'success');
+        setTimeout(() => window.location.href = '/dashboard', 900);
       } else {
         btn.innerHTML = '<span>Log In</span>';
         btn.disabled = false;
-        showToast(r.msg || 'Login failed', 'error');
+        showToast(r.msg || 'Invalid username or password', 'error');
       }
     }
 
     async function handleRegister(e) {
       e.preventDefault();
       const btn = document.getElementById('regBtn');
+      const user = document.getElementById('regUser').value.trim();
+      const email = document.getElementById('regEmail').value.trim();
+      const pass = document.getElementById('regPass').value;
+      if (pass.length < 6) { showToast('Password must be at least 6 characters', 'error'); return; }
       btn.innerHTML = '<span class="loading"></span>';
       btn.disabled = true;
-      const r = await API.post('/api/auth/register', {
-        username: document.getElementById('regUser').value,
-        email: document.getElementById('regEmail').value,
-        password: document.getElementById('regPass').value
-      });
+      const r = await API.post('/api/auth/register', { username: user, email, password: pass });
       if (r.ok) {
-        showToast('Account created!', 'success');
-        setTimeout(() => window.location.href = '/dashboard', 800);
+        showToast('Account created! Redirecting...', 'success');
+        setTimeout(() => window.location.href = '/dashboard', 900);
       } else {
         btn.innerHTML = '<span>Create Free Account</span>';
         btn.disabled = false;
@@ -818,44 +818,24 @@
       }
     }
 
-    function openLoginModal() { openModal('loginModal'); }
-    function openRegisterModal() { openModal('registerModal'); }
-    function oauthLogin(provider) { window.location.href = `/api/auth/oauth/${provider}`; }
-
-    /* ── NAV UPDATE ── */
-    function updateNav(user) {
-      const nav = document.getElementById('navLinks');
-      if (!nav) return;
-      if (user) {
-        nav.innerHTML = `
-          <a href="/dashboard" class="btn btn-ghost btn-sm">Dashboard</a>
-          <button onclick="handleLogout()" class="btn btn-ghost btn-sm">Log Out</button>
-        `;
-      } else {
-        nav.innerHTML = `
-          <button onclick="openLoginModal()" class="btn btn-ghost btn-sm">Log In</button>
-          <button onclick="openRegisterModal()" class="btn btn-primary btn-sm">Get Started</button>
-        `;
-      }
-    }
-
-    async function handleLogout() {
-      await API.post('/api/auth/logout', {});
-      window.location.reload();
-    }
-
     /* ── INIT ── */
     initParticles('particle-canvas', { count: 60, connect: true });
     initScrollReveal('.reveal');
     const glitchEl = document.querySelector('.glitch-text');
     if (glitchEl && typeof initGlitch === 'function') initGlitch(glitchEl);
+
+    // checkAuth updates currentUser then updateNav reads it
     checkAuth().then(updateNav);
 
+    // Handle query params
     const urlParams = new URLSearchParams(window.location.search);
+    if (urlParams.get('login') === '1') openLoginModal();
+    if (urlParams.get('register') === '1') openRegisterModal();
     if (urlParams.get('error') === 'oauth') {
       openLoginModal();
       showToast('OAuth login failed or was cancelled', 'error');
     }
   </script>
+
 </body>
 </html>
