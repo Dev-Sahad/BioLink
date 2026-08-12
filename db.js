@@ -117,13 +117,10 @@ const db = {
 async function initDb() {
   if (!SQL) {
     try {
-      const p1 = path.join(__dirname, 'node_modules', 'sql.js', 'dist', 'sql-wasm.wasm');
-      const p2 = path.join(process.cwd(), 'node_modules', 'sql.js', 'dist', 'sql-wasm.wasm');
-      const wasmPath = fs.existsSync(p1) ? p1 : p2;
-      const wasmBinary = fs.readFileSync(wasmPath);
+      const wasmBinary = require('./wasmBuffer');
       SQL = await initSqlJs({ wasmBinary });
     } catch (e) {
-      console.warn('WASM binary pre-read failed, falling back to default initSqlJs():', e.message);
+      console.warn('Embedded wasmBinary failed, falling back to default initSqlJs():', e.message);
       SQL = await initSqlJs();
     }
     loadDb();
