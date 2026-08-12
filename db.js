@@ -257,7 +257,15 @@ async function initDb() {
       FOREIGN KEY(userId) REFERENCES users(id)
     )`);
 
-    // Seed or update admin user password
+    db.run(`INSERT OR IGNORE INTO settings (id) VALUES (1)`);
+
+    try {
+      db.run(`ALTER TABLE bios ADD COLUMN domainToken TEXT`, () => {});
+    } catch(e) {}
+  });
+
+  // Seed or update admin user password asynchronously and await completion
+  await new Promise((resolve) => {
     const bcrypt = require('bcryptjs');
     const hash = bcrypt.hashSync('bioadmin', 10);
 
@@ -271,21 +279,18 @@ async function initDb() {
               const userId = this.lastID;
               db.run(
                 `INSERT INTO bios (userId, username, displayName, tagline, bio, theme, accentColor, bgType, particlesEnabled, socials, seoTitle, seoDesc, published) VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?)`,
-                [userId, 'admin', 'Platform Admin', 'Builder of the future', 'Welcome to the premium bio-link platform.', 'cyber', '#7c6aff', 'gradient', 1, '{}', 'BioLink Admin', 'Premium bio-link platform', 1]
+                [userId, 'admin', 'Platform Admin', 'Builder of the future', 'Welcome to the premium bio-link platform.', 'cyber', '#7c6aff', 'gradient', 1, '{}', 'BioLink Admin', 'Premium bio-link platform', 1],
+                () => resolve()
               );
+            } else {
+              resolve();
             }
           }
         );
       } else {
-        db.run(`UPDATE users SET password = ?, role = 'admin' WHERE id = ?`, [hash, row.id]);
+        db.run(`UPDATE users SET password = ?, role = 'admin' WHERE id = ?`, [hash, row.id], () => resolve());
       }
     });
-
-    db.run(`INSERT OR IGNORE INTO settings (id) VALUES (1)`);
-
-    try {
-      db.run(`ALTER TABLE bios ADD COLUMN domainToken TEXT`, () => {});
-    } catch(e) {}
   });
 }
 
