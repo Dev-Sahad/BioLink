@@ -79,28 +79,52 @@ function escapeHtml(str) {
 }
 
 function showToast(msg, type = 'info') {
+  let container = document.getElementById('toast-container');
+  if (!container) {
+    container = document.createElement('div');
+    container.id = 'toast-container';
+    document.body.appendChild(container);
+  }
   const toast = document.createElement('div');
-  const colors = {
-    info: 'border-color: var(--accent); color: var(--accent);',
-    success: 'border-color: var(--success); color: var(--success);',
-    error: 'border-color: var(--danger); color: var(--danger);',
+  toast.className = `toast toast-${type}`;
+  const icons = {
+    success: '<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>',
+    error: '<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="12" cy="12" r="10"/><line x1="15" y1="9" x2="9" y2="15"/><line x1="9" y1="9" x2="15" y2="15"/></svg>',
+    info: '<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>'
   };
-  toast.style.cssText = `
-    position: fixed; bottom: 24px; right: 24px; z-index: 200;
-    background: var(--surface); border: 1px solid; ${colors[type] || colors.info}
-    border-radius: var(--rad); padding: 14px 20px;
-    font-size: 14px; font-weight: 500;
-    box-shadow: 0 8px 32px rgba(0,0,0,0.4);
-    animation: slideUp 0.3s ease-out;
-  `;
-  toast.textContent = msg;
-  document.body.appendChild(toast);
+  toast.innerHTML = `${icons[type] || icons.info} <span>${msg}</span>`;
+  container.appendChild(toast);
   setTimeout(() => {
     toast.style.opacity = '0';
-    toast.style.transform = 'translateY(10px)';
-    setTimeout(() => toast.remove(), 300);
-  }, 3000);
+    toast.style.transform = 'translateX(20px)';
+    toast.style.transition = '0.3s ease-out';
+    setTimeout(() => toast.remove(), 350);
+  }, 3200);
 }
+
+/* ── IMAGE FALLBACK ── */
+function handleImgError(img, fallbackText) {
+  const text = fallbackText || (img.alt ? img.alt[0].toUpperCase() : '?');
+  const div = document.createElement('div');
+  div.className = 'bio-avatar-fallback';
+  div.textContent = text;
+  div.style.width = img.style.width || img.width + 'px' || '120px';
+  div.style.height = img.style.height || img.height + 'px' || '120px';
+  img.parentNode.replaceChild(div, img);
+}
+
+/* ── GLOBAL IMG ERROR FALLBACK ── */
+document.addEventListener('DOMContentLoaded', () => {
+  document.querySelectorAll('img').forEach(img => {
+    img.addEventListener('error', () => {
+      if (!img.dataset.fallbackApplied) {
+        img.dataset.fallbackApplied = 'true';
+        img.style.display = 'none';
+      }
+    });
+  });
+});
+
 
 /* ── PARTICLE SYSTEM ── */
 function initParticles(canvasId, options = {}) {
