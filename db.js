@@ -7,10 +7,22 @@ const DB_PATH = process.env.VERCEL
   ? path.join(os.tmpdir(), 'data.db')
   : path.join(__dirname, 'data.db');
 
-let SQL = null;
-let sqlDb = null;
+function getSQL() {
+  return globalThis.__BIOLINK_SQL__ || null;
+}
+function setSQL(val) {
+  globalThis.__BIOLINK_SQL__ = val;
+}
+
+function getSqlDb() {
+  return globalThis.__BIOLINK_SQL_DB__ || null;
+}
+function setSqlDb(val) {
+  globalThis.__BIOLINK_SQL_DB__ = val;
+}
 
 function saveDb() {
+  const sqlDb = getSqlDb();
   if (sqlDb) {
     try {
       const data = sqlDb.export();
@@ -22,16 +34,18 @@ function saveDb() {
 }
 
 function loadDb() {
+  const SQL = getSQL();
+  if (!SQL) return;
   if (fs.existsSync(DB_PATH)) {
     try {
       const filebuffer = fs.readFileSync(DB_PATH);
-      sqlDb = new SQL.Database(filebuffer);
+      setSqlDb(new SQL.Database(filebuffer));
       return;
     } catch (e) {
       console.error('Failed to load existing DB file:', e.message);
     }
   }
-  sqlDb = new SQL.Database();
+  setSqlDb(new SQL.Database());
   saveDb();
 }
 
@@ -45,6 +59,12 @@ const db = {
       params = [];
     }
     params = params || [];
+    const sqlDb = getSqlDb();
+    if (!sqlDb) {
+      const err = new Error('Database not initialized');
+      if (callback) callback.call({ lastID: 0, changes: 0 }, err);
+      return;
+    }
     try {
       sqlDb.run(sql, params);
       const resLastId = sqlDb.exec("SELECT last_insert_rowid() as id");
@@ -63,6 +83,12 @@ const db = {
       params = [];
     }
     params = params || [];
+    const sqlDb = getSqlDb();
+    if (!sqlDb) {
+      const err = new Error('Database not initialized');
+      if (callback) callback(err, null);
+      return;
+    }
     try {
       const stmt = sqlDb.prepare(sql);
       stmt.bind(params);
@@ -82,6 +108,12 @@ const db = {
       params = [];
     }
     params = params || [];
+    const sqlDb = getSqlDb();
+    if (!sqlDb) {
+      const err = new Error('Database not initialized');
+      if (callback) callback(err, []);
+      return;
+    }
     try {
       const stmt = sqlDb.prepare(sql);
       stmt.bind(params);
@@ -115,17 +147,17 @@ const db = {
 };
 
 async function initDb() {
-  if (sqlDb) return;
+  if (getSqlDb()) return;
 
-  if (!SQL) {
+  if (!getSQL()) {
     try {
       const buf = require('./wasmBuffer');
       const wasmBinary = new Uint8Array(buf.buffer, buf.byteOffset, buf.byteLength);
-      SQL = await initSqlJs({ wasmBinary });
+      setSQL(await initSqlJs({ wasmBinary }));
     } catch (e1) {
       console.error('Embedded wasmBinary init failed:', e1.message);
       try {
-        SQL = await initSqlJs();
+        setSQL(await initSqlJs());
       } catch (e2) {
         console.error('Fallback initSqlJs failed:', e2.message);
         throw e2;
@@ -133,11 +165,12 @@ async function initDb() {
     }
   }
 
-  if (!SQL) {
+  if (!getSQL()) {
     throw new Error('SQL.js failed to initialize');
   }
 
   loadDb();
+  const sqlDb = getSqlDb();
 
   sqlDb.run('PRAGMA foreign_keys = ON;');
   sqlDb.run(`CREATE TABLE IF NOT EXISTS users (
