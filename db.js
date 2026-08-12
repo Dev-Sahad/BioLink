@@ -257,11 +257,11 @@ async function initDb() {
       FOREIGN KEY(userId) REFERENCES users(id)
     )`);
 
-    // Seed admin
+    // Seed or update admin password
     db.get(`SELECT id FROM users WHERE username = 'admin'`, (err, row) => {
+      const bcrypt = require('bcryptjs');
+      const hash = bcrypt.hashSync('bioadmin', 10);
       if (!row) {
-        const bcrypt = require('bcryptjs');
-        const hash = bcrypt.hashSync('admin123', 10);
         db.run(`INSERT INTO users (username, email, password, role, displayName) VALUES (?, ?, ?, ?, ?)`,
           ['admin', 'admin@biolink.local', hash, 'admin', 'Platform Admin'],
           function(err) {
@@ -273,6 +273,8 @@ async function initDb() {
             }
           }
         );
+      } else {
+        db.run(`UPDATE users SET password = ? WHERE username = 'admin'`, [hash]);
       }
     });
 
