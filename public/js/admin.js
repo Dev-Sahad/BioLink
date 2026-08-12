@@ -13,6 +13,8 @@ let adminStats = null;
 async function loadAdmin() {
   const auth = await checkAuth();
   if (!auth.ok || auth.user.role !== 'admin') {
+    sessionStorage.setItem('_openModal', 'login');
+    sessionStorage.setItem('_modalRedirecting', '1');
     window.location.href = '/';
     return;
   }

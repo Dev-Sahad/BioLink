@@ -782,59 +782,78 @@
     async function handleLogin(e) {
       e.preventDefault();
       const btn = document.getElementById('loginBtn');
+      const origHtml = '<span>Log In</span>';
       btn.innerHTML = '<span class="loading"></span>';
       btn.disabled = true;
-      const r = await API.post('/api/auth/login', {
-        username: document.getElementById('loginUser').value,
-        password: document.getElementById('loginPass').value
-      });
-      if (r.ok) {
-        showToast('Welcome back! 🎉', 'success');
-        setTimeout(() => window.location.href = '/dashboard', 900);
-      } else {
-        btn.innerHTML = '<span>Log In</span>';
+      try {
+        const r = await API.post('/api/auth/login', {
+          username: document.getElementById('loginUser').value.trim(),
+          password: document.getElementById('loginPass').value
+        });
+        if (r.ok) {
+          btn.innerHTML = '<span>✓ Welcome back!</span>';
+          showToast('Welcome back! 🎉', 'success');
+          setTimeout(() => window.location.href = '/dashboard', 900);
+        } else {
+          btn.innerHTML = origHtml;
+          btn.disabled = false;
+          showToast(r.msg || 'Invalid username or password', 'error');
+        }
+      } catch (_) {
+        btn.innerHTML = origHtml;
         btn.disabled = false;
-        showToast(r.msg || 'Invalid username or password', 'error');
+        showToast('Network error — try again', 'error');
       }
     }
 
     async function handleRegister(e) {
       e.preventDefault();
       const btn = document.getElementById('regBtn');
+      const origHtml = '<span>Create Free Account</span>';
       const user = document.getElementById('regUser').value.trim();
       const email = document.getElementById('regEmail').value.trim();
       const pass = document.getElementById('regPass').value;
+      if (!user || user.length < 3) { showToast('Username must be 3+ characters', 'error'); return; }
+      if (!email.includes('@')) { showToast('Enter a valid email address', 'error'); return; }
       if (pass.length < 6) { showToast('Password must be at least 6 characters', 'error'); return; }
       btn.innerHTML = '<span class="loading"></span>';
       btn.disabled = true;
-      const r = await API.post('/api/auth/register', { username: user, email, password: pass });
-      if (r.ok) {
-        showToast('Account created! Redirecting...', 'success');
-        setTimeout(() => window.location.href = '/dashboard', 900);
-      } else {
-        btn.innerHTML = '<span>Create Free Account</span>';
+      try {
+        const r = await API.post('/api/auth/register', { username: user, email, password: pass });
+        if (r.ok) {
+          btn.innerHTML = '<span>✓ Account created!</span>';
+          showToast('Account created! Redirecting...', 'success');
+          setTimeout(() => window.location.href = '/dashboard', 900);
+        } else {
+          btn.innerHTML = origHtml;
+          btn.disabled = false;
+          showToast(r.msg || 'Registration failed — try a different username', 'error');
+        }
+      } catch (_) {
+        btn.innerHTML = origHtml;
         btn.disabled = false;
-        showToast(r.msg || 'Registration failed', 'error');
+        showToast('Network error — try again', 'error');
       }
     }
 
-    /* ── INIT ── */
+    /* ── INIT (DOM is ready since script is at bottom of body) ── */
     initParticles('particle-canvas', { count: 60, connect: true });
     initScrollReveal('.reveal');
     const glitchEl = document.querySelector('.glitch-text');
     if (glitchEl && typeof initGlitch === 'function') initGlitch(glitchEl);
 
-    // checkAuth updates currentUser then updateNav reads it
+    // Auth check → update nav buttons
     checkAuth().then(updateNav);
 
-    // Handle query params
-    const urlParams = new URLSearchParams(window.location.search);
-    if (urlParams.get('login') === '1') openLoginModal();
-    if (urlParams.get('register') === '1') openRegisterModal();
-    if (urlParams.get('error') === 'oauth') {
-      openLoginModal();
-      showToast('OAuth login failed or was cancelled', 'error');
-    }
+    // Open any pending modal (from redirect or query param) — after a brief tick
+    // so the modal elements are guaranteed to be in the DOM
+    setTimeout(() => {
+      checkPendingModal();
+      if (new URLSearchParams(window.location.search).get('error') === 'oauth') {
+        openLoginModal();
+        showToast('OAuth login failed or was cancelled', 'error');
+      }
+    }, 50);
   </script>
 
 </body>

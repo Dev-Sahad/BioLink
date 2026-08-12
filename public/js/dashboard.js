@@ -27,7 +27,13 @@ const themes = [
 
 async function loadDashboard() {
   const auth = await checkAuth();
-  if (!auth.ok) { window.location.href = '/'; return; }
+  if (!auth.ok) {
+    // Signal home page to open login modal
+    sessionStorage.setItem('_openModal', 'login');
+    sessionStorage.setItem('_modalRedirecting', '1');
+    window.location.href = '/';
+    return;
+  }
 
   const full = await API.get('/api/bio/me/full');
   if (!full.ok) { showToast('Failed to load bio data', 'error'); return; }

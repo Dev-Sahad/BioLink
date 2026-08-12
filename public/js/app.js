@@ -77,19 +77,56 @@ function updateNav(authResponse) {
   }
 }
 
-/* ── GLOBAL MODAL STUBS (pages override these if they have modals) ── */
+/* ── GLOBAL MODAL HELPERS ── */
+/* Never redirect in a loop — use sessionStorage to signal which modal to open */
 function openLoginModal() {
   const m = document.getElementById('loginModal');
-  if (m) openModal('loginModal');
-  else window.location.href = '/?login=1';
+  if (m) {
+    closeAllModals();
+    openModal('loginModal');
+  } else {
+    // Store intent and navigate to home — but only if not already redirecting
+    if (!sessionStorage.getItem('_modalRedirecting')) {
+      sessionStorage.setItem('_openModal', 'login');
+      sessionStorage.setItem('_modalRedirecting', '1');
+      window.location.href = '/';
+    }
+  }
 }
 function openRegisterModal() {
   const m = document.getElementById('registerModal');
-  if (m) openModal('registerModal');
-  else window.location.href = '/?register=1';
+  if (m) {
+    closeAllModals();
+    openModal('registerModal');
+  } else {
+    if (!sessionStorage.getItem('_modalRedirecting')) {
+      sessionStorage.setItem('_openModal', 'register');
+      sessionStorage.setItem('_modalRedirecting', '1');
+      window.location.href = '/';
+    }
+  }
 }
 function oauthLogin(provider) {
   window.location.href = `/api/auth/oauth/${provider}`;
+}
+
+/* Called on index.html after DOM ready — opens any pending modal from redirect */
+function checkPendingModal() {
+  sessionStorage.removeItem('_modalRedirecting');
+  const pending = sessionStorage.getItem('_openModal');
+  if (pending) {
+    sessionStorage.removeItem('_openModal');
+    if (pending === 'login') openLoginModal();
+    else if (pending === 'register') openRegisterModal();
+  }
+  // Also support legacy ?login=1 / ?register=1 query params
+  const p = new URLSearchParams(window.location.search);
+  if (p.get('login') === '1') openLoginModal();
+  if (p.get('register') === '1') openRegisterModal();
+  // Clean URL
+  if (p.has('login') || p.has('register')) {
+    history.replaceState(null, '', window.location.pathname);
+  }
 }
 
 function escapeHtml(str) {
