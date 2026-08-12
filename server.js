@@ -120,7 +120,8 @@ app.use((req, res, next) => {
 app.use((err, req, res, next) => {
   console.error('SERVER ERROR:', err);
   const errMsg = err ? (err.stack || err.message || String(err)) : 'Unknown error';
-  if (req.path.startsWith('/api/') || req.headers.accept?.includes('application/json')) {
+  const isApi = (req.originalUrl && req.originalUrl.startsWith('/api/')) || req.path.startsWith('/api/') || (req.headers.accept && req.headers.accept.includes('application/json'));
+  if (isApi) {
     return res.status(500).json({ ok: false, msg: 'Internal server error', error: errMsg });
   }
   res.status(500).setHeader('X-Debug-Error', errMsg.replace(/\n/g, ' ')).sendFile(path.join(__dirname, 'public', '500.html'));
