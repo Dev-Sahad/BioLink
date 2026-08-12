@@ -117,8 +117,10 @@ app.use((err, req, res, next) => {
   res.status(500).sendFile(path.join(__dirname, 'public', '500.html'));
 });
 
-initDb();
-
-app.listen(PORT, HOST, () => {
-  console.log(`BioLink Premium server running on http://${HOST}:${PORT}`);
+initDb().then(() => {
+  app.listen(PORT, HOST, () => {
+    console.log(`BioLink Premium server running on http://${HOST}:${PORT}`);
+  });
+}).catch(err => {
+  console.error('Failed to initialize database:', err);
 });

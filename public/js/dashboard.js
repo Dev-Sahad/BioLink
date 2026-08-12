@@ -10,6 +10,8 @@ function toggleSidebar() {
 let bioData = null;
 let linksData = [];
 let galleryData = [];
+let deletedLinkIds = [];
+let deletedGalleryIds = [];
 let dragSrc = null;
 
 const themes = [
@@ -165,11 +167,20 @@ function updateLink(i, field, value) {
   linksData[i][field] = value;
 }
 function removeLink(i) {
-  linksData.splice(i, 1);
+  const removed = linksData.splice(i, 1)[0];
+  if (removed && removed.id) {
+    deletedLinkIds.push(removed.id);
+  }
   renderLinks();
 }
 
 async function saveLinks() {
+  // Delete removed links from DB
+  while (deletedLinkIds.length) {
+    const id = deletedLinkIds.pop();
+    await API.del(`/api/links/${id}`);
+  }
+
   const valid = linksData.filter(l => l.title && l.url);
   for (const link of valid) {
     if (link.id) {
@@ -186,10 +197,13 @@ async function saveLinks() {
 }
 
 /* ── APPEARANCE ── */
+let selectedTheme = 'dark';
+
 function populateAppearance() {
+  selectedTheme = bioData.theme || 'dark';
   const grid = document.getElementById('themeGrid');
   grid.innerHTML = themes.map(t => `
-    <div class="theme-option ${bioData.theme === t.id ? 'active' : ''}" onclick="selectTheme('${t.id}')" style="background: ${t.bg}; color: ${t.accent}; border-color: ${bioData.theme === t.id ? t.accent : 'var(--border)'};">
+    <div class="theme-option ${selectedTheme === t.id ? 'active' : ''}" onclick="selectTheme('${t.id}')" style="background: ${t.bg}; color: ${t.accent}; border-color: ${selectedTheme === t.id ? t.accent : 'var(--border)'};">
       <div style="font-weight: 700; font-size: 12px;">${t.name}</div>
     </div>
   `).join('');
@@ -207,7 +221,6 @@ function populateAppearance() {
   loadQR();
 }
 
-let selectedTheme = bioData?.theme || 'dark';
 function selectTheme(id) {
   selectedTheme = id;
   document.querySelectorAll('.theme-option').forEach(el => el.classList.remove('active'));
@@ -312,11 +325,18 @@ function addGalleryImage() {
 }
 
 function removeGalleryImage(i) {
-  galleryData.splice(i, 1);
+  const removed = galleryData.splice(i, 1)[0];
+  if (removed && removed.id) {
+    deletedGalleryIds.push(removed.id);
+  }
   renderGallery();
 }
 
 async function saveGallery() {
+  while (deletedGalleryIds.length) {
+    const id = deletedGalleryIds.pop();
+    await API.del(`/api/gallery/${id}`);
+  }
   for (const img of galleryData) {
     if (img.id) continue;
     const r = await API.post('/api/gallery', { imageUrl: img.imageUrl, caption: img.caption || '' });
@@ -347,9 +367,22 @@ async function populateAnalytics() {
   const r = await API.get('/api/analytics/me');
   if (!r.ok) return;
   const a = r.analytics;
-  document.getElementById('aTotalViews').textContent = (a.totalViews || 0).toLocaleString();
-  document.getElementById('aTodayViews').textContent = (a.todayViews || 0).toLocaleString();
-  document.getElementById('aTotalClicks').textContent = (a.totalClicks || 0).toLocaleString();
+
+  // Top stats bar
+  const statViewsEl = document.getElementById('statViews');
+  const statClicksEl = document.getElementById('statClicks');
+  const statTodayEl = document.getElementById('statToday');
+  if (statViewsEl) statViewsEl.textContent = (a.totalViews || 0).toLocaleString();
+  if (statClicksEl) statClicksEl.textContent = (a.totalClicks || 0).toLocaleString();
+  if (statTodayEl) statTodayEl.textContent = (a.todayViews || 0).toLocaleString();
+
+  // Analytics tab stats
+  const aTotalViewsEl = document.getElementById('aTotalViews');
+  const aTodayViewsEl = document.getElementById('aTodayViews');
+  const aTotalClicksEl = document.getElementById('aTotalClicks');
+  if (aTotalViewsEl) aTotalViewsEl.textContent = (a.totalViews || 0).toLocaleString();
+  if (aTodayViewsEl) aTodayViewsEl.textContent = (a.todayViews || 0).toLocaleString();
+  if (aTotalClicksEl) aTotalClicksEl.textContent = (a.totalClicks || 0).toLocaleString();
 
   // View chart
   const chart = document.getElementById('viewChart');
@@ -507,3 +540,15 @@ function switchTab(name) {
   if (name === 'analytics') populateAnalytics();
   if (name === 'domain') populateDomain();
 }
+
+document.addEventListener('DOMContentLoaded', () => {
+  const galInput = document.getElementById('galleryInput');
+  if (galInput) {
+    galInput.addEventListener('keydown', e => {
+      if (e.key === 'Enter') {
+        e.preventDefault();
+        addGalleryImage();
+      }
+    });
+  }
+});

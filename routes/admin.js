@@ -12,7 +12,17 @@ router.get('/stats', (req, res) => {
         db.get(`SELECT COUNT(*) as totalClicks FROM clicks`, (err, c) => {
           db.get(`SELECT COUNT(*) as todayViews FROM views WHERE date >= date('now')`, (err, tv) => {
             db.get(`SELECT COUNT(*) as todayClicks FROM clicks WHERE date >= date('now')`, (err, tc) => {
-              res.json({ ok: true, stats: { totalUsers: u.totalUsers, totalBios: b.totalBios, totalViews: v.totalViews, totalClicks: c.totalClicks, todayViews: tv.todayViews, todayClicks: tc.todayClicks } });
+              res.json({
+                ok: true,
+                stats: {
+                  totalUsers: u?.totalUsers || 0,
+                  totalBios: b?.totalBios || 0,
+                  totalViews: v?.totalViews || 0,
+                  totalClicks: c?.totalClicks || 0,
+                  todayViews: tv?.todayViews || 0,
+                  todayClicks: tc?.todayClicks || 0
+                }
+              });
             });
           });
         });
@@ -23,12 +33,14 @@ router.get('/stats', (req, res) => {
 
 router.get('/users', (req, res) => {
   db.all(`SELECT id, username, email, role, displayName, suspended, createdAt FROM users ORDER BY createdAt DESC`, (err, rows) => {
-    res.json({ ok: true, users: rows });
+    res.json({ ok: true, users: rows || [] });
   });
 });
 
 router.put('/users/:id/role', (req, res) => {
   const { role } = req.body;
+  const validRoles = ['user', 'admin', 'mod'];
+  if (!validRoles.includes(role)) return res.status(400).json({ ok: false, msg: 'Invalid role' });
   db.run(`UPDATE users SET role = ? WHERE id = ?`, [role, req.params.id], function(err) {
     if (err) return res.status(500).json({ ok: false, msg: 'Update failed' });
     res.json({ ok: true });
@@ -44,9 +56,20 @@ router.put('/users/:id/suspend', (req, res) => {
 });
 
 router.delete('/users/:id', (req, res) => {
-  db.run(`DELETE FROM users WHERE id = ?`, [req.params.id], function(err) {
-    if (err) return res.status(500).json({ ok: false, msg: 'Delete failed' });
-    res.json({ ok: true });
+  const uid = req.params.id;
+  db.serialize(() => {
+    db.run(`DELETE FROM clicks WHERE linkId IN (SELECT id FROM links WHERE userId = ?)`, [uid]);
+    db.run(`DELETE FROM links WHERE userId = ?`, [uid]);
+    db.run(`DELETE FROM gallery WHERE userId = ?`, [uid]);
+    db.run(`DELETE FROM music WHERE userId = ?`, [uid]);
+    db.run(`DELETE FROM video WHERE userId = ?`, [uid]);
+    db.run(`DELETE FROM views WHERE userId = ?`, [uid]);
+    db.run(`DELETE FROM domains WHERE userId = ?`, [uid]);
+    db.run(`DELETE FROM bios WHERE userId = ?`, [uid]);
+    db.run(`DELETE FROM users WHERE id = ?`, [uid], function(err) {
+      if (err) return res.status(500).json({ ok: false, msg: 'Delete failed' });
+      res.json({ ok: true });
+    });
   });
 });
 

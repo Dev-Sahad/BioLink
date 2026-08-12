@@ -38,6 +38,14 @@ router.post('/me', authMiddleware, (req, res) => {
         [clean, req.userId]
       );
       db.run(
+        `DELETE FROM domains WHERE userId = ? OR domain = ?`,
+        [req.userId, clean]
+      );
+      db.run(
+        `INSERT INTO domains (userId, domain, verified) VALUES (?, ?, 0)`,
+        [req.userId, clean]
+      );
+      db.run(
         `UPDATE bios SET customDomain = ?, domainVerified = 0, domainToken = ?, updatedAt = CURRENT_TIMESTAMP WHERE userId = ?`,
         [clean, token, req.userId],
         function(err) {
@@ -50,14 +58,17 @@ router.post('/me', authMiddleware, (req, res) => {
 });
 
 router.delete('/me', authMiddleware, (req, res) => {
-  db.run(
-    `UPDATE bios SET customDomain = NULL, domainVerified = 0, domainToken = NULL, updatedAt = CURRENT_TIMESTAMP WHERE userId = ?`,
-    [req.userId],
-    function(err) {
-      if (err) return res.status(500).json({ ok: false, msg: 'Failed to remove domain' });
-      res.json({ ok: true });
-    }
-  );
+  db.serialize(() => {
+    db.run(`DELETE FROM domains WHERE userId = ?`, [req.userId]);
+    db.run(
+      `UPDATE bios SET customDomain = NULL, domainVerified = 0, domainToken = NULL, updatedAt = CURRENT_TIMESTAMP WHERE userId = ?`,
+      [req.userId],
+      function(err) {
+        if (err) return res.status(500).json({ ok: false, msg: 'Failed to remove domain' });
+        res.json({ ok: true });
+      }
+    );
+  });
 });
 
 router.post('/verify', authMiddleware, async (req, res) => {
@@ -70,7 +81,7 @@ router.post('/verify', authMiddleware, async (req, res) => {
 
     try {
       const records = await dns.resolveTxt(row.customDomain);
-      const flat = records.map(r => r.join('')).flat();
+      const flat = records.map(r => Array.isArray(r) ? r.join('') : String(r));
       const found = flat.some(r => r === expectedRecord);
 
       if (found) {
@@ -84,14 +95,17 @@ router.post('/verify', authMiddleware, async (req, res) => {
             if (conflict) {
               return res.status(409).json({ ok: false, verified: false, msg: 'Another account has already verified this domain.' });
             }
-            db.run(
-              `UPDATE bios SET domainVerified = 1, updatedAt = CURRENT_TIMESTAMP WHERE userId = ?`,
-              [req.userId],
-              function(updateErr) {
-                if (updateErr) return res.status(500).json({ ok: false, msg: 'Verification passed but failed to save' });
-                res.json({ ok: true, verified: true });
-              }
-            );
+            db.serialize(() => {
+              db.run(`UPDATE domains SET verified = 1 WHERE userId = ? AND domain = ?`, [req.userId, row.customDomain]);
+              db.run(
+                `UPDATE bios SET domainVerified = 1, updatedAt = CURRENT_TIMESTAMP WHERE userId = ?`,
+                [req.userId],
+                function(updateErr) {
+                  if (updateErr) return res.status(500).json({ ok: false, msg: 'Verification passed but failed to save' });
+                  res.json({ ok: true, verified: true });
+                }
+              );
+            });
           }
         );
       } else {

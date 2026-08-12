@@ -1,11 +1,118 @@
-const sqlite3 = require('sqlite3').verbose();
+const initSqlJs = require('sql.js');
 const path = require('path');
+const fs = require('fs');
 
 const DB_PATH = path.join(__dirname, 'data.db');
-const db = new sqlite3.Database(DB_PATH);
 
-function initDb() {
+let SQL = null;
+let sqlDb = null;
+
+function saveDb() {
+  if (sqlDb) {
+    const data = sqlDb.export();
+    fs.writeFileSync(DB_PATH, Buffer.from(data));
+  }
+}
+
+function loadDb() {
+  if (fs.existsSync(DB_PATH)) {
+    try {
+      const filebuffer = fs.readFileSync(DB_PATH);
+      sqlDb = new SQL.Database(filebuffer);
+      return;
+    } catch (e) {}
+  }
+  sqlDb = new SQL.Database();
+  saveDb();
+}
+
+const db = {
+  serialize(fn) {
+    if (fn) fn();
+  },
+  run(sql, params, callback) {
+    if (typeof params === 'function') {
+      callback = params;
+      params = [];
+    }
+    params = params || [];
+    try {
+      sqlDb.run(sql, params);
+      const resLastId = sqlDb.exec("SELECT last_insert_rowid() as id");
+      const lastID = resLastId[0]?.values[0]?.[0] || 0;
+      const resChanges = sqlDb.exec("SELECT changes() as cnt");
+      const changes = resChanges[0]?.values[0]?.[0] || 0;
+      saveDb();
+      if (callback) callback.call({ lastID, changes }, null);
+    } catch (err) {
+      if (callback) callback.call({ lastID: 0, changes: 0 }, err);
+    }
+  },
+  get(sql, params, callback) {
+    if (typeof params === 'function') {
+      callback = params;
+      params = [];
+    }
+    params = params || [];
+    try {
+      const stmt = sqlDb.prepare(sql);
+      stmt.bind(params);
+      let row;
+      if (stmt.step()) {
+        row = stmt.getAsObject();
+      }
+      stmt.free();
+      if (callback) callback(null, row);
+    } catch (err) {
+      if (callback) callback(err, null);
+    }
+  },
+  all(sql, params, callback) {
+    if (typeof params === 'function') {
+      callback = params;
+      params = [];
+    }
+    params = params || [];
+    try {
+      const stmt = sqlDb.prepare(sql);
+      stmt.bind(params);
+      const rows = [];
+      while (stmt.step()) {
+        rows.push(stmt.getAsObject());
+      }
+      stmt.free();
+      if (callback) callback(null, rows);
+    } catch (err) {
+      if (callback) callback(err, []);
+    }
+  },
+  prepare(sql) {
+    const self = this;
+    return {
+      run(...args) {
+        let callback = null;
+        let params = args;
+        if (typeof args[args.length - 1] === 'function') {
+          callback = args.pop();
+          params = args;
+        }
+        self.run(sql, params, callback);
+      },
+      finalize(callback) {
+        if (callback) callback(null);
+      }
+    };
+  }
+};
+
+async function initDb() {
+  if (!SQL) {
+    SQL = await initSqlJs();
+    loadDb();
+  }
+
   db.serialize(() => {
+    db.run('PRAGMA foreign_keys = ON;');
     db.run(`CREATE TABLE IF NOT EXISTS users (
       id INTEGER PRIMARY KEY AUTOINCREMENT,
       username TEXT UNIQUE NOT NULL,
@@ -149,7 +256,9 @@ function initDb() {
 
     db.run(`INSERT OR IGNORE INTO settings (id) VALUES (1)`);
 
-    db.run(`ALTER TABLE bios ADD COLUMN domainToken TEXT`, () => {});
+    try {
+      db.run(`ALTER TABLE bios ADD COLUMN domainToken TEXT`, () => {});
+    } catch(e) {}
   });
 }
 

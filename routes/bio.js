@@ -4,6 +4,16 @@ const { authMiddleware } = require('../middleware/auth');
 const QRCode = require('qrcode');
 const router = express.Router();
 
+function parseSocials(socialsRaw) {
+  if (!socialsRaw) return {};
+  if (typeof socialsRaw === 'object') return socialsRaw;
+  try {
+    return JSON.parse(socialsRaw);
+  } catch (e) {
+    return {};
+  }
+}
+
 router.get('/:username', (req, res) => {
   const { username } = req.params;
   db.get(`SELECT * FROM bios WHERE username = ?`, [username], (err, bio) => {
@@ -15,7 +25,7 @@ router.get('/:username', (req, res) => {
         db.get(`SELECT * FROM music WHERE userId = ?`, [bio.userId], (err, music) => {
           db.get(`SELECT * FROM video WHERE userId = ?`, [bio.userId], (err, video) => {
             db.get(`SELECT COUNT(*) as count FROM views WHERE userId = ?`, [bio.userId], (err, views) => {
-              res.json({ ok: true, bio: { ...bio, socials: JSON.parse(bio.socials || '{}'), views: views?.count || 0, links, gallery, music, video } });
+              res.json({ ok: true, bio: { ...bio, socials: parseSocials(bio.socials), views: views?.count || 0, links: links || [], gallery: gallery || [], music: music || null, video: video || null } });
             });
           });
         });
@@ -46,7 +56,7 @@ router.get('/public/:username', (req, res) => {
         db.get(`SELECT * FROM music WHERE userId = ?`, [bio.userId], (err, music) => {
           db.get(`SELECT * FROM video WHERE userId = ?`, [bio.userId], (err, video) => {
             db.get(`SELECT COUNT(*) as count FROM views WHERE userId = ?`, [bio.userId], (err, views) => {
-              res.json({ ok: true, bio: { ...bio, socials: JSON.parse(bio.socials || '{}'), views: views?.count || 0, links, gallery, music, video } });
+              res.json({ ok: true, bio: { ...bio, socials: parseSocials(bio.socials), views: views?.count || 0, links: links || [], gallery: gallery || [], music: music || null, video: video || null } });
             });
           });
         });
@@ -81,7 +91,7 @@ router.get('/me/full', authMiddleware, (req, res) => {
         db.get(`SELECT * FROM music WHERE userId = ?`, [req.userId], (err, music) => {
           db.get(`SELECT * FROM video WHERE userId = ?`, [req.userId], (err, video) => {
             db.get(`SELECT COUNT(*) as count FROM views WHERE userId = ?`, [req.userId], (err, views) => {
-              res.json({ ok: true, bio: { ...bio, socials: JSON.parse(bio.socials || '{}'), views: views?.count || 0, links, gallery, music, video } });
+              res.json({ ok: true, bio: { ...bio, socials: parseSocials(bio.socials), views: views?.count || 0, links: links || [], gallery: gallery || [], music: music || null, video: video || null } });
             });
           });
         });

@@ -31,7 +31,18 @@ router.get('/me', optionalAuth, (req, res) => {
           db.all(`SELECT date(date) as day, COUNT(*) as count FROM views WHERE userId = ? AND date >= date('now', '-7 days') GROUP BY day ORDER BY day`, [req.userId], (err, viewHistory) => {
             db.all(`SELECT date(date) as day, COUNT(*) as count FROM clicks WHERE linkId IN (SELECT id FROM links WHERE userId = ?) AND date >= date('now', '-7 days') GROUP BY day ORDER BY day`, [req.userId], (err, clickHistory) => {
               db.all(`SELECT l.id, l.title, l.url, COUNT(c.id) as clicks FROM links l LEFT JOIN clicks c ON l.id = c.linkId WHERE l.userId = ? GROUP BY l.id ORDER BY clicks DESC LIMIT 5`, [req.userId], (err, topLinks) => {
-                res.json({ ok: true, analytics: { totalViews: v.totalViews, todayViews: tv.totalViews, totalClicks: c.totalClicks, todayClicks: tc.totalClicks, viewHistory, clickHistory, topLinks } });
+                res.json({
+                  ok: true,
+                  analytics: {
+                    totalViews: v ? v.totalViews : 0,
+                    todayViews: tv ? tv.todayViews : 0,
+                    totalClicks: c ? c.totalClicks : 0,
+                    todayClicks: tc ? tc.todayClicks : 0,
+                    viewHistory: viewHistory || [],
+                    clickHistory: clickHistory || [],
+                    topLinks: topLinks || []
+                  }
+                });
               });
             });
           });

@@ -125,17 +125,28 @@ async function renderBioPage(username) {
   const socials = bio.socials || {};
   const socialsEl = document.getElementById('bioSocials');
   let socialsHTML = '';
+  
+  function getSocialUrl(platform, handle) {
+    if (!handle) return '#';
+    const clean = handle.trim();
+    if (clean.startsWith('http://') || clean.startsWith('https://')) return clean;
+    const username = clean.replace(/^@/, '');
+    switch (platform) {
+      case 'twitter': return `https://twitter.com/${username}`;
+      case 'github': return `https://github.com/${username}`;
+      case 'discord': return `https://discord.com/users/${username}`;
+      case 'instagram': return `https://instagram.com/${username}`;
+      case 'tiktok': return `https://tiktok.com/@${username}`;
+      case 'youtube': return `https://youtube.com/${username}`;
+      default: return `https://${username}`;
+    }
+  }
+
   Object.entries(socials).forEach(([platform, handle]) => {
     if (!handle) return;
     const icon = socialIcons[platform] || '';
-    let url = '';
-    if (platform === 'twitter') url = `https://twitter.com/${handle}`;
-    if (platform === 'github') url = `https://github.com/${handle}`;
-    if (platform === 'discord') url = '#';
-    if (platform === 'instagram') url = `https://instagram.com/${handle}`;
-    if (platform === 'tiktok') url = `https://tiktok.com/@${handle}`;
-    if (platform === 'youtube') url = `https://youtube.com/${handle}`;
-    socialsHTML += `<a href="${url}" target="_blank" rel="noopener" class="social-icon" title="${platform}">${icon}</a>`;
+    const url = getSocialUrl(platform, handle);
+    socialsHTML += `<a href="${escapeHtml(url)}" target="_blank" rel="noopener" class="social-icon" title="${escapeHtml(platform)}">${icon}</a>`;
   });
   socialsEl.innerHTML = socialsHTML;
 
@@ -146,7 +157,7 @@ async function renderBioPage(username) {
     const clickCount = link.clicks ? `<span class="click-count">${link.clicks} clicks</span>` : '';
     const lockIcon = link.password ? `<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="color:var(--warn);"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>` : '';
     return `
-      <div class="bio-link" onclick="trackClick(${link.id}, '${link.url}', ${link.password ? `'${link.password}'` : 'null'})" style="${link.password ? 'border-color:var(--warn);' : ''}">
+      <div class="bio-link" data-id="${link.id || ''}" data-url="${escapeHtml(link.url || '')}" data-password="${escapeHtml(link.password || '')}" onclick="handleBioLinkClick(this)" style="${link.password ? 'border-color:var(--warn);' : ''}">
         <div class="bio-link-icon">
           <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"/><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"/></svg>
         </div>
@@ -251,6 +262,14 @@ function initSnowfall() {
   window.addEventListener('resize', () => { w = canvas.width = window.innerWidth; h = canvas.height = window.innerHeight; });
 }
 
+function handleBioLinkClick(el) {
+  if (!el) return;
+  const linkId = el.getAttribute('data-id');
+  const url = el.getAttribute('data-url');
+  const password = el.getAttribute('data-password');
+  trackClick(linkId, url, password);
+}
+
 async function trackClick(linkId, url, password) {
   if (password) {
     const input = prompt('This link is password-protected. Enter password:');
@@ -259,5 +278,7 @@ async function trackClick(linkId, url, password) {
   if (linkId) {
     await fetch(`/api/analytics/click/${linkId}`, { method: 'POST', credentials: 'include' }).catch(() => {});
   }
-  window.open(url, '_blank');
+  if (url) {
+    window.open(url, '_blank');
+  }
 }

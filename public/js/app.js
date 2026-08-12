@@ -3,31 +3,37 @@
    ═══════════════════════════════════════════════════════════════ */
 
 const API = {
-  async get(url) {
-    const r = await fetch(url, { credentials: 'include' });
-    return r.json();
+  async request(url, options = {}) {
+    try {
+      const r = await fetch(url, { credentials: 'include', ...options });
+      const contentType = r.headers.get('content-type');
+      if (contentType && contentType.includes('application/json')) {
+        return await r.json();
+      }
+      return { ok: r.ok, msg: r.statusText || `Request failed (${r.status})` };
+    } catch (e) {
+      return { ok: false, msg: 'Network error' };
+    }
   },
-  async post(url, body) {
-    const r = await fetch(url, {
+  get(url) {
+    return this.request(url);
+  },
+  post(url, body) {
+    return this.request(url, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(body),
-      credentials: 'include'
+      body: JSON.stringify(body)
     });
-    return r.json();
   },
-  async put(url, body) {
-    const r = await fetch(url, {
+  put(url, body) {
+    return this.request(url, {
       method: 'PUT',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(body),
-      credentials: 'include'
+      body: JSON.stringify(body)
     });
-    return r.json();
   },
-  async del(url) {
-    const r = await fetch(url, { method: 'DELETE', credentials: 'include' });
-    return r.json();
+  del(url) {
+    return this.request(url, { method: 'DELETE' });
   }
 };
 

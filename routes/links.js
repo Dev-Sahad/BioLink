@@ -44,10 +44,14 @@ router.delete('/:id', authMiddleware, (req, res) => {
 router.post('/reorder', authMiddleware, (req, res) => {
   const { order } = req.body;
   if (!Array.isArray(order)) return res.status(400).json({ ok: false, msg: 'Order array required' });
-  const stmt = db.prepare(`UPDATE links SET sortOrder = ? WHERE id = ? AND userId = ?`);
-  order.forEach((id, i) => stmt.run(i, id, req.userId));
-  stmt.finalize();
-  res.json({ ok: true });
+  db.serialize(() => {
+    const stmt = db.prepare(`UPDATE links SET sortOrder = ? WHERE id = ? AND userId = ?`);
+    order.forEach((id, i) => stmt.run(i, id, req.userId));
+    stmt.finalize((err) => {
+      if (err) return res.status(500).json({ ok: false, msg: 'Reorder failed' });
+      res.json({ ok: true });
+    });
+  });
 });
 
 module.exports = router;

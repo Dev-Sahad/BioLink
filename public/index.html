@@ -504,6 +504,12 @@
     initScrollReveal('.reveal');
     initGlitch(document.querySelector('.glitch-text'));
     checkAuth().then(updateNav);
+
+    const urlParams = new URLSearchParams(window.location.search);
+    if (urlParams.get('error') === 'oauth') {
+      openLoginModal();
+      showToast('OAuth login failed or was cancelled', 'error');
+    }
   </script>
 </body>
 </html>
