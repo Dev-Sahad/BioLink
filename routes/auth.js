@@ -24,7 +24,7 @@ router.post('/register', (req, res) => {
       db.run(`INSERT INTO users (username, email, password, displayName) VALUES (?, ?, ?, ?)`,
         [cleanUser, email, hash, cleanUser],
         function(err) {
-          if (err) return res.status(500).json({ ok: false, msg: 'Registration failed' });
+          if (err) return res.status(500).json({ ok: false, msg: 'Registration failed: ' + (err.message || String(err)) });
           const userId = this.lastID;
           db.run(`INSERT INTO bios (userId, username, displayName, tagline, bio, theme, accentColor, bgType, socials, seoTitle, seoDesc, published) VALUES (?,?,?,?,?,?,?,?,?,?,?,?)`,
             [userId, cleanUser, cleanUser, 'Hey, I\'m new here!', '', 'dark', '#7c6aff', 'gradient', '{}', cleanUser + ' | BioLink', 'My bio link page', 1],
@@ -43,16 +43,10 @@ router.post('/login', (req, res) => {
   if (!username || !password) return res.status(400).json({ ok: false, msg: 'Username and password required' });
   const input = username.trim().toLowerCase();
   db.get(`SELECT * FROM users WHERE LOWER(username) = ? OR LOWER(email) = ?`, [input, input], (err, user) => {
-    if (err) console.error('Login DB err:', err);
-    if (!user) {
-      console.error('Login user not found for input:', input);
-      return res.status(401).json({ ok: false, msg: 'Invalid credentials' });
-    }
+    if (err) return res.status(500).json({ ok: false, msg: 'Database query error: ' + (err.message || String(err)) });
+    if (!user) return res.status(401).json({ ok: false, msg: 'User not found' });
     const match = bcrypt.compareSync(password, user.password);
-    if (!match) {
-      console.error('Password mismatch for user:', user.username);
-      return res.status(401).json({ ok: false, msg: 'Invalid credentials' });
-    }
+    if (!match) return res.status(401).json({ ok: false, msg: 'Incorrect password' });
     if (user.suspended) return res.status(403).json({ ok: false, msg: 'Account suspended' });
     const token = jwt.sign({ userId: user.id, username: user.username, role: user.role }, JWT_SECRET, { expiresIn: '7d' });
     res.cookie('token', token, { httpOnly: true, secure: false, sameSite: 'lax', maxAge: JWT_AGE });
