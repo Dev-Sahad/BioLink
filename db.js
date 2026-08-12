@@ -115,19 +115,16 @@ const db = {
 async function initDb() {
   if (!SQL) {
     try {
-      SQL = await initSqlJs({
-        locateFile: file => {
-          try {
-            return require.resolve(`sql.js/dist/${file}`);
-          } catch (e) {
-            const p1 = path.join(process.cwd(), 'node_modules', 'sql.js', 'dist', file);
-            if (fs.existsSync(p1)) return p1;
-            return path.join(__dirname, 'node_modules', 'sql.js', 'dist', file);
-          }
-        }
-      });
+      let wasmPath;
+      try {
+        wasmPath = require.resolve('sql.js/dist/sql-wasm.wasm');
+      } catch (e) {
+        wasmPath = path.join(process.cwd(), 'node_modules', 'sql.js', 'dist', 'sql-wasm.wasm');
+      }
+      const wasmBinary = fs.readFileSync(wasmPath);
+      SQL = await initSqlJs({ wasmBinary });
     } catch (e) {
-      console.warn('Custom locateFile failed, falling back to default initSqlJs():', e.message);
+      console.warn('WASM binary pre-read failed, falling back to default initSqlJs():', e.message);
       SQL = await initSqlJs();
     }
     loadDb();
