@@ -43,22 +43,14 @@ const limiter = rateLimit({
   standardHeaders: true,
   legacyHeaders: false,
 });
-// Database initialization middleware for serverless environment
-let dbInitialized = false;
-let dbInitPromise = null;
-
 app.use((req, res, next) => {
-  if (dbInitialized) return next();
-  if (!dbInitPromise) {
-    dbInitPromise = initDb().then(() => {
-      dbInitialized = true;
-    }).catch(err => {
-      console.error('Database init error:', err);
-      dbInitPromise = null;
-      throw err;
+  const { getSqlDb } = require('./db');
+  if (getSqlDb()) return next();
+  initDb()
+    .then(() => next())
+    .catch(err => {
+      res.status(500).json({ ok: false, msg: 'Database init error: ' + (err.message || String(err)) });
     });
-  }
-  dbInitPromise.then(() => next()).catch(next);
 });
 
 // Auth routes
