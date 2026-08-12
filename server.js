@@ -67,7 +67,7 @@ app.use((req, res, next) => {
   ].filter(Boolean);
 
   const isOwnHost = ownHosts.some(h => host === h || host.endsWith('.' + h)) ||
-    host.endsWith('.replit.app') || host.endsWith('.replit.dev');
+    host.endsWith('.replit.app') || host.endsWith('.replit.dev') || host.endsWith('.vercel.app');
   if (isOwnHost) return next();
 
   // Pass through API routes, asset directories, and any path that looks like a static file
