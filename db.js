@@ -333,4 +333,4 @@ async function initDb() {
   saveDb();
 }
 
-module.exports = { db, initDb };
+module.exports = { db, initDb, getSqlDb };
