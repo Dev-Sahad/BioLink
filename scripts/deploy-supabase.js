@@ -10,7 +10,9 @@ if (!password) {
 }
 
 const connectionString = `postgresql://postgres:${encodeURIComponent(password)}@db.zlymhniyvrdapgyqhcry.supabase.co:5432/postgres`;
-const sqlFilePath = path.join(__dirname, '..', 'supabase_schema_and_data.sql');
+const p1 = path.join(__dirname, '..', 'sql', 'supabase_schema_and_data.sql');
+const p2 = path.join(__dirname, '..', 'supabase_schema_and_data.sql');
+const sqlFilePath = fs.existsSync(p1) ? p1 : p2;
 
 if (!fs.existsSync(sqlFilePath)) {
   console.error('Error: supabase_schema_and_data.sql file not found.');

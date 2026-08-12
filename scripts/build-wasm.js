@@ -9,4 +9,5 @@ module.exports = Buffer.from(b64, 'base64');
 `;
 
 fs.writeFileSync(path.join(__dirname, '..', 'wasmBuffer.js'), code);
-console.log('Successfully generated wasmBuffer.js!');
+fs.writeFileSync(path.join(__dirname, '..', 'database', 'wasmBuffer.js'), code);
+console.log('Successfully generated wasmBuffer.js in root and database/!');
