@@ -118,11 +118,12 @@ app.use((req, res, next) => {
 
 // Error handler
 app.use((err, req, res, next) => {
-  console.error(err);
+  console.error('SERVER ERROR:', err);
+  const errMsg = err ? (err.stack || err.message || String(err)) : 'Unknown error';
   if (req.path.startsWith('/api/') || req.headers.accept?.includes('application/json')) {
-    return res.status(500).json({ ok: false, msg: 'Internal server error' });
+    return res.status(500).json({ ok: false, msg: 'Internal server error', error: errMsg });
   }
-  res.status(500).sendFile(path.join(__dirname, 'public', '500.html'));
+  res.status(500).setHeader('X-Debug-Error', errMsg.replace(/\n/g, ' ')).sendFile(path.join(__dirname, 'public', '500.html'));
 });
 
 if (!process.env.VERCEL) {
