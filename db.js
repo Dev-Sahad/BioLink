@@ -117,13 +117,13 @@ async function initDb() {
     try {
       SQL = await initSqlJs({
         locateFile: file => {
-          const p1 = path.join(process.cwd(), 'node_modules', 'sql.js', 'dist', file);
-          if (fs.existsSync(p1)) return p1;
-          const p2 = path.join(__dirname, '..', 'node_modules', 'sql.js', 'dist', file);
-          if (fs.existsSync(p2)) return p2;
-          const p3 = path.join(__dirname, 'node_modules', 'sql.js', 'dist', file);
-          if (fs.existsSync(p3)) return p3;
-          return file;
+          try {
+            return require.resolve(`sql.js/dist/${file}`);
+          } catch (e) {
+            const p1 = path.join(process.cwd(), 'node_modules', 'sql.js', 'dist', file);
+            if (fs.existsSync(p1)) return p1;
+            return path.join(__dirname, 'node_modules', 'sql.js', 'dist', file);
+          }
         }
       });
     } catch (e) {

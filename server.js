@@ -128,9 +128,11 @@ app.use((req, res, next) => {
       dbInitialized = true;
     }).catch(err => {
       console.error('Database init error:', err);
+      dbInitPromise = null;
+      throw err;
     });
   }
-  dbInitPromise.then(() => next());
+  dbInitPromise.then(() => next()).catch(next);
 });
 
 if (!process.env.VERCEL) {
