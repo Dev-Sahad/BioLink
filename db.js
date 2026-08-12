@@ -119,12 +119,22 @@ async function initDb() {
 
   if (!SQL) {
     try {
-      const wasmBinary = require('./wasmBuffer');
+      const buf = require('./wasmBuffer');
+      const wasmBinary = new Uint8Array(buf.buffer, buf.byteOffset, buf.byteLength);
       SQL = await initSqlJs({ wasmBinary });
-    } catch (e) {
-      console.warn('Embedded wasmBinary failed, falling back to default initSqlJs():', e.message);
-      SQL = await initSqlJs();
+    } catch (e1) {
+      console.error('Embedded wasmBinary init failed:', e1.message);
+      try {
+        SQL = await initSqlJs();
+      } catch (e2) {
+        console.error('Fallback initSqlJs failed:', e2.message);
+        throw e2;
+      }
     }
+  }
+
+  if (!SQL) {
+    throw new Error('SQL.js failed to initialize');
   }
 
   loadDb();
