@@ -1,16 +1,23 @@
 const initSqlJs = require('sql.js');
 const path = require('path');
 const fs = require('fs');
+const os = require('os');
 
-const DB_PATH = path.join(__dirname, 'data.db');
+const DB_PATH = process.env.VERCEL
+  ? path.join(os.tmpdir(), 'data.db')
+  : path.join(__dirname, 'data.db');
 
 let SQL = null;
 let sqlDb = null;
 
 function saveDb() {
   if (sqlDb) {
-    const data = sqlDb.export();
-    fs.writeFileSync(DB_PATH, Buffer.from(data));
+    try {
+      const data = sqlDb.export();
+      fs.writeFileSync(DB_PATH, Buffer.from(data));
+    } catch (e) {
+      console.error('Failed to save DB:', e.message);
+    }
   }
 }
 

@@ -117,10 +117,30 @@ app.use((err, req, res, next) => {
   res.status(500).sendFile(path.join(__dirname, 'public', '500.html'));
 });
 
-initDb().then(() => {
-  app.listen(PORT, HOST, () => {
-    console.log(`BioLink Premium server running on http://${HOST}:${PORT}`);
-  });
-}).catch(err => {
-  console.error('Failed to initialize database:', err);
+// Database initialization middleware for serverless environment
+let dbInitialized = false;
+let dbInitPromise = null;
+
+app.use((req, res, next) => {
+  if (dbInitialized) return next();
+  if (!dbInitPromise) {
+    dbInitPromise = initDb().then(() => {
+      dbInitialized = true;
+    }).catch(err => {
+      console.error('Database init error:', err);
+    });
+  }
+  dbInitPromise.then(() => next());
 });
+
+if (!process.env.VERCEL) {
+  initDb().then(() => {
+    app.listen(PORT, HOST, () => {
+      console.log(`BioLink Premium server running on http://${HOST}:${PORT}`);
+    });
+  }).catch(err => {
+    console.error('Failed to initialize database:', err);
+  });
+}
+
+module.exports = app;
