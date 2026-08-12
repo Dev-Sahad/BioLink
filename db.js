@@ -259,33 +259,30 @@ async function initDb() {
     try {
       db.run(`ALTER TABLE bios ADD COLUMN domainToken TEXT`, () => {});
     } catch(e) {}
-  });
 
-  // Seed or update admin user password asynchronously and await completion
-  await new Promise((resolve) => {
+    // Seed or update admin user password
     const bcrypt = require('bcryptjs');
     const hash = bcrypt.hashSync('bioadmin', 10);
 
     db.get(`SELECT id FROM users WHERE LOWER(username) = 'admin'`, (err, row) => {
+      if (err) console.error('Admin lookup err:', err);
       if (!row) {
         db.run(
           `INSERT INTO users (username, email, password, role, displayName) VALUES (?, ?, ?, ?, ?)`,
           ['admin', 'admin@biolink.local', hash, 'admin', 'Platform Admin'],
           function(err) {
-            if (!err && this.lastID) {
+            if (err) console.error('Admin insert err:', err);
+            else if (this.lastID) {
               const userId = this.lastID;
               db.run(
                 `INSERT INTO bios (userId, username, displayName, tagline, bio, theme, accentColor, bgType, particlesEnabled, socials, seoTitle, seoDesc, published) VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?)`,
-                [userId, 'admin', 'Platform Admin', 'Builder of the future', 'Welcome to the premium bio-link platform.', 'cyber', '#7c6aff', 'gradient', 1, '{}', 'BioLink Admin', 'Premium bio-link platform', 1],
-                () => resolve()
+                [userId, 'admin', 'Platform Admin', 'Builder of the future', 'Welcome to the premium bio-link platform.', 'cyber', '#7c6aff', 'gradient', 1, '{}', 'BioLink Admin', 'Premium bio-link platform', 1]
               );
-            } else {
-              resolve();
             }
           }
         );
       } else {
-        db.run(`UPDATE users SET password = ?, role = 'admin' WHERE id = ?`, [hash, row.id], () => resolve());
+        db.run(`UPDATE users SET password = ?, role = 'admin' WHERE id = ?`, [hash, row.id]);
       }
     });
   });
