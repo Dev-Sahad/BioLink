@@ -43,7 +43,23 @@ const limiter = rateLimit({
   standardHeaders: true,
   legacyHeaders: false,
 });
-app.use('/api/', limiter);
+// Database initialization middleware for serverless environment
+let dbInitialized = false;
+let dbInitPromise = null;
+
+app.use((req, res, next) => {
+  if (dbInitialized) return next();
+  if (!dbInitPromise) {
+    dbInitPromise = initDb().then(() => {
+      dbInitialized = true;
+    }).catch(err => {
+      console.error('Database init error:', err);
+      dbInitPromise = null;
+      throw err;
+    });
+  }
+  dbInitPromise.then(() => next()).catch(next);
+});
 
 // Auth routes
 app.use('/api/auth', require('./routes/auth'));
@@ -115,24 +131,6 @@ app.use((err, req, res, next) => {
     return res.status(500).json({ ok: false, msg: 'Internal server error' });
   }
   res.status(500).sendFile(path.join(__dirname, 'public', '500.html'));
-});
-
-// Database initialization middleware for serverless environment
-let dbInitialized = false;
-let dbInitPromise = null;
-
-app.use((req, res, next) => {
-  if (dbInitialized) return next();
-  if (!dbInitPromise) {
-    dbInitPromise = initDb().then(() => {
-      dbInitialized = true;
-    }).catch(err => {
-      console.error('Database init error:', err);
-      dbInitPromise = null;
-      throw err;
-    });
-  }
-  dbInitPromise.then(() => next()).catch(next);
 });
 
 if (!process.env.VERCEL) {
