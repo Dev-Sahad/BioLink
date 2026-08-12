@@ -117,12 +117,9 @@ const db = {
 async function initDb() {
   if (!SQL) {
     try {
-      let wasmPath;
-      try {
-        wasmPath = require.resolve('sql.js/dist/sql-wasm.wasm');
-      } catch (e) {
-        wasmPath = path.join(process.cwd(), 'node_modules', 'sql.js', 'dist', 'sql-wasm.wasm');
-      }
+      const p1 = path.join(__dirname, 'node_modules', 'sql.js', 'dist', 'sql-wasm.wasm');
+      const p2 = path.join(process.cwd(), 'node_modules', 'sql.js', 'dist', 'sql-wasm.wasm');
+      const wasmPath = fs.existsSync(p1) ? p1 : p2;
       const wasmBinary = fs.readFileSync(wasmPath);
       SQL = await initSqlJs({ wasmBinary });
     } catch (e) {
