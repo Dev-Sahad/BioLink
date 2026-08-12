@@ -41,7 +41,8 @@ router.post('/register', (req, res) => {
 router.post('/login', (req, res) => {
   const { username, password } = req.body;
   if (!username || !password) return res.status(400).json({ ok: false, msg: 'Username and password required' });
-  db.get(`SELECT * FROM users WHERE username = ?`, [username.trim().toLowerCase()], (err, user) => {
+  const input = username.trim().toLowerCase();
+  db.get(`SELECT * FROM users WHERE LOWER(username) = ? OR LOWER(email) = ?`, [input, input], (err, user) => {
     if (!user || !bcrypt.compareSync(password, user.password)) return res.status(401).json({ ok: false, msg: 'Invalid credentials' });
     if (user.suspended) return res.status(403).json({ ok: false, msg: 'Account suspended' });
     const token = jwt.sign({ userId: user.id, username: user.username, role: user.role }, JWT_SECRET, { expiresIn: '7d' });
