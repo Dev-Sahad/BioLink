@@ -114,15 +114,22 @@ const db = {
 
 async function initDb() {
   if (!SQL) {
-    SQL = await initSqlJs({
-      locateFile: file => {
-        const p1 = path.join(process.cwd(), 'node_modules', 'sql.js', 'dist', file);
-        if (fs.existsSync(p1)) return p1;
-        const p2 = path.join(__dirname, 'node_modules', 'sql.js', 'dist', file);
-        if (fs.existsSync(p2)) return p2;
-        return file;
-      }
-    });
+    try {
+      SQL = await initSqlJs({
+        locateFile: file => {
+          const p1 = path.join(process.cwd(), 'node_modules', 'sql.js', 'dist', file);
+          if (fs.existsSync(p1)) return p1;
+          const p2 = path.join(__dirname, '..', 'node_modules', 'sql.js', 'dist', file);
+          if (fs.existsSync(p2)) return p2;
+          const p3 = path.join(__dirname, 'node_modules', 'sql.js', 'dist', file);
+          if (fs.existsSync(p3)) return p3;
+          return file;
+        }
+      });
+    } catch (e) {
+      console.warn('Custom locateFile failed, falling back to default initSqlJs():', e.message);
+      SQL = await initSqlJs();
+    }
     loadDb();
   }
 
