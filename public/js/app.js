@@ -71,8 +71,8 @@ function updateNav(authResponse) {
     `;
   } else {
     navLinks.innerHTML = `
-      <button onclick="openLoginModal()" class="btn btn-ghost btn-sm">Log In</button>
-      <button onclick="openRegisterModal()" class="btn btn-primary btn-sm">Get Started</button>
+      <a href="/login" class="btn btn-ghost btn-sm">Log In</a>
+      <a href="/register" class="btn btn-primary btn-sm">Get Started</a>
     `;
   }
 }
@@ -80,31 +80,13 @@ function updateNav(authResponse) {
 /* ── GLOBAL MODAL HELPERS ── */
 /* Never redirect in a loop — use sessionStorage to signal which modal to open */
 function openLoginModal() {
-  const m = document.getElementById('loginModal');
-  if (m) {
-    closeAllModals();
-    openModal('loginModal');
-  } else {
-    // Store intent and navigate to home — but only if not already redirecting
-    if (!sessionStorage.getItem('_modalRedirecting')) {
-      sessionStorage.setItem('_openModal', 'login');
-      sessionStorage.setItem('_modalRedirecting', '1');
-      window.location.href = '/';
-    }
-  }
+  // Authentication has its own route. This avoids relying on an inline modal
+  // that may not be present on every page (or after an intermediary rewrites
+  // the document).
+  window.location.assign('/login');
 }
 function openRegisterModal() {
-  const m = document.getElementById('registerModal');
-  if (m) {
-    closeAllModals();
-    openModal('registerModal');
-  } else {
-    if (!sessionStorage.getItem('_modalRedirecting')) {
-      sessionStorage.setItem('_openModal', 'register');
-      sessionStorage.setItem('_modalRedirecting', '1');
-      window.location.href = '/';
-    }
-  }
+  window.location.assign('/register');
 }
 function oauthLogin(provider) {
   window.location.href = `/api/auth/oauth/${provider}`;

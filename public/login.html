@@ -1,0 +1,47 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Log in — BioLink</title>
+  <link rel="stylesheet" href="/style.css">
+  <style>
+    .auth-page { min-height: 100vh; display: grid; place-items: center; padding: 24px; }
+    .auth-card { width: min(100%, 440px); padding: 32px; background: rgba(14,14,38,.85); border: 1px solid var(--border); border-radius: var(--rad-lg); box-shadow: 0 24px 70px rgba(0,0,0,.4); }
+    .auth-card h1 { margin: 0 0 8px; }
+    .auth-card .intro { color: var(--muted); margin: 0 0 28px; }
+  </style>
+</head>
+<body>
+  <main class="auth-page">
+    <section class="auth-card" aria-labelledby="login-title">
+      <a href="/" class="nav-logo" aria-label="Back to BioLink"><span>← BioLink</span></a>
+      <h1 id="login-title" class="text-gradient">Welcome back</h1>
+      <p class="intro">Log in to manage your BioLink page.</p>
+      <form id="loginForm">
+        <div class="field" style="margin-bottom:16px;"><label for="loginUser">Username or email</label><input type="text" id="loginUser" required autocomplete="username" placeholder="Enter your username or email"></div>
+        <div class="field" style="margin-bottom:22px;"><label for="loginPass">Password</label><input type="password" id="loginPass" required autocomplete="current-password" placeholder="Enter your password"></div>
+        <button type="submit" class="btn btn-primary btn-full" id="loginBtn">Log In</button>
+      </form>
+      <p style="text-align:center;margin-top:18px;color:var(--muted)">No account? <a href="/register" style="color:var(--accent);font-weight:700">Create one free</a></p>
+    </section>
+  </main>
+  <script src="/js/app.js"></script>
+  <script>
+    document.getElementById('loginForm').addEventListener('submit', async event => {
+      event.preventDefault();
+      const button = document.getElementById('loginBtn');
+      button.disabled = true;
+      button.textContent = 'Logging in…';
+      const response = await API.post('/api/auth/login', {
+        username: document.getElementById('loginUser').value.trim(),
+        password: document.getElementById('loginPass').value
+      });
+      if (response.ok) return window.location.assign('/dashboard');
+      button.disabled = false;
+      button.textContent = 'Log In';
+      showToast(response.msg || 'Invalid username or password', 'error');
+    });
+  </script>
+</body>
+</html>

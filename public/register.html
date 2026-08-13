@@ -1,0 +1,48 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Create an account — BioLink</title>
+  <link rel="stylesheet" href="/style.css">
+  <style>
+    .auth-page { min-height: 100vh; display: grid; place-items: center; padding: 24px; }
+    .auth-card { width: min(100%, 440px); padding: 32px; background: rgba(14,14,38,.85); border: 1px solid var(--border); border-radius: var(--rad-lg); box-shadow: 0 24px 70px rgba(0,0,0,.4); }
+    .auth-card h1 { margin: 0 0 8px; }.auth-card .intro { color: var(--muted); margin: 0 0 28px; }
+  </style>
+</head>
+<body>
+  <main class="auth-page">
+    <section class="auth-card" aria-labelledby="register-title">
+      <a href="/" class="nav-logo" aria-label="Back to BioLink"><span>← BioLink</span></a>
+      <h1 id="register-title" class="text-gradient">Create your BioLink</h1>
+      <p class="intro">It takes less than a minute.</p>
+      <form id="registerForm">
+        <div class="field" style="margin-bottom:14px;"><label for="regUser">Username</label><input type="text" id="regUser" required minlength="3" autocomplete="username" placeholder="Choose a username"></div>
+        <div class="field" style="margin-bottom:14px;"><label for="regEmail">Email</label><input type="email" id="regEmail" required autocomplete="email" placeholder="you@example.com"></div>
+        <div class="field" style="margin-bottom:22px;"><label for="regPass">Password</label><input type="password" id="regPass" required minlength="6" autocomplete="new-password" placeholder="At least 6 characters"></div>
+        <button type="submit" class="btn btn-primary btn-full" id="registerBtn">Create Free Account</button>
+      </form>
+      <p style="text-align:center;margin-top:18px;color:var(--muted)">Already have an account? <a href="/login" style="color:var(--accent);font-weight:700">Log in</a></p>
+    </section>
+  </main>
+  <script src="/js/app.js"></script>
+  <script>
+    document.getElementById('registerForm').addEventListener('submit', async event => {
+      event.preventDefault();
+      const button = document.getElementById('registerBtn');
+      button.disabled = true;
+      button.textContent = 'Creating account…';
+      const response = await API.post('/api/auth/register', {
+        username: document.getElementById('regUser').value.trim(),
+        email: document.getElementById('regEmail').value.trim(),
+        password: document.getElementById('regPass').value
+      });
+      if (response.ok) return window.location.assign('/dashboard');
+      button.disabled = false;
+      button.textContent = 'Create Free Account';
+      showToast(response.msg || 'Registration failed — please try again', 'error');
+    });
+  </script>
+</body>
+</html>
