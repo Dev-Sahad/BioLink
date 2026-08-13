@@ -42,7 +42,7 @@
       position: absolute;
       inset: -7.5%;
       opacity: .46;
-      filter: blur(20px);
+      filter: blur(6px);
       transform: scale(1.08);
       animation: backgroundScroll 28s ease-in-out infinite alternate;
       transition: opacity .12s linear;
@@ -438,7 +438,7 @@
   </style>
 </head>
 <body>
-  <div class="animated-page-background" aria-hidden="true"><img id="animatedBackgroundFrame" src="/assets/home-background/frame-00.gif" alt=""></div>
+  <div class="animated-page-background" aria-hidden="true"><img id="animatedBackgroundFrame" src="/assets/home-background/frame-000.gif" alt=""></div>
   <canvas id="particle-canvas"></canvas>
   <div class="ambient-orb ambient-orb-1"></div>
   <div class="ambient-orb ambient-orb-2"></div>
@@ -904,16 +904,16 @@
       }
     }, 50);
 
-    // Lightweight frame sequence from the uploaded animation.
+    // Full frame sequence from the uploaded animation, preserving its timing.
     const animatedBackgroundFrame = document.getElementById('animatedBackgroundFrame');
     if (animatedBackgroundFrame && !window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
-      const frames = Array.from({ length: 20 }, (_, index) => `/assets/home-background/frame-${String(index).padStart(2, '0')}.gif`);
+      const frames = Array.from({ length: 160 }, (_, index) => `/assets/home-background/frame-${String(index).padStart(3, '0')}.gif`);
       frames.slice(1).forEach(src => { const image = new Image(); image.src = src; });
       let frameIndex = 0;
       setInterval(() => {
         frameIndex = (frameIndex + 1) % frames.length;
         animatedBackgroundFrame.src = frames[frameIndex];
-      }, 110);
+      }, 65);
     }
   </script>
 
