@@ -175,8 +175,17 @@ async function renderBioPage(username) {
   // Music
   const musicEl = document.getElementById('bioMusic');
   if (bio.music && bio.music.url) {
-    const height = bio.music.type === 'spotify' ? '80' : '166';
-    musicEl.innerHTML = `<iframe src="${bio.music.url}" width="100%" height="${height}" frameborder="0" allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture"></iframe>`;
+    let embedUrl = bio.music.url;
+    if (bio.music.type === 'spotify') {
+      const match = embedUrl.match(/open\.spotify\.com\/(?:embed\/)?(track|album|playlist|episode|show)\/([A-Za-z0-9]+)/i);
+      if (match) embedUrl = `https://open.spotify.com/embed/${match[1].toLowerCase()}/${match[2]}`;
+    }
+    if (bio.music.type === 'youtube') {
+      const match = embedUrl.match(/(?:youtu\.be\/|youtube(?:-nocookie)?\.com\/(?:watch\?v=|shorts\/|embed\/))([A-Za-z0-9_-]{11})/i);
+      if (match) embedUrl = `https://www.youtube-nocookie.com/embed/${match[1]}?rel=0`;
+    }
+    const height = bio.music.type === 'spotify' ? '152' : '166';
+    musicEl.innerHTML = `<iframe src="${embedUrl}" width="100%" height="${height}" frameborder="0" allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture"></iframe>`;
   }
 
   // Video

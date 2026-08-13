@@ -264,6 +264,45 @@ async function loadQR() {
 }
 
 /* ── MEDIA ── */
+function getMusicEmbedUrl(type, rawUrl) {
+  const url = (rawUrl || '').trim();
+  if (!url) return '';
+
+  if (type === 'spotify') {
+    const match = url.match(/open\.spotify\.com\/(?:embed\/)?(track|album|playlist|episode|show)\/([A-Za-z0-9]+)/i);
+    return match ? `https://open.spotify.com/embed/${match[1].toLowerCase()}/${match[2]}` : url;
+  }
+
+  if (type === 'youtube') {
+    const match = url.match(/(?:youtu\.be\/|youtube(?:-nocookie)?\.com\/(?:watch\?v=|shorts\/|embed\/))([A-Za-z0-9_-]{11})/i);
+    return match ? `https://www.youtube-nocookie.com/embed/${match[1]}?rel=0` : url;
+  }
+
+  return url;
+}
+
+function updateMusicProviderUI() {
+  const type = document.getElementById('musicType').value;
+  const input = document.getElementById('musicUrl');
+  const hint = document.getElementById('musicProviderHint');
+  const copy = {
+    spotify: {
+      placeholder: 'Paste a Spotify track, album, or playlist URL',
+      hint: 'Paste any Spotify track, album, playlist, episode, or show link. BioLink creates the player link automatically.'
+    },
+    youtube: {
+      placeholder: 'Paste a YouTube video or Shorts URL',
+      hint: 'Paste a YouTube video, youtu.be, or Shorts link. It will appear as a compact player on your profile.'
+    },
+    soundcloud: {
+      placeholder: 'Paste a SoundCloud embed URL',
+      hint: 'Paste the SoundCloud embed URL from the Share → Embed option.'
+    }
+  }[type];
+  input.placeholder = copy.placeholder;
+  hint.textContent = copy.hint;
+}
+
 function populateMedia() {
   const music = bioData.music;
   if (music) {
@@ -271,6 +310,8 @@ function populateMedia() {
     document.getElementById('musicUrl').value = music.url || '';
     document.getElementById('musicAutoplay').checked = music.autoplay === 1;
   }
+  updateMusicProviderUI();
+  document.getElementById('musicType').addEventListener('change', updateMusicProviderUI);
   const video = bioData.video;
   if (video) {
     document.getElementById('videoType').value = video.type || 'youtube';
@@ -280,9 +321,10 @@ function populateMedia() {
 }
 
 async function saveMedia() {
+  const musicType = document.getElementById('musicType').value;
   const r1 = await API.put('/api/media/music', {
-    type: document.getElementById('musicType').value,
-    url: document.getElementById('musicUrl').value,
+    type: musicType,
+    url: getMusicEmbedUrl(musicType, document.getElementById('musicUrl').value),
     autoplay: document.getElementById('musicAutoplay').checked,
   });
   const r2 = await API.put('/api/media/video', {

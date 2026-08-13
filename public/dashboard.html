@@ -517,14 +517,16 @@
               <label>Type</label>
               <select id="musicType">
                 <option value="spotify">Spotify</option>
+                <option value="youtube">YouTube Music / Video</option>
                 <option value="soundcloud">SoundCloud</option>
               </select>
             </div>
             <div class="field">
-              <label>Embed URL</label>
-              <input type="text" id="musicUrl" placeholder="https://open.spotify.com/embed/...">
+              <label>Track, playlist, or video link</label>
+              <input type="url" id="musicUrl" placeholder="Paste a Spotify track or playlist URL" inputmode="url">
             </div>
           </div>
+          <p id="musicProviderHint" style="margin:12px 0 0;color:var(--muted);font-size:12px;line-height:1.55;">Paste a Spotify track, album, playlist, episode, or show link. BioLink creates the player link automatically.</p>
           <div class="field" style="margin-top: 14px;">
             <label>
               <input type="checkbox" id="musicAutoplay" style="width: auto; margin-right: 8px;">

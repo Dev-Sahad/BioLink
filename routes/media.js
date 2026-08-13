@@ -5,7 +5,7 @@ const router = express.Router();
 
 router.put('/music', authMiddleware, (req, res) => {
   const { type, url, autoplay } = req.body;
-  const validTypes = ['spotify', 'soundcloud'];
+  const validTypes = ['spotify', 'youtube', 'soundcloud'];
   const musicType = validTypes.includes(type) ? type : 'spotify';
   const musicUrl = url || '';
   db.get(`SELECT id FROM music WHERE userId = ?`, [req.userId], (err, row) => {
