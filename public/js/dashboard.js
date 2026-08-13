@@ -27,10 +27,7 @@ const themes = [
 
 async function loadDashboard() {
   const auth = await checkAuth();
-  if (!auth.ok) {
-    // Signal home page to open login modal
-    sessionStorage.setItem('_openModal', 'login');
-    sessionStorage.setItem('_modalRedirecting', '1');
+  if (!auth.ok || auth.user.role !== 'admin') {
     window.location.href = '/';
     return;
   }

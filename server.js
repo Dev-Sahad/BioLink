@@ -102,7 +102,8 @@ app.use('/assets', express.static(path.join(__dirname, 'assets')));
 
 // Serve SPA pages
 app.get('/', (req, res) => res.sendFile(path.join(__dirname, 'public', 'index.html')));
-app.get('/dashboard', (req, res) => res.sendFile(path.join(__dirname, 'public', 'dashboard.html')));
+app.get('/dashboard', (req, res) => res.redirect(302, '/admin'));
+app.get('/studio', (req, res) => res.sendFile(path.join(__dirname, 'public', 'dashboard.html')));
 app.get('/admin', (req, res) => res.sendFile(path.join(__dirname, 'public', 'admin.html')));
 app.get('/bio', (req, res) => res.sendFile(path.join(__dirname, 'public', 'bio.html')));
 app.get('/login', (req, res) => res.sendFile(path.join(__dirname, 'public', 'login.html')));

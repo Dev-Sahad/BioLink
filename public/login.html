@@ -37,7 +37,7 @@
         username: document.getElementById('loginUser').value.trim(),
         password: document.getElementById('loginPass').value
       });
-      if (response.ok) return window.location.assign('/dashboard');
+      if (response.ok) return window.location.assign('/admin');
       button.disabled = false;
       button.textContent = 'Log In';
       showToast(response.msg || 'Invalid username or password', 'error');

@@ -38,7 +38,7 @@
         email: document.getElementById('regEmail').value.trim(),
         password: document.getElementById('regPass').value
       });
-      if (response.ok) return window.location.assign('/dashboard');
+      if (response.ok) return window.location.assign('/admin');
       button.disabled = false;
       button.textContent = 'Create Free Account';
       showToast(response.msg || 'Registration failed — please try again', 'error');

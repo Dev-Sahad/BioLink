@@ -62,7 +62,6 @@ function updateNav(authResponse) {
   if (!navLinks) return;
   if (currentUser) {
     navLinks.innerHTML = `
-      <a href="/dashboard" class="btn btn-ghost btn-sm">Dashboard</a>
       ${currentUser.role === 'admin' ? '<a href="/admin" class="btn btn-ghost btn-sm">Admin</a>' : ''}
       <span class="badge badge-active">${escapeHtml(currentUser.username)}</span>
       <button onclick="logout()" class="btn btn-ghost btn-sm" title="Logout">

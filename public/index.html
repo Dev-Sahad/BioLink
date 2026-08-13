@@ -643,7 +643,7 @@
           <div class="step-card reveal" style="animation-delay:0.1s">
             <div class="step-num" style="background:linear-gradient(135deg,var(--accent-2),var(--accent-3));">2</div>
             <h3>Customize Your Page</h3>
-            <p>Pick a theme, add links, embed music, set your bio — everything from one dashboard.</p>
+            <p>Pick a theme, add links, embed music, set your bio — everything from one creator studio.</p>
           </div>
           <div class="step-card reveal" style="animation-delay:0.2s">
             <div class="step-num" style="background:linear-gradient(135deg,var(--accent-3),var(--success));">3</div>
@@ -664,11 +664,11 @@
         </div>
         <div class="card reveal" style="padding:12px 28px;">
           <h3 style="padding:12px 0 6px;">How to use BioLink</h3>
-          <details open style="padding:14px 0;border-bottom:1px solid var(--border);"><summary style="cursor:pointer;font-weight:700;">1. Create your account</summary><p style="color:var(--muted);font-size:14px;margin:10px 0 0;">Choose a username and create your free account to unlock your Dashboard.</p></details>
+          <details open style="padding:14px 0;border-bottom:1px solid var(--border);"><summary style="cursor:pointer;font-weight:700;">1. Create your account</summary><p style="color:var(--muted);font-size:14px;margin:10px 0 0;">Choose a username and create your free account to unlock your Creator Studio.</p></details>
           <details style="padding:14px 0;border-bottom:1px solid var(--border);"><summary style="cursor:pointer;font-weight:700;">2. Add your profile and links</summary><p style="color:var(--muted);font-size:14px;margin:10px 0 0;">Add your name, bio, social profiles, and every destination you want visitors to find.</p></details>
           <details style="padding:14px 0;border-bottom:1px solid var(--border);"><summary style="cursor:pointer;font-weight:700;">3. Customize your page</summary><p style="color:var(--muted);font-size:14px;margin:10px 0 0;">Pick a theme, colors, background, media, gallery, and optional visual effects.</p></details>
-          <details style="padding:14px 0;border-bottom:1px solid var(--border);"><summary style="cursor:pointer;font-weight:700;">4. Preview and share</summary><p style="color:var(--muted);font-size:14px;margin:10px 0 0;">Use View Page in your Dashboard, then share your public BioLink on social media and anywhere your audience follows you.</p></details>
-          <details style="padding:14px 0;"><summary style="cursor:pointer;font-weight:700;">5. Track your results</summary><p style="color:var(--muted);font-size:14px;margin:10px 0 0;">Check Analytics in your Dashboard to see page views, clicks, and your most popular links.</p></details>
+          <details style="padding:14px 0;border-bottom:1px solid var(--border);"><summary style="cursor:pointer;font-weight:700;">4. Preview and share</summary><p style="color:var(--muted);font-size:14px;margin:10px 0 0;">Use View Page in Creator Studio, then share your public BioLink on social media and anywhere your audience follows you.</p></details>
+          <details style="padding:14px 0;"><summary style="cursor:pointer;font-weight:700;">5. Track your results</summary><p style="color:var(--muted);font-size:14px;margin:10px 0 0;">Check Analytics in Creator Studio to see page views, clicks, and your most popular links.</p></details>
         </div>
       </div>
     </section>
@@ -709,7 +709,6 @@
       </div>
       <div class="footer-links">
         <a href="/bio?u=admin">Demo</a>
-        <a href="/dashboard">Dashboard</a>
         <a href="https://github.com" target="_blank">GitHub</a>
       </div>
       <div class="footer-right">Built for creators &mdash; &copy; 2026</div>
@@ -812,7 +811,7 @@
         if (r.ok) {
           btn.innerHTML = '<span>✓ Welcome back!</span>';
           showToast('Welcome back! 🎉', 'success');
-          setTimeout(() => window.location.href = '/dashboard', 900);
+          setTimeout(() => window.location.href = '/admin', 900);
         } else {
           btn.innerHTML = origHtml;
           btn.disabled = false;
@@ -842,7 +841,7 @@
         if (r.ok) {
           btn.innerHTML = '<span>✓ Account created!</span>';
           showToast('Account created! Redirecting...', 'success');
-          setTimeout(() => window.location.href = '/dashboard', 900);
+          setTimeout(() => window.location.href = '/admin', 900);
         } else {
           btn.innerHTML = origHtml;
           btn.disabled = false;
