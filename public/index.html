@@ -21,36 +21,6 @@
       padding: 80px 24px 60px;
       position: relative;
     }
-    .animated-page-background {
-      position: fixed;
-      inset: 0;
-      z-index: 0;
-      overflow: hidden;
-      pointer-events: none;
-      background: #070713;
-    }
-    .animated-page-background::after {
-      content: '';
-      position: absolute;
-      inset: 0;
-      background: linear-gradient(180deg, rgba(7,7,19,.52), rgba(7,7,19,.78));
-    }
-    .animated-page-background img {
-      width: 115%;
-      height: 115%;
-      object-fit: cover;
-      position: absolute;
-      inset: -7.5%;
-      opacity: .46;
-      filter: blur(6px);
-      transform: scale(1.08);
-      animation: backgroundScroll 28s ease-in-out infinite alternate;
-      transition: opacity .12s linear;
-    }
-    @keyframes backgroundScroll {
-      from { transform: scale(1.08) translate3d(-2%, -2%, 0); }
-      to { transform: scale(1.18) translate3d(2%, 3%, 0); }
-    }
     .hero-eyebrow {
       display: inline-flex;
       align-items: center;
@@ -438,7 +408,6 @@
   </style>
 </head>
 <body>
-  <div class="animated-page-background" aria-hidden="true"><img id="animatedBackgroundFrame" src="/assets/home-background/frame-000.gif" alt=""></div>
   <canvas id="particle-canvas"></canvas>
   <div class="ambient-orb ambient-orb-1"></div>
   <div class="ambient-orb ambient-orb-2"></div>
@@ -904,17 +873,6 @@
       }
     }, 50);
 
-    // Full frame sequence from the uploaded animation, preserving its timing.
-    const animatedBackgroundFrame = document.getElementById('animatedBackgroundFrame');
-    if (animatedBackgroundFrame && !window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
-      const frames = Array.from({ length: 160 }, (_, index) => `/assets/home-background/frame-${String(index).padStart(3, '0')}.gif`);
-      frames.slice(1).forEach(src => { const image = new Image(); image.src = src; });
-      let frameIndex = 0;
-      setInterval(() => {
-        frameIndex = (frameIndex + 1) % frames.length;
-        animatedBackgroundFrame.src = frames[frameIndex];
-      }, 65);
-    }
   </script>
 
 </body>
